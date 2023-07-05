@@ -2,10 +2,10 @@
 // Author: Jungrae Kim <dale40@gmail.com>
 // Description:
 
-// Follows AMBA 3 AHB-Lite v1.0 specification, 2006
-// (ARM IHI0033A)
+// Follows AMBA2 AHB v1.0 specification, 1999
+// (ARM IHI 0011A)
 
-interface AHB_LITE_INTF
+interface AHB2_INTF
 #(
     parameter   ADDR_WIDTH              = 32,
     parameter   DATA_WIDTH              = 32
@@ -17,16 +17,19 @@ interface AHB_LITE_INTF
 
     logic                               hbusreq;
     logic                               hgrant;
+
     logic   [ADDR_WIDTH-1:0]            haddr;
-    logic                               hmasterlock;
-    logic   [3:0]                       hprot;
-    logic   [2:0]                       hsize;
     logic   [1:0]                       htrans;
-    logic   [DATA_WIDTH-1:0]            hwdata;
     logic                               hwrite;
+    logic   [2:0]                       hsize;
+    logic   [2:0]                       hburst;
+    logic   [3:0]                       hprot;
+    logic   [DATA_WIDTH-1:0]            hwdata;
+
+    logic                               hmasterlock;
     logic   [DATA_WIDTH-1:0]            hrdata;
-    logic                               hreadyout;
-    logic                               hresp;
+    logic                               hready;
+    logic   [1:0]                       hresp;
 
     modport master (
         output      hbusreq, haddr, hmasterlock, hprot, hsize, htrans, hwdata, hwrite,

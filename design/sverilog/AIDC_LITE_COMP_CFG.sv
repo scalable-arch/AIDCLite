@@ -20,44 +20,44 @@ module AIDC_LITE_COMP_CFG
 
     always_ff @(posedge clk)
         if (~rst_n) begin
-            src_addr                    <= 'd0;
-            dst_addr                    <= 'd0;
-            len                         <= 'd0;
-            start                       <= 1'b0;
+            src_addr                        <= 'd0;
+            dst_addr                        <= 'd0;
+            len                             <= 'd0;
+            start                           <= 1'b0;
         end
         else begin
             if (apb_if.psel & apb_if.penable & apb_if.pwrite) begin
                 case (apb_if.paddr[9:2]) begin
                     8'd0:
-                        src_addr                    <= apb_if.pwdata;
+                        src_addr                        <= apb_if.pwdata;
                     8'd1:
-                        dst_addr                    <= apb_if.pwdata;
+                        dst_addr                        <= apb_if.pwdata;
                     8'd2:
-                        len                         <= apb_if.pwdata[31:7];
+                        len                             <= apb_if.pwdata[31:7];
                 endcase
             end
-            start                       <= apb_if.psel & apb_if.penable
-                                          &apb_if.pwrite
-                                          &(apb_if.paddr[9:0]==8'd3)
-                                          &apb_if.pwdata[0];
+            start                           <= apb_if.psel & apb_if.penable
+                                              &apb_if.pwrite
+                                              &(apb_if.paddr[9:0]==8'd3)
+                                              &apb_if.pwdata[0];
         end
 
     logic   [31:0]                      prdata;
 
     always_ff @(posedge clk)
         if (~rst_n) begin
-            prdata                      <= 'd0;
+            prdata                          <= 'd0;
         end
         else if (apb_if.psel & ~apb_if.penable & ~apb_if.pwrite) begin
             case (apb_if.paddr[9:2]) begin
                 8'd0:
-                    prdata                      <= src_addr;
+                    prdata                          <= src_addr;
                 8'd1:
-                    prdata                      <= dst_addr;
+                    prdata                          <= dst_addr;
                 8'd2:
-                    prdata                      <= {len, 7'd0};
+                    prdata                          <= {len, 7'd0};
                 8'd3:
-                    prdata                      <= {31'd0, done_i};
+                    prdata                          <= {31'd0, done_i};
             endcase
         end
 
