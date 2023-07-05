@@ -1,7 +1,4 @@
-+incdir+${CMSS_DIR}/IP/AIDC/sverilog
-${CMSS_DIR}/IP/AIDC/sverilog/AIDC_ADDR_CONVERTER.sv
-${CMSS_DIR}/IP/AIDC/sverilog/AIDC_CFG.sv
-${CMSS_DIR}/IP/AIDC/sverilog/AIDC_COMP_DATA.sv
-${CMSS_DIR}/IP/AIDC/sverilog/AIDC_DECOMP_DATA.sv
-${CMSS_DIR}/IP/AIDC/sverilog/AIDC_SOP_GEN.sv
-${CMSS_DIR}/IP/AIDC/sverilog/AIDC_TOP.sv
++incdir+${AIDC_LITE_DIR}/design/sverilog
+${AIDC_LITE_DIR}/design/sverilog/AIDC_LITE_COMP_CFG.sv
+${AIDC_LITE_DIR}/design/sverilog/AIDC_LITE_COMP_ENGINE.sv
+${AIDC_LITE_DIR}/design/sverilog/AIDC_LITE_COMP_TOP.sv
