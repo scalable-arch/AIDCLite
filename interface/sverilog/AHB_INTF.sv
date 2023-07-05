@@ -25,18 +25,16 @@ interface AHB2_INTF
     logic   [2:0]                       hburst;
     logic   [3:0]                       hprot;
     logic   [DATA_WIDTH-1:0]            hwdata;
-
-    logic                               hmasterlock;
     logic   [DATA_WIDTH-1:0]            hrdata;
     logic                               hready;
     logic   [1:0]                       hresp;
 
     modport master (
-        output      hbusreq, haddr, hmasterlock, hprot, hsize, htrans, hwdata, hwrite,
+        output      hbusreq, haddr, hprot, hsize, htrans, hwdata, hwrite,
         input       hgrant, hrdata, hreadyout, hresp
     );
     modport slave (
-        input      hbusreq, haddr, hmasterlock, hprot, hsize, htrans, hwdata, hwrite,
+        input      hbusreq, haddr, hprot, hsize, htrans, hwdata, hwrite,
         output     hgrant, hrdata, hreadyout, hresp
     );
 
