@@ -21,3 +21,9 @@ jobs:
         run: |
           ls ${{ github.workspace }}
       - run: echo "🍏 This job's status is ${{ job.status }}."
+  Spyglass-Lint:
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+      - run: sg_shell -tcl /home/dale40/ADICLite/actions/spyglass_lint/lint.tcl
