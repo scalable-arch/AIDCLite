@@ -6,7 +6,7 @@ module AIDC_LITE_COMP_TOP
     input   wire                        clk,
     input   wire                        rst_n,
 
-    AHB_INTF.master                     ahb_if,
+    AHB2_MST_INTF.master                ahb_if,
 
     APB_INTF.slave                      apb_if
 );

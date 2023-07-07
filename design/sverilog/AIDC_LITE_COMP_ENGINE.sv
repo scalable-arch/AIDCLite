@@ -3,11 +3,11 @@ module AIDC_LITE_COMP_ENGINE
     input   wire                        clk,
     input   wire                        rst_n,
 
-    AHB2_INTF.master                    ahb_if,
+    AHB2_MST_INTF.master                ahb_if,
 
     input   wire    [31:0]              src_addr_i,
     input   wire    [31:0]              dst_addr_i,
-    input   wire    [31:7]              len_i
+    input   wire    [31:7]              len_i,
     input   wire                        start_i,    // pulse
     output  logic                       done_o      // level
 );
@@ -15,6 +15,7 @@ module AIDC_LITE_COMP_ENGINE
     enum    logic   [2:0]   {
         S_IDLE,
         S_BUSREQ,
+        S_BUSY
     }                                   state,      state_n;
 
     logic                               hbusreq,    hbusreq_n;
@@ -23,7 +24,7 @@ module AIDC_LITE_COMP_ENGINE
         state_n                         = state;
 
         hbusreq_n                       = hbusreq;
-        case (state) begin
+        case (state)
             S_IDLE: begin
                 if (start_i & (len_i!='d0)) begin
                     state_n                     = S_BUSREQ;
@@ -35,7 +36,7 @@ module AIDC_LITE_COMP_ENGINE
                 if (ahb_if.hgrant) begin
                 end
             end
-        end
+        endcase
     end
 
     always_ff @(posedge clk)

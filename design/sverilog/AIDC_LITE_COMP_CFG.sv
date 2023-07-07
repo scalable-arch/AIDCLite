@@ -7,7 +7,7 @@ module AIDC_LITE_COMP_CFG
 
     output  logic   [31:0]              src_addr_o,
     output  logic   [31:0]              dst_addr_o,
-    output  logic   [31:7]              len_o
+    output  logic   [31:7]              len_o,
     output  logic                       start_o,    // pulse
     input   wire                        done_i      // level
 );
@@ -27,7 +27,7 @@ module AIDC_LITE_COMP_CFG
         end
         else begin
             if (apb_if.psel & apb_if.penable & apb_if.pwrite) begin
-                case (apb_if.paddr[9:2]) begin
+                case (apb_if.paddr[9:2])
                     8'd0:
                         src_addr                        <= apb_if.pwdata;
                     8'd1:
@@ -49,7 +49,7 @@ module AIDC_LITE_COMP_CFG
             prdata                          <= 'd0;
         end
         else if (apb_if.psel & ~apb_if.penable & ~apb_if.pwrite) begin
-            case (apb_if.paddr[9:2]) begin
+            case (apb_if.paddr[9:2])
                 8'd0:
                     prdata                          <= src_addr;
                 8'd1:
