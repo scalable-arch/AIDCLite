@@ -26,5 +26,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
-      - run: pushd ${{github.workspace}}; source env.source; pushd # setup env variables
       - run: sg_shell -tcl ${{github.workspace}}/actions/spyglass_lint/lint_rtl_signoff.tcl
+        env: AIDC_LITE_HOME=${github.workspace}}
+      
