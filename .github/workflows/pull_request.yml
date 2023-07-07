@@ -20,11 +20,18 @@ jobs:
         run: |
           ls ${{ github.workspace }}
       - run: echo "🍏 This job's status is ${{ job.status }}."
-#  compile:
-#    runs-on: self-hosted        # runs on a server with Spyglass installed
-#    steps:
+  compile:
+    runs-on: self-hosted        # runs on a server with Synopsys VCS installed
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+      - name: VCS (compile)
+        export AIDC_LITE_HOME=${{github.workspace}}; \
+        export DESIGN_FILELIST=${{github.workspace}}/design/sverilog/filelist.f; \
+        export DESIGN_TOP=AIDC_LITE_COMP_TOP_WRAPPER; \
+        vcs -full64 -f $DESIGN_FILELIST
   Spyglass-Lint-RTL-Handoff:
-    runs-on: self-hosted        # runs on a server with Spyglass installed
+    runs-on: self-hosted        # runs on a server with Synopsys Spyglass installed
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
