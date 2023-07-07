@@ -22,11 +22,11 @@ jobs:
           ls ${{ github.workspace }}
       - run: echo "🍏 This job's status is ${{ job.status }}."
   Spyglass-Lint-RTL-Handoff:
+    runs-on: self-hosted        # runs on a server with Spyglass installed
     env:
-      AIDC_LITE_HOME: ${github.workspace}}
-    runs-on: self-hosted
+      AIDC_LITE_HOME: ${{github.workspace}}
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
-      - run: sg_shell -tcl ${{github.workspace}}/actions/spyglass_lint/lint_rtl_signoff.tcl
+      - run: echo $AIDC_LITE_HOME; sg_shell -tcl ${{github.workspace}}/actions/spyglass_lint/rtl_signoff.tcl
       
