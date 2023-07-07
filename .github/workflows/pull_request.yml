@@ -11,7 +11,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
-      - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
       - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
       - name: Check out repository code
         uses: actions/checkout@v3
@@ -21,13 +20,16 @@ jobs:
         run: |
           ls ${{ github.workspace }}
       - run: echo "🍏 This job's status is ${{ job.status }}."
+#  compile:
+#    runs-on: self-hosted        # runs on a server with Spyglass installed
+#    steps:
   Spyglass-Lint-RTL-Handoff:
     runs-on: self-hosted        # runs on a server with Spyglass installed
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
-      - name: Environment variable setting
-        run: export AIDC_LITE_HOME=${{github.workspace}}
       - name: Spyglass
-        run: sg_shell -tcl ${{github.workspace}}/actions/spyglass_lint/rtl_signoff.tcl
-      
+        run: export DESIGN_TOP=AIDC_LITE_COMP_TOP_WRAPPER; \
+             export AIDC_LITE_HOME=${{github.workspace}}; \
+             export DESIGN_FILELIST=${{github.workspace}}/design/sverilog/filelist.f; \
+             sg_shell < ${{github.workspace}}/actions/spyglass_lint/rtl_signoff.tcl
