@@ -26,4 +26,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
-      - run: ls ${{github.workspace}}; source ${{github.workspace}}/env.source; sg_shell -tcl /home/dale40/AIDCLite/actions/spyglass_lint/lint_rtl_signoff.tcl
+      - run: pushd ${{github.workspace}};   # move to the checkouted repository
+             source env.source;             # setup environment variables
+             pushd;                         # come back to the work directory
+             sg_shell -tcl ${{github.workspace}}/actions/spyglass_lint/lint_rtl_signoff.tcl
