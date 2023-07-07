@@ -21,7 +21,7 @@ jobs:
         run: |
           ls ${{ github.workspace }}
       - run: echo "🍏 This job's status is ${{ job.status }}."
-  Spyglass-Lint (RTL Handoff):
+  Spyglass-Lint-RTL-Handoff):
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v3
