@@ -27,3 +27,4 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
       - run: source actions/spgglass_lint/env.source; sg_shell -tcl /home/dale40/AIDCLite/actions/spyglass_lint/lint_rtl_signoff.tcl
+
