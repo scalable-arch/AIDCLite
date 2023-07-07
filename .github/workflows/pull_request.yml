@@ -30,7 +30,7 @@ jobs:
       - uses: actions/setup-node@v3
       - name: Spyglass
         run: |
-          export DESIGN_TOP=AIDC_LITE_COMP_TOP_WRAPPER; \
           export AIDC_LITE_HOME=${{github.workspace}}; \
           export DESIGN_FILELIST=${{github.workspace}}/design/sverilog/filelist.f; \
+          export DESIGN_TOP=AIDC_LITE_COMP_TOP_WRAPPER; \
           sg_shell < ${{github.workspace}}/actions/spyglass_lint/rtl_signoff.tcl
