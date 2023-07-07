@@ -1,28 +1,43 @@
 ############################################################
-# check inputs
+# check environment
 ############################################################
-if { ![info exists $env(DESIGN_TOP)] } {
-    puts "\$DESIGN_TOP env variable is not set"        
-    return 1;   // test failed        
-}
-if { ![info exists $env(DESIGN_FILELIST)] } {
-    puts "\$DESIGN_FILELIST env variable is not set"        
-    return 1;   // test failed        
+if { [info exists env(SPYGLASS_HOME)] } {
+    puts "\$SPYGLASS_HOME: $env(SPYGLASS_HOME)";
+} else {
+    puts "(Env setting error): \$SPYGLASS_HOME is not set"
+    exit 1; 
 }
 
-set project RTL_HANDOFF.$DESIGN_TOP
+if { [info exists env(DESIGN_TOP)] } {
+    puts "\$DESIGN_TOP: $env(DESIGN_TOP)";
+    set DESIGN_TOP $env(DESIGN_TOP)
+} else {
+    puts "(IP setting error): \$DESIGN_TOP is not set"
+    exit 1; 
+}
+
+if { [info exists env(DESIGN_FILELIST)] } {
+    puts "\$DESIGN_FILELIST: $env(DESIGN_FILELIST)";
+    set DESIGN_FILELIST $env(DESIGN_FILELIST)
+} else {
+    puts "(IP setting error): \$DESIGN_FILELIST is not set"
+    exit 1; 
+}
+
+#
+set PROJECT RTL_HANDOFF.${DESIGN_TOP}
 
 # Delete an existing project, if any
-file delete -force -- ${project}
+file delete -force -- ${PROJECT}.prj ${PROJECT}
 
 # Create a new project
-new_project ${project}
+new_project ${PROJECT}
 
 # Rules for RTL handoff
 current_methodology $env(SPYGLASS_HOME)/GuideWare/latest/block/rtl_handoff
 
 #Read Files
-read_file -type sourcelist $DESIGN_FILELIST
+read_file -type sourcelist ${DESIGN_FILELIST}
 
 #Read waiver files
 #read_file -type awl ../waiver.awl
@@ -32,7 +47,7 @@ set_option language_mode mixed
 set_option allow_module_override yes
 set_option designread_disable_flatten no
 set_option ignoredu axi_xbar_intf
-set_option top $env(DESIGN_TOP)
+set_option top ${DESIGN_TOP}
 
 # Disable HWPE Mac Engine Usage
 #set_option param {pulpissimo.USE_HWPE=0}
