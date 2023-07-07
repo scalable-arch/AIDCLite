@@ -26,4 +26,4 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
-      - run: sg_shell -tcl /home/dale40/ADICLite/actions/spyglass_lint/lint.tcl
+      - run: sg_shell -tcl /home/dale40/AIDCLite/actions/spyglass_lint/lint.tcl
