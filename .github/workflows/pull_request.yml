@@ -1,6 +1,6 @@
 # This file describes a workflow that runs regression tests
 # on a pull request to the main branch
-name: Regression test (pull request to main)
+name: Regression tests
 run-name: Regression test for a pull request from ${{ github.actor }}
 on:
   pull_request:
@@ -21,3 +21,9 @@ jobs:
         run: |
           ls ${{ github.workspace }}
       - run: echo "🍏 This job's status is ${{ job.status }}."
+  Spyglass-Lint-RTL-Handoff):
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+      - run: sg_shell -tcl /home/dale40/AIDCLite/actions/spyglass_lint/lint.tcl

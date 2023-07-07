@@ -1,7 +1,4 @@
 module AIDC_LITE_COMP_TOP
-#(
-    parameter   ADDR_WIDTH              = 32
-)
 (
     input   wire                        clk,
     input   wire                        rst_n,
@@ -31,7 +28,7 @@ module AIDC_LITE_COMP_TOP
         .done_i                         (done)
     );
 
-    ADIC_LITE_COMP_ENGINE               u_engine
+    AIDC_LITE_COMP_ENGINE               u_engine
     (
         .clk                            (clk),
         .rst_n                          (rst_n),
