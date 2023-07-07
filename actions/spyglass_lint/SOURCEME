@@ -1,0 +1,2 @@
+export DESIGN_TOP=AIDC_LITE_COMP_TOP_WRAPPER
+export DESIGN_FILELIST="${AIDC_LITE_HOME}/filelist.design.f"

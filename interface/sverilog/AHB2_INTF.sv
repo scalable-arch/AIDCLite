@@ -6,10 +6,6 @@
 // (ARM IHI 0011A)
 
 interface AHB2_MST_INTF
-#(
-    parameter   ADDR_WIDTH              = 32,
-    parameter   DATA_WIDTH              = 32
-)
 (
     input   wire                        hclk,
     input   wire                        hreset_n
@@ -18,15 +14,15 @@ interface AHB2_MST_INTF
     logic                               hbusreq;
     logic                               hgrant;
 
-    logic   [ADDR_WIDTH-1:0]            haddr;
+    logic   [31:0]                      haddr;
     logic   [1:0]                       htrans;
     logic                               hwrite;
     logic   [2:0]                       hsize;
     logic   [2:0]                       hburst;
     logic   [3:0]                       hprot;
-    logic   [DATA_WIDTH-1:0]            hwdata;
+    logic   [31:0]                      hwdata;
 
-    logic   [DATA_WIDTH-1:0]            hrdata;
+    logic   [31:0]                      hrdata;
     logic                               hready;
     logic   [1:0]                       hresp;
 
@@ -35,8 +31,8 @@ interface AHB2_MST_INTF
         input       hgrant, hrdata, hready, hresp
     );
     modport slave (
-        input   hbusreq, haddr, htrans, hwrite, hsize, hburst, hprot, hwdata,
-        output  hgrant, hrdata, hready, hresp
+        input       hbusreq, haddr, htrans, hwrite, hsize, hburst, hprot, hwdata,
+        output      hgrant, hrdata, hready, hresp
     );
 
     // synthesis translate_off
@@ -46,25 +42,21 @@ interface AHB2_MST_INTF
 endinterface
 
 interface AHB2_SLV_INTF
-#(
-    parameter   ADDR_WIDTH              = 32,
-    parameter   DATA_WIDTH              = 32
-)
 (
     input   wire                        hclk,
     input   wire                        hreset_n
 );
 
     logic                               hsel;
-    logic   [ADDR_WIDTH-1:0]            haddr;
+    logic   [31:0]                      haddr;
     logic   [1:0]                       htrans;
     logic                               hwrite;
     logic   [2:0]                       hsize;
     logic   [2:0]                       hburst;
     logic   [3:0]                       hprot;
-    logic   [DATA_WIDTH-1:0]            hwdata;
+    logic   [31:0]                      hwdata;
 
-    logic   [DATA_WIDTH-1:0]            hrdata;
+    logic   [31:0]                      hrdata;
     logic                               hready;
     logic   [1:0]                       hresp;
 

@@ -1,14 +1,28 @@
-set project RTL_HANDOFF
+############################################################
+# check inputs
+############################################################
+if { ![info exists $env(DESIGN_TOP)] } {
+    puts "\$DESIGN_TOP env variable is not set"        
+    return 1;   // test failed        
+}
+if { ![info exists $env(DESIGN_FILELIST)] } {
+    puts "\$DESIGN_FILELIST env variable is not set"        
+    return 1;   // test failed        
+}
+
+set project RTL_HANDOFF.$DESIGN_TOP
 
 # Delete an existing project, if any
 file delete -force -- ${project}
 
 # Create a new project
 new_project ${project}
+
+# Rules for RTL handoff
 current_methodology $env(SPYGLASS_HOME)/GuideWare/latest/block/rtl_handoff
 
 #Read Files
-read_file -type sourcelist ../../filelist.design.f
+read_file -type sourcelist $DESIGN_FILELIST
 
 #Read waiver files
 #read_file -type awl ../waiver.awl
