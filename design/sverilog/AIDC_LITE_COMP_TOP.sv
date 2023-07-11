@@ -47,7 +47,7 @@ module AIDC_LITE_COMP_TOP
         .ahb_if                         (ahb_if),
 
         .buf_wren_o                     (buf_wren),
-        .buf_waddr_o                    (buf_addr),
+        .buf_waddr_o                    (buf_waddr),
         .buf_wbe_o                      (buf_wbe),
         .buf_wdata_o                    (buf_wdata),
 
