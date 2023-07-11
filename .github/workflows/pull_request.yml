@@ -39,6 +39,6 @@ jobs:
         run: cat reports/moresimple.rpt;
       - name: Upload summary report
         uses: actions/upload-artifact@v3
-          with:
-            name: moresimple.rpt
-            path: reports/moresimple.rpt
+        with:
+          name: moresimple.rpt
+          path: reports/moresimple.rpt
