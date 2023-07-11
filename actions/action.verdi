@@ -1,0 +1,4 @@
+#!/bin/bash
+
+# $@: forward all input arguments to VCS
+Verdi -kdb -f $DESIGN_FILELIST -f $TB_FILELIST $@

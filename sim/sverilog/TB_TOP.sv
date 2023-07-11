@@ -58,10 +58,13 @@ module TB_TOP;
         .ahb_if                         (slv_ahb_if)
     );
 
-    // 
+    //initial begin
+    //    $dumpvars(0, dut);
+    //    $dumpfile("dump.vcd");
+    //end
     initial begin
-        $dumpvars(0, dut);
-        $dumpfile("dump.vcs");
+        $fsdbDumpfile("dump.fsdb");
+        $fsdbDumpvars(0, dut);
     end
 
     //----------------------------------------------------------
@@ -79,11 +82,13 @@ module TB_TOP;
         apb_if.write(32'h8, 32'h0000_1000);
         apb_if.write(32'hC, 32'd1);
 
-        rdata = 0;
-        while (rdata!=1) begin
+        for (int i=0; i<10000; i++) begin
             apb_if.read(32'h10, rdata);
-            repeat (100) @(posedge clk);
+            if (rdata==1) begin
+                break;
+            end
             $write(".");
+            repeat (100) @(posedge clk);
         end
         $display("");   // new line
         repeat (50) @(posedge clk);
