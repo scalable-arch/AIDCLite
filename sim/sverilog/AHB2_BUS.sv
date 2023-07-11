@@ -11,7 +11,6 @@ module AHB2_BUS
     assign  m0_if.hgrant                = 1'b1;
 
     assign  s0_if.hsel                  = 1'b1;
-    //assign  s0_if.hsel                  = 1'b1;
     assign  s0_if.haddr                 = m0_if.haddr;
     assign  s0_if.htrans                = m0_if.htrans;
     assign  s0_if.hwrite                = m0_if.hwrite;
