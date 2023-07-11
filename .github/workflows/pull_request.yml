@@ -15,7 +15,7 @@ jobs:
       - name: compile
         run: |
           source ${{github.workspace}}/env.source ${{github.workspace}}; \
-          run_compile
+          run_compile_only
   Spyglass-Lint-RTL-Handoff:
     runs-on: self-hosted        # runs on a server with Synopsys Spyglass installed
     steps:
