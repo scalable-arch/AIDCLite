@@ -15,6 +15,15 @@ parameter   logic   [1:0]           HRESP_ERROR     = 2'b01;
 parameter   logic   [1:0]           HRESP_RETRY     = 2'b10;
 parameter   logic   [1:0]           HRESP_SPLIT     = 2'b11;
 
+parameter   logic   [2:0]           HBURST_SINGLE   = 3'b000;
+parameter   logic   [2:0]           HBURST_INCR     = 3'b001;
+parameter   logic   [2:0]           HBURST_WRAP4    = 3'b010;
+parameter   logic   [2:0]           HBURST_INCR4    = 3'b011;
+parameter   logic   [2:0]           HBURST_WRAP8    = 3'b100;
+parameter   logic   [2:0]           HBURST_INCR8    = 3'b101;
+parameter   logic   [2:0]           HBURST_WRAP16   = 3'b110;
+parameter   logic   [2:0]           HBURST_INCR16   = 3'b111;
+
 interface AHB2_MST_INTF
 (
     input   wire                        hclk,
