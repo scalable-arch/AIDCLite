@@ -35,9 +35,9 @@ jobs:
         run: |
           source ${{github.workspace}}/env.source ${{github.workspace}}; \
           action.lint; \
-      - name: moresimple.rpt
+      - name: Lint report (moresimple)
         run: cat reports/moresimple.rpt;
-      - name: Upload summary report
+      - name: Upload Lint report
         uses: actions/upload-artifact@v3
         with:
           name: moresimple.rpt
