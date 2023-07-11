@@ -32,7 +32,7 @@ interface APB_INTF
         output      pready, prdata, pslverr
     );
 
-    // synthesis translate_off
+    // synopsys translate_off
     // - for verification only
     task reset_master();
         paddr                           = 'hx;
@@ -82,6 +82,6 @@ interface APB_INTF
         data                            = prdata;
         reset_master();
     endtask;
-    // synthesis translate_on
+    // synopsys translate_on
 
 endinterface

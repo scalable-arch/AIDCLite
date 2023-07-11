@@ -86,6 +86,7 @@ module AIDC_LITE_COMP_ENGINE
         hbusreq_n                       = hbusreq;
         haddr_n                         = haddr;
         htrans_n                        = htrans;
+        hwrite_n                        = hwrite;
 
         // to write 32-bit data to 64b-wide buffer
         buf_wren                        = 1'b0;

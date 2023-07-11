@@ -45,9 +45,9 @@ interface AHB2_MST_INTF
         output      hgrant, hrdata, hready, hresp
     );
 
-    // synthesis translate_off
+    // synopsys translate_off
     // - for verification only
-    // synthesis translate_on
+    // synopsys translate_on
 
 endinterface
 
@@ -80,8 +80,8 @@ interface AHB2_SLV_INTF
         output      hrdata, hreadyo, hresp
     );
 
-    // synthesis translate_off
+    // synopsys translate_off
     // - for verification only
-    // synthesis translate_on
+    // synopsys translate_on
 
 endinterface
