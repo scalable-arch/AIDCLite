@@ -25,7 +25,7 @@ module AIDC_LITE_COMP_ENGINE
     // A block: 128B data
     // - fetched from memory using two 4B x 16-beat accesses
     // - written to memory (in a compressed format) using one 4B x 16-beat access
-    logic   [24:7]                      blk_cnt,    blk_cnt_n;
+    logic   [31:7]                      blk_cnt,    blk_cnt_n;
     // A beat: a single-cycle transfer (4B)
     // - beat_cnt increases from 0 to 31.
     //   - 0~15 belong to the first 16-beat acess
@@ -117,6 +117,7 @@ module AIDC_LITE_COMP_ENGINE
                     // deassert hbusreq
                     hbusreq_n                       = 1'b0;
 
+                    // address phase part (prepation)
                     // set the address and SRC_ADDR + BLK_CNT*128
                     haddr_n                         = src_addr_i + {blk_cnt, 7'd0};
                     htrans_n                        = HTRANS_NONSEQ;
@@ -128,8 +129,11 @@ module AIDC_LITE_COMP_ENGINE
             S_RD1_1ST_ADDR: begin
                 // address accepted
                 if (ahb_if.hready) begin
+                    // address phase part
                     haddr_n                         = haddr + 'd4;
                     htrans_n                        = HTRANS_SEQ;
+
+                    // data phase part (preparation)
                     // reset the beat_cnt for the 1st data phase
                     beat_cnt_n                      = 'd0;
 
@@ -139,12 +143,15 @@ module AIDC_LITE_COMP_ENGINE
             S_RD1_MIDDLE: begin
                 // receive data
                 if (ahb_if.hready) begin
+                    // address phase part
                     haddr_n                         = haddr + 'd4;
+
+                    // data phase part
                     buf_wren                        = 1'b1;
                     beat_cnt_n                      = beat_cnt + 'd1;
 
                     if (beat_cnt=='d14) begin
-                        // last address (=last data - 1) of the 1st access
+                        // last address (=last data - 1) of the access
                         htrans_n                        = HTRANS_IDLE;
                         state_n                         = S_RD1_LAST_DATA;
                     end
@@ -153,6 +160,7 @@ module AIDC_LITE_COMP_ENGINE
             S_RD1_LAST_DATA: begin
                 // receive data
                 if (ahb_if.hready) begin
+                    // data phase part
                     buf_wren                        = 1'b1;
                     beat_cnt_n                      = beat_cnt + 'd1;
 
@@ -167,6 +175,8 @@ module AIDC_LITE_COMP_ENGINE
                     // deassert hbusreq
                     hbusreq_n                       = 1'b0;
 
+                    // address phase part (prepation)
+                    // continue using haddr and hwrite from the 1st access
                     htrans_n                        = HTRANS_NONSEQ;
 
                     state_n                         = S_RD2_1ST_ADDR;
@@ -175,8 +185,12 @@ module AIDC_LITE_COMP_ENGINE
             S_RD2_1ST_ADDR: begin
                 // address accepted
                 if (ahb_if.hready) begin
+                    // address phase part
                     haddr_n                         = haddr + 'd4;
                     htrans_n                        = HTRANS_SEQ;
+
+                    // data phase part (preparation)
+                    // continue using beat_cnt from the 1st access
 
                     state_n                         = S_RD2_MIDDLE;
                 end
@@ -184,12 +198,15 @@ module AIDC_LITE_COMP_ENGINE
             S_RD2_MIDDLE: begin
                 // receive data
                 if (ahb_if.hready) begin
+                    // address phase part
                     haddr_n                         = haddr + 'd4;
+
+                    // data phase part
                     buf_wren                        = 1'b1;
                     beat_cnt_n                      = beat_cnt + 'd1;
 
                     if (beat_cnt=='d30) begin
-                        // last address (=last data - 1) of the 2nd access
+                        // last address (=last data - 1) of the access
                         htrans_n                        = HTRANS_IDLE;
                         state_n                         = S_RD2_LAST_DATA;
                     end
@@ -198,6 +215,7 @@ module AIDC_LITE_COMP_ENGINE
             S_RD2_LAST_DATA: begin
                 // receive data
                 if (ahb_if.hready) begin
+                    // data phase part
                     buf_wren                        = 1'b1;
                     beat_cnt_n                      = beat_cnt + 'd1;
 
@@ -218,6 +236,7 @@ module AIDC_LITE_COMP_ENGINE
                     // deassert hbusreq
                     hbusreq_n                       = 1'b0;
 
+                    // data phase part (preparation)
                     // set the address and SRC_ADDR + BLK_CNT*64
                     haddr_n                         = dst_addr_i + {blk_cnt, 6'd0};
                     htrans_n                        = HTRANS_NONSEQ;
@@ -229,8 +248,11 @@ module AIDC_LITE_COMP_ENGINE
             S_WR_1ST_ADDR: begin
                 // address accepted
                 if (ahb_if.hready) begin
+                    // address phase part
                     haddr_n                         = haddr + 'd4;
                     htrans_n                        = HTRANS_SEQ;
+
+                    // data phase part (preparation)
                     // reset the beat_cnt for the 1st data phase
                     beat_cnt_n                      = 'd0;
 
@@ -240,12 +262,15 @@ module AIDC_LITE_COMP_ENGINE
             S_WR_MIDDLE: begin
                 // receive data
                 if (ahb_if.hready) begin
+                    // address phase part
                     haddr_n                         = haddr + 'd4;
+
+                    // data phase part
                     comp_rden                       = 1'b1;
                     beat_cnt_n                      = beat_cnt + 'd1;
 
                     if (beat_cnt=='d14) begin
-                        // last address beat of the 1st access
+                        // last address (=last data - 1) of the access
                         htrans_n                        = HTRANS_IDLE;
                         state_n                         = S_WR_LAST_DATA;
                     end
@@ -254,6 +279,7 @@ module AIDC_LITE_COMP_ENGINE
             S_WR_LAST_DATA: begin
                 // receive data
                 if (ahb_if.hready) begin
+                    // data phase part
                     comp_rden                       = 1'b1;
                     beat_cnt_n                      = beat_cnt + 'd1;
 
@@ -263,6 +289,7 @@ module AIDC_LITE_COMP_ENGINE
                     end
                     else begin
                         hbusreq_n                       = 1'b1;
+
                         state_n                         = S_RD1_BUSREQ;
                     end
                 end
@@ -288,7 +315,7 @@ module AIDC_LITE_COMP_ENGINE
 
             blk_cnt                         <= blk_cnt_n;
             beat_cnt                        <= beat_cnt_n;
-            blk_ready_pulse                 <= blk_ready_pulse;
+            blk_ready_pulse                 <= blk_ready_pulse_n;
 
             hbusreq                         <= hbusreq_n;
             haddr                           <= haddr_n;
@@ -301,7 +328,7 @@ module AIDC_LITE_COMP_ENGINE
     assign  buf_wren_o                      = buf_wren;
     assign  buf_waddr_o                     = buf_waddr;
     assign  buf_wbe_o                       = buf_wbe;
-    assign  buf_wdata_o                     = ahb_if.hrdata;
+    assign  buf_wdata_o                     = buf_wdata;
 
     assign  comp_start_o                    = blk_ready_pulse;
 

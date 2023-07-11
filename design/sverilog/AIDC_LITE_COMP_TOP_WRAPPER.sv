@@ -34,6 +34,7 @@ module AIDC_LITE_COMP_TOP_WRAPPER
     AHB2_MST_INTF                       ahb_if  (.hclk(clk), .hreset_n(rst_n));
     assign  hbusreq_o                   = ahb_if.hbusreq;
     assign  haddr_o                     = ahb_if.haddr;
+    assign  htrans_o                    = ahb_if.htrans;
     assign  hwrite_o                    = ahb_if.hwrite;
     assign  hsize_o                     = ahb_if.hsize;
     assign  hburst_o                    = ahb_if.hburst;

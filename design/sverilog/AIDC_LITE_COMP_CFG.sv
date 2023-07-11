@@ -62,6 +62,9 @@ module AIDC_LITE_COMP_CFG
         end
 
     // output assignment
+    assign  apb_if.prdata               = prdata;
+    assign  apb_if.pready               = 1'b1;
+
     assign  src_addr_o                  = src_addr;
     assign  dst_addr_o                  = dst_addr;
     assign  len_o                       = len;
