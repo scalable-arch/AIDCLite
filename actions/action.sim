@@ -1,4 +1,4 @@
 #!/bin/bash
 
 # $@: forward all input arguments to VCS
-vcs -full64 -debug_access+all -kdb -LDFLAGS -Wl,--no-as-needed -f $DESIGN_FILELIST -f $TB_FILELIST $@
+vcs -full64 -kdb -debug_access+all -LDFLAGS -Wl,--no-as-needed -f $DESIGN_FILELIST -f $TB_FILELIST $@
