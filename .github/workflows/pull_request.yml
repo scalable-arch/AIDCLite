@@ -24,11 +24,10 @@ jobs:
       - name: compile
         run: |
           source ${{github.workspace}}/env.source ${{github.workspace}}; \
-          action.sim
+          action.sim; \
+          simv;
   Spyglass-Lint-RTL-Handoff:
     runs-on: self-hosted        # runs on a server with Synopsys Spyglass installed
-    outputs:
-        moresimple: ${{ steps.Spyglass.outputs.test }}
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
@@ -37,4 +36,4 @@ jobs:
         run: |
           source ${{github.workspace}}/env.source ${{github.workspace}}; \
           action.lint; \
-          cat reports/moresimple.rpt >> $GITHUB_OUTPUT
+          cat reports/moresimple.rpt
