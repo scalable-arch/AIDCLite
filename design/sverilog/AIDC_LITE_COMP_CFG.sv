@@ -38,7 +38,7 @@ module AIDC_LITE_COMP_CFG
             end
             start                           <= apb_if.psel & apb_if.penable
                                               &apb_if.pwrite
-                                              &(apb_if.paddr[9:0]==8'd3)
+                                              &(apb_if.paddr[9:2]==8'd3)
                                               &apb_if.pwdata[0];
         end
 
@@ -56,7 +56,7 @@ module AIDC_LITE_COMP_CFG
                     prdata                          <= dst_addr;
                 8'd2:
                     prdata                          <= {len, 7'd0};
-                8'd3:
+                8'd4:
                     prdata                          <= {31'd0, done_i};
             endcase
         end
