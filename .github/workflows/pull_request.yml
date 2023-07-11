@@ -14,7 +14,7 @@ jobs:
       - uses: actions/setup-node@v3
       - name: compile
         run: |
-          source ${{github.workspace}}/env.source ${{github.workspace}}; \
+          source ${{github.workspace}}/env.source ${{github.workspace}}
           action.compile_only
   VCS-Sim:
     runs-on: self-hosted        # runs on a server with Synopsys VCS installed
@@ -23,9 +23,9 @@ jobs:
       - uses: actions/setup-node@v3
       - name: compile
         run: |
-          source ${{github.workspace}}/env.source ${{github.workspace}}; \
-          action.sim;
-#../simv;
+          source ${{github.workspace}}/env.source ${{github.workspace}}
+          action.sim
+#../simv
   Spyglass-Lint-RTL-Handoff:
     runs-on: self-hosted        # runs on a server with Synopsys Spyglass installed
     steps:
@@ -33,10 +33,10 @@ jobs:
       - uses: actions/setup-node@v3
       - name: Spyglass-Lint
         run: |
-          source ${{github.workspace}}/env.source ${{github.workspace}}; \
-          action.lint;
+          source ${{github.workspace}}/env.source ${{github.workspace}}
+          action.lint
       - name: Report (moresimple)
-        run: cat reports/moresimple.rpt;
+        run: cat reports/moresimple.rpt
       - name: Upload Lint report
         uses: actions/upload-artifact@v3
         with:
@@ -49,5 +49,5 @@ jobs:
       - uses: actions/setup-node@v3
       - name: Synthesis
         run: |
-          source ${{github.workspace}}/env.source ${{github.workspace}}; \
-          #action.syn;
+          source ${{github.workspace}}/env.source ${{github.workspace}}
+          #action.syn
