@@ -51,3 +51,20 @@ jobs:
         run: |
           source ${{github.workspace}}/env.source ${{github.workspace}}
           #action.syn
+  PeakRDL-RDL:
+    #runs-on: self-hosted        # runs on a server with Synopsys Design Compiler installed
+    runs-on: ubuntu-latest    # GitHub runner
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+      - name: Install dependencies
+        run: python3 -m pip install peakrdl
+      - name: RTL generation
+        run: |
+          source ${{github.workspace}}/env.source ${{github.workspace}}
+          peakrdl regblock registers/systemRDL/AIDC_LITE.rdl -o regblock/ --cpuif apb3-flat
+          
+          #action.syn
