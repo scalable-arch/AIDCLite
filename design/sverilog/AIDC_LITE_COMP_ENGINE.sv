@@ -336,8 +336,8 @@ module AIDC_LITE_COMP_ENGINE
     assign  ahb_if.haddr                    = haddr;
     assign  ahb_if.htrans                   = htrans;
     assign  ahb_if.hwrite                   = hwrite;
-    assign  ahb_if.hsize                    = 3'b010;   // 4 byte;
-    assign  ahb_if.hburst                   = 3'b111;   // 16-beat incrementing
+    assign  ahb_if.hsize                    = HSIZE_32BITS;
+    assign  ahb_if.hburst                   = HBURST_INCR16;
     assign  ahb_if.hprot                    = 4'b0001;  // data access
 
 endmodule
