@@ -1,0 +1,3 @@
+#!/bin/bash
+
+sg_shell < ${ACTION_HOME}/spyglass_lint/rtl_signoff.tcl
