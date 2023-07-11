@@ -1,0 +1,81 @@
+addrmap atxmega_spi {
+    name = "AI Data Compressor";
+    desc = "Register description of Sungkyunkwan University Scalable Architecture Lab's AIDC";
+
+    default regwidth = 8;
+    default sw = rw;
+    default hw = r;
+
+    reg {
+        name = "Source Register";
+
+        field {
+            desc = "Specifies the source address (of uncompressed data)";
+        } START_ADDR[31:0] = 0;
+    } SRC_ADDR @0x0;
+
+    reg {
+        name = "Destination Register";
+
+        field {
+            desc = "Specifies the destination address (of compressed data)";
+        } START_ADDR[31:0] = 0;
+    } DST_ADDR @0x4;
+
+    reg {
+        name = "Length Register";
+
+        field {
+            desc = "Specifies the size of the data to be compressed";
+        } BYTE_SIZE[31:0] = 0;
+    } LEN @0x8;
+
+/*
+    reg {
+        name = "Control Register";
+
+        field {
+            desc = "Selects master mode when written to one, and slave mode when
+            written to zero. If SS is configured as an input and driven low while
+            master mode is set, master mode will be cleared";
+
+            hw=rw; we;
+        } MASTER[4:4] = 0;
+    } SRC_ADDR @ 0x0;
+    */
+
+    reg {
+        name = "Interrupt Control";
+
+        field {
+            desc = "These bits enable the SPI interrupt and select the interrupt level";
+        } INTLVL[1:0] = 0;
+    } INTCTRL @ 0x1;
+
+    reg {
+        field {
+            sw=r; hw=rw; we;
+        } WRCOL[6:6] = 0;
+
+        field {
+            sw=r; hw=rw; we;
+        } IF[7:7] = 0;
+    } STATUS @ 0x2;
+
+    reg {
+        desc = "The DATA register is used for sending and receiving data.
+        Writing to the register initiates the data transmission, and the byte
+        written to the register will be shifted out on the SPI output line.
+        Reading the register causes the shift register receive buffer to be read,
+        returning the last byte successfully received";
+
+        field {
+            sw=w; hw=r;
+        } WDATA[7:0];
+
+        field {
+            sw=r; hw=w;
+        } RDATA[7:0];
+
+    } DATA @ 0x3;
+};
