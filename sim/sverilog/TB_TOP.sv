@@ -50,7 +50,7 @@ module TB_TOP;
         .s0_if                          (slv_ahb_if)
     );
 
-    AHB2_SLAVE                          u_slave
+    AHB2_MEM                            u_mem
     (
         .clk                            (clk),
         .rst_n                          (rst_n),
@@ -74,6 +74,7 @@ module TB_TOP;
         logic   [31:0]      rdata;
 
         apb_if.reset_master();
+        u_mem.init_mem_with_addr();
 
         repeat (10) @(posedge clk);
 
@@ -84,7 +85,7 @@ module TB_TOP;
 
         for (int i=0; i<10000; i++) begin
             apb_if.read(32'h10, rdata);
-            if (rdata==1) begin
+            if (rdata==32'h1) begin
                 break;
             end
             $write(".");
