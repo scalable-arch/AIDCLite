@@ -25,7 +25,7 @@ jobs:
         run: |
           source ${{github.workspace}}/env.source ${{github.workspace}}; \
           action.sim; \
-          simv;
+          ../simv;
   Spyglass-Lint-RTL-Handoff:
     runs-on: self-hosted        # runs on a server with Synopsys Spyglass installed
     steps:
@@ -36,4 +36,5 @@ jobs:
         run: |
           source ${{github.workspace}}/env.source ${{github.workspace}}; \
           action.lint; \
+          cat reports/project_summary; \
           cat reports/moresimple.rpt
