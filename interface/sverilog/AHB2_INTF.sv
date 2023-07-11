@@ -24,6 +24,15 @@ parameter   logic   [2:0]           HBURST_INCR8    = 3'b101;
 parameter   logic   [2:0]           HBURST_WRAP16   = 3'b110;
 parameter   logic   [2:0]           HBURST_INCR16   = 3'b111;
 
+parameter   logic   [2:0]           HSIZE_8BITS     = 3'b000;
+parameter   logic   [2:0]           HSIZE_16BITS    = 3'b001;
+parameter   logic   [2:0]           HSIZE_32BITS    = 3'b010;
+parameter   logic   [2:0]           HSIZE_64BITS    = 3'b011;
+parameter   logic   [2:0]           HSIZE_128BITS   = 3'b100;
+parameter   logic   [2:0]           HSIZE_256BITS   = 3'b101;
+parameter   logic   [2:0]           HSIZE_512BITS   = 3'b110;
+parameter   logic   [2:0]           HSIZE_1024BITS  = 3'b111;
+
 interface AHB2_MST_INTF
 (
     input   wire                        hclk,
