@@ -31,23 +31,23 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
-      - name: Spyglass
+      - name: Spyglass-Lint
         run: |
           source ${{github.workspace}}/env.source ${{github.workspace}}; \
           action.lint;
-      - name: Lint report (moresimple)
+      - name: Report (moresimple)
         run: cat reports/moresimple.rpt;
       - name: Upload Lint report
         uses: actions/upload-artifact@v3
         with:
           name: moresimple.rpt
           path: reports/moresimple.rpt
-  Synthesis-UMC28nm:
-    runs-on: self-hosted        # runs on a server with Synopsys Spyglass installed
+  Design-Compiler-UMC28nm:
+    runs-on: self-hosted        # runs on a server with Synopsys Design Compiler installed
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
       - name: Synthesis
         run: |
           source ${{github.workspace}}/env.source ${{github.workspace}}; \
-          action.syn; \
+          #action.syn;
