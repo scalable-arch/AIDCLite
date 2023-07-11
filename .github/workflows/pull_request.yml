@@ -32,8 +32,13 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
       - name: Spyglass
-        id: Spyglass
         run: |
           source ${{github.workspace}}/env.source ${{github.workspace}}; \
           action.lint; \
-          cat reports/moresimple.rpt
+      - name: moresimple.rpt
+        run: cat reports/moresimple.rpt;
+      - name: Upload summary report
+        uses: actions/upload-artifact@v3
+          with:
+            name: moresimple.rpt
+            path: reports/moresimple.rpt
