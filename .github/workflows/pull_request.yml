@@ -24,7 +24,7 @@ jobs:
       - name: compile
         run: |
           source ${{github.workspace}}/env.source ${{github.workspace}}; \
-          action.sim; \
+          action.sim;
 #../simv;
   Spyglass-Lint-RTL-Handoff:
     runs-on: self-hosted        # runs on a server with Synopsys Spyglass installed
@@ -34,7 +34,7 @@ jobs:
       - name: Spyglass
         run: |
           source ${{github.workspace}}/env.source ${{github.workspace}}; \
-          action.lint; \
+          action.lint;
       - name: Lint report (moresimple)
         run: cat reports/moresimple.rpt;
       - name: Upload Lint report
@@ -42,3 +42,12 @@ jobs:
         with:
           name: moresimple.rpt
           path: reports/moresimple.rpt
+  Synthesis-UMC28nm:
+    runs-on: self-hosted        # runs on a server with Synopsys Spyglass installed
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+      - name: Synthesis
+        run: |
+          source ${{github.workspace}}/env.source ${{github.workspace}}; \
+          action.syn; \
