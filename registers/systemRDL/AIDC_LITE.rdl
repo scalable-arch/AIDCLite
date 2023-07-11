@@ -30,6 +30,19 @@ addrmap atxmega_spi {
         } BYTE_SIZE[31:0] = 0;
     } LEN @0x8;
 
+    reg {
+        field {
+            sw=r; hw=w;
+        } START[0:0];
+
+    } CMD @ 0xC;
+
+    reg {
+        field {
+            sw=r; hw=w;
+        } START[0:0];
+
+    } STATUS @ 0x10;
 /*
     reg {
         name = "Control Register";
@@ -42,7 +55,6 @@ addrmap atxmega_spi {
             hw=rw; we;
         } MASTER[4:4] = 0;
     } SRC_ADDR @ 0x0;
-    */
 
     reg {
         name = "Interrupt Control";
@@ -78,4 +90,5 @@ addrmap atxmega_spi {
         } RDATA[7:0];
 
     } DATA @ 0x3;
+    */
 };
