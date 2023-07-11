@@ -12,7 +12,11 @@ module AIDC_LITE_COMP_ENGINE
     AHB2_MST_INTF.master                ahb_if,
 
     output  logic                       buf_wren_o,
-    output  logic   [31:0]              buf_wdata_o
+    output  logic   [31:0]              buf_wdata_o,
+
+    input   wire                        comp_ready_i,
+    output  logic                       comp_rden_o,
+    input   wire    [31:0]              comp_rdata_i
 );
 
     // A block: 128B data
@@ -44,22 +48,24 @@ module AIDC_LITE_COMP_ENGINE
 
     logic                               buf_wren;
     logic                               blk_ready_pulse, blk_ready_pulse_n;
+    logic                               comp_rden;
 
-    //----------------------------------------------------------------------------------
+    //-----------------------------------------------------------------------------------
     // Timing diagram (part 1)
-    //----------------------------------------------------------------------------------
-    // clk      : __--__--__--__--__--__--__--//__--__--__--__--__--__--__--//__--__--__
-    // start_i  : ___----_____________________//____________________________//__________
+    //-----------------------------------------------------------------------------------
+    // clk      : __--__--__--__--__--__--__--//__--__--__--__--__--__--__--//__--__--___
+    // start_i  : ___----_____________________//____________________________//___________
 
     // state    :  IDL  |  R1B  |R1A|    R1D  //      |  R2B  |R2A|   R2D   // R2D  |
     // beat_cnt :               | 0 | 1 | 2 | //  |15 |       |16 |17 |18 | //  |31 |
+    // blk_ready: __________________________________________________________________----_
 
-    // hbusreq_o: _______--------_____________//_______--------_____________//__________
-    // hgrant_i : ___________----_____________//___________----_____________//__________
+    // hbusreq_o: _______--------_____________//_______--------_____________//___________
+    // hgrant_i : ___________----_____________//___________----_____________//___________
     // haddr_o  :               |SA |+4 |+8 | //  |+60|       |+64|+68|+62| // |+124|
     // hsize_o  :                         constant (4B)
     // hburst_o :                         constant (16-beat)
-    // hready_i : _______________-------------//-------________-------------//-------___
+    // hready_i : _______________-------------//-------________-------------//-------____
 
     always_comb begin
         state_n                         = state;
@@ -72,22 +78,26 @@ module AIDC_LITE_COMP_ENGINE
         haddr_n                         = haddr;
 
         buf_wren                        = 1'b0;
+        comp_rden                       = 1'b0;
 
         case (state)
             S_IDLE: begin
                 if (start_i & (len_i!='d0)) begin
+                    // reset block_cnt to zero
                     blk_cnt_n                       = 'd0;
-                    beat_cnt_n                      = 'd0;
 
+                    // prepare asserting hbusreq on the next cycle (BUSREQ state)
                     hbusreq_n                       = 1'b1;
-
                     state_n                         = S_RD1_BUSREQ;
                 end
             end
             S_RD1_BUSREQ: begin
                 // request granted
                 if (ahb_if.hgrant) begin
+                    // deassert hbusreq
                     hbusreq_n                       = 1'b0;
+
+                    // set the address and SRC_ADDR + BLK_CNT*128
                     haddr_n                         = src_addr_i + {blk_cnt, 7'd0};
 
                     state_n                         = S_RD1_ADDR_PHASE;
@@ -97,6 +107,9 @@ module AIDC_LITE_COMP_ENGINE
                 // address accepted
                 if (ahb_if.hready) begin
                     haddr_n                         = haddr + 'd4;
+                    // reset the beat_cnt for the 1st data phase
+                    beat_cnt_n                      = 'd0;
+
                     state_n                         = S_RD1_DATA_PHASES;
                 end
             end
@@ -104,8 +117,10 @@ module AIDC_LITE_COMP_ENGINE
                 // receive data
                 if (ahb_if.hready) begin
                     haddr_n                         = haddr + 'd4;
+
                     buf_wren                        = 1'b1;
-                    if (beat_cnt=='d15) begin
+                    beat_cnt_n                      = beat_cnt + 'd1;
+                    if (beat_cnt=='d15) begin   // last beat of the 1st access
                         hbusreq_n                       = 1'b1;
 
                         state_n                         = S_RD2_BUSREQ;
@@ -115,6 +130,7 @@ module AIDC_LITE_COMP_ENGINE
             S_RD2_BUSREQ: begin
                 // request granted
                 if (ahb_if.hgrant) begin
+                    // deassert hbusreq
                     hbusreq_n                       = 1'b0;
 
                     state_n                         = S_RD2_ADDR_PHASE;
@@ -124,6 +140,7 @@ module AIDC_LITE_COMP_ENGINE
                 // address accepted
                 if (ahb_if.hready) begin
                     haddr_n                         = haddr + 'd4;
+
                     state_n                         = S_RD2_DATA_PHASES;
                 end
             end
@@ -131,7 +148,9 @@ module AIDC_LITE_COMP_ENGINE
                 // receive data
                 if (ahb_if.hready) begin
                     haddr_n                         = haddr + 'd4;
+
                     buf_wren                        = 1'b1;
+                    beat_cnt_n                      = beat_cnt + 'd1;
                     if (beat_cnt=='d31) begin
                         blk_ready_pulse_n               = 1'b1;
                         state_n                         = S_COMP;
@@ -139,6 +158,51 @@ module AIDC_LITE_COMP_ENGINE
                 end
             end
             S_COMP: begin
+                // compression finished
+                if (comp_ready_i) begin
+                    hbusreq_n                       = 1'b1;
+                    state_n                         = S_WR_BUSREQ;
+                end
+            end
+            S_WR_BUSREQ: begin
+                if (ahb_if.hgrant) begin
+                    // deassert hbusreq
+                    hbusreq_n                       = 1'b0;
+
+                    // set the address and SRC_ADDR + BLK_CNT*128
+                    haddr_n                         = dst_addr_i + {blk_cnt, 6'd0};
+
+                    state_n                         = S_WR_ADDR_PHASE;
+                end
+            end
+            S_WR_ADDR_PHASE: begin
+                // address accepted
+                if (ahb_if.hready) begin
+                    haddr_n                         = haddr + 'd4;
+                    // reset the beat_cnt for the 1st data phase
+                    beat_cnt_n                      = 'd0;
+
+                    state_n                         = S_WR_DATA_PHASES;
+                end
+            end
+            S_WR_DATA_PHASES: begin
+                // receive data
+                if (ahb_if.hready) begin
+                    haddr_n                         = haddr + 'd4;
+
+                    comp_rden                       = 1'b1;
+                    beat_cnt_n                      = beat_cnt + 'd1;
+                    if (beat_cnt=='d15) begin   // last beat of WR access
+                        blk_cnt_n                       = blk_cnt + 'd1;
+                        if (blk_cnt_n==len_i) begin
+                            state_n                         = S_IDLE;
+                        end
+                        else begin
+                            hbusreq_n                       = 1'b1;
+                            state_n                         = S_RD1_BUSREQ;
+                        end
+                    end
+                end
             end
         endcase
     end
