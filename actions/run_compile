@@ -1,0 +1,3 @@
+#!/bin/bash
+
+vcs -full64 -debug_access+all -kdb -LDFLAGS -Wl,--no-as-needed -f $DESIGN_FILELIST
