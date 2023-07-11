@@ -2,7 +2,7 @@ addrmap atxmega_spi {
     name = "AI Data Compressor";
     desc = "Register description of Sungkyunkwan University Scalable Architecture Lab's AIDC";
 
-    default regwidth = 8;
+    default regwidth = 32;
     default sw = rw;
     default hw = r;
 
