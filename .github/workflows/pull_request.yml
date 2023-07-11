@@ -36,5 +36,4 @@ jobs:
         run: |
           source ${{github.workspace}}/env.source ${{github.workspace}}; \
           action.lint; \
-          cat reports/project_summary; \
           cat reports/moresimple.rpt
