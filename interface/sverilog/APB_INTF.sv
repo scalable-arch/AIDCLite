@@ -63,7 +63,7 @@ interface APB_INTF
     endtask;
 
     task read (input logic [31:0]       addr,
-               input logic [31:0]       data);
+               output logic [31:0]       data);
         #1
         psel                            = 1'b1;
         penable                         = 1'b0;
