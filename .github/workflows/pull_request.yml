@@ -27,10 +27,14 @@ jobs:
           action.sim
   Spyglass-Lint-RTL-Handoff:
     runs-on: self-hosted        # runs on a server with Synopsys Spyglass installed
+    outputs:
+        moresimple: ${{ steps.Spyglass.outputs.test
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
       - name: Spyglass
+        id: Spyglass
         run: |
           source ${{github.workspace}}/env.source ${{github.workspace}}; \
-          action.lint
+          action.lint; \
+          cat reports/moresimple.rpt >> $GITHUB_OUTPUT
