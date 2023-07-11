@@ -1,4 +1,4 @@
 #!/bin/bash
 
 # $@: forward all input arguments to VCS
-vcs -full64 -timescale=1ns/1ps -LDFLAGS -Wl,--no-as-needed -f $DESIGN_FILELIST $@
+vcs -full64 -timescale=1ns/1ps -LDFLAGS -Wl,--no-as-needed -top $DESIGN_TOP -f $DESIGN_FILELIST $@
