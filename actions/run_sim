@@ -1,4 +1,0 @@
-#!/bin/bash
-
-# $@: forward all input arguments to VCS
-vcs -full64 -debug_access+all -kdb -LDFLAGS -Wl,--no-as-needed -f $DESIGN_FILELIST $@

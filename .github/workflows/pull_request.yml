@@ -15,7 +15,16 @@ jobs:
       - name: compile
         run: |
           source ${{github.workspace}}/env.source ${{github.workspace}}; \
-          run_compile_only
+          action.compile_only
+  VCS-Sim:
+    runs-on: self-hosted        # runs on a server with Synopsys VCS installed
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+      - name: compile
+        run: |
+          source ${{github.workspace}}/env.source ${{github.workspace}}; \
+          action.sim
   Spyglass-Lint-RTL-Handoff:
     runs-on: self-hosted        # runs on a server with Synopsys Spyglass installed
     steps:
@@ -24,4 +33,4 @@ jobs:
       - name: Spyglass
         run: |
           source ${{github.workspace}}/env.source ${{github.workspace}}; \
-          run_lint
+          action.lint

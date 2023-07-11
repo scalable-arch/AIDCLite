@@ -5,6 +5,11 @@
 // Follows AMBA2 AHB v1.0 specification, 1999
 // (ARM IHI 0011A)
 
+parameter   logic   [1:0]           AHB_HTRANS_IDLE     = 2'b00;
+parameter   logic   [1:0]           AHB_HTRANS_BUSY     = 2'b01;
+parameter   logic   [1:0]           AHB_HTRANS_NONSEQ   = 2'b10;
+parameter   logic   [1:0]           AHB_HTRANS_SEQ      = 2'b11;
+
 interface AHB2_MST_INTF
 (
     input   wire                        hclk,
