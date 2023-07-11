@@ -24,7 +24,8 @@ jobs:
       - name: compile
         run: |
           source ${{github.workspace}}/env.source ${{github.workspace}}; \
-          action.sim
+          action.sim; \
+#../simv;
   Spyglass-Lint-RTL-Handoff:
     runs-on: self-hosted        # runs on a server with Synopsys Spyglass installed
     steps:
@@ -33,4 +34,11 @@ jobs:
       - name: Spyglass
         run: |
           source ${{github.workspace}}/env.source ${{github.workspace}}; \
-          action.lint
+          action.lint; \
+      - name: moresimple.rpt
+        run: cat reports/moresimple.rpt;
+      - name: Upload summary report
+        uses: actions/upload-artifact@v3
+        with:
+          name: moresimple.rpt
+          path: reports/moresimple.rpt
