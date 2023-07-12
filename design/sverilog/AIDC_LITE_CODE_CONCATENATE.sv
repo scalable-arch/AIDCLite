@@ -56,7 +56,7 @@ module AIDC_LITE_CODE_CONCATENATE
     always_comb begin
         valid_n                         = 1'b0;
         cnt_n                           = cnt;
-        data_n                          = 'dx;
+        data_n                          = data;
         done_n                          = done;
 
         blk_size_n                      = blk_size;
@@ -79,7 +79,6 @@ module AIDC_LITE_CODE_CONCATENATE
 
                 // preload the 2-bit prefix for the next block
                 blk_size_n                      = 'd2;
-                code_buf_n                      = 'hx;
                 code_buf_n[CODE_BUF_SIZE-1:CODE_BUF_SIZE-2] = PREFIX;
             end
             else if (blk_size_n[6]!=blk_size[6]) begin
@@ -97,7 +96,6 @@ module AIDC_LITE_CODE_CONCATENATE
 
                 // partial data is ready
                 valid_n                         = 1'b0;
-                data_n                          = 'dx;
                 code_buf_n                      = tmp_buf[TMP_BUF_SIZE-1:TMP_BUF_SIZE-62];
             end
 
@@ -114,13 +112,13 @@ module AIDC_LITE_CODE_CONCATENATE
         if  (~rst_n) begin
             valid                           <= 1'b0;
             cnt                             <= 'd0;
-            cnt_reg                         <= 'dx;
-            data                            <= 'dx;
+            cnt_reg                         <= 'd0;
+            data                            <= 'd0;
             done                            <= 1'b1;
 
             // the default value is 2 to represent 2-bit prefix
             blk_size                        <= 'd2;
-            code_buf                        <= 'dx;
+            code_buf                        <= 'd0;
         end
         else begin
             valid                           <= valid_n;
