@@ -56,7 +56,7 @@ module AIDC_LITE_COMP_TOP
         .comp_eop_o                     (comp_eop),
         .comp_wdata_o                   (comp_wdata),
 
-        .zrle_blk_size                  (zrle_blk_size),
+        .zrle_blk_size_i                (zrle_blk_size),
         .comp_ready_i                   (1'b1),
         .comp_rden_o                    (/* floating */),
         .comp_rdata_i                   (32'd0)
