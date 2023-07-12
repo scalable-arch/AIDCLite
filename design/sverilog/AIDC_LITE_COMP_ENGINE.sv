@@ -11,12 +11,11 @@ module AIDC_LITE_COMP_ENGINE
 
     AHB2_MST_INTF.master                ahb_if,
 
-    output  logic                       buf_wren_o,
-    output  logic   [3:0]               buf_waddr_o,
-    output  logic   [7:0]               buf_wbe_o,  // byte_enable
-    output  logic   [63:0]              buf_wdata_o,
+    output  logic                       comp_wren_o,
+    output  logic                       comp_sop_o,
+    output  logic                       comp_eop_o,
+    output  logic   [63:0]              comp_wdata_o,
 
-    output  logic                       comp_start_o,
     input   wire                        comp_ready_i,
     output  logic                       comp_rden_o,
     input   wire    [31:0]              comp_rdata_i
@@ -31,6 +30,7 @@ module AIDC_LITE_COMP_ENGINE
     //   - 0~15 belong to the first 16-beat acess
     //   - 16~31 belong to the second 16-beat access
     logic   [4:0]                       beat_cnt,   beat_cnt_n;
+    logic                               beat_en;
 
     enum    logic   [3:0]   {
         S_IDLE,                         // 0
@@ -54,12 +54,6 @@ module AIDC_LITE_COMP_ENGINE
     logic   [1:0]                       htrans,     htrans_n;
     logic                               hwrite,     hwrite_n;
 
-    logic                               buf_wren;
-    logic   [3:0]                       buf_waddr;
-    logic   [7:0]                       buf_wbe;
-    logic   [63:0]                      buf_wdata;
-
-    logic                               blk_ready_pulse, blk_ready_pulse_n;
     logic                               comp_rden;
 
     //--------------------------------------------------------------------------------------
@@ -84,19 +78,13 @@ module AIDC_LITE_COMP_ENGINE
 
         blk_cnt_n                       = blk_cnt;
         beat_cnt_n                      = beat_cnt;
-        blk_ready_pulse_n               = 1'b0;
 
         hbusreq_n                       = hbusreq;
         haddr_n                         = haddr;
         htrans_n                        = htrans;
         hwrite_n                        = hwrite;
 
-        // to write 32-bit data to 64b-wide buffer
-        buf_wren                        = 1'b0;
-        buf_waddr                       = beat_cnt[3:0];
-        buf_wbe                         = { {4{!beat_cnt[0]}}, {4{beat_cnt[0]}} };
-        buf_wdata                       = {ahb_if.hrdata, ahb_if.hrdata};
-
+        beat_en                         = 1'b0;
         comp_rden                       = 1'b0;
 
         case (state)
@@ -147,7 +135,7 @@ module AIDC_LITE_COMP_ENGINE
                     haddr_n                         = haddr + 'd4;
 
                     // data phase part
-                    buf_wren                        = 1'b1;
+                    beat_en                         = 1'b1;
                     beat_cnt_n                      = beat_cnt + 'd1;
 
                     if (beat_cnt=='d14) begin
@@ -161,7 +149,7 @@ module AIDC_LITE_COMP_ENGINE
                 // receive data
                 if (ahb_if.hready) begin
                     // data phase part
-                    buf_wren                        = 1'b1;
+                    beat_en                         = 1'b1;
                     beat_cnt_n                      = beat_cnt + 'd1;
 
                     hbusreq_n                       = 1'b1;
@@ -202,7 +190,7 @@ module AIDC_LITE_COMP_ENGINE
                     haddr_n                         = haddr + 'd4;
 
                     // data phase part
-                    buf_wren                        = 1'b1;
+                    beat_en                         = 1'b1;
                     beat_cnt_n                      = beat_cnt + 'd1;
 
                     if (beat_cnt=='d30) begin
@@ -216,10 +204,8 @@ module AIDC_LITE_COMP_ENGINE
                 // receive data
                 if (ahb_if.hready) begin
                     // data phase part
-                    buf_wren                        = 1'b1;
+                    beat_en                         = 1'b1;
                     beat_cnt_n                      = beat_cnt + 'd1;
-
-                    blk_ready_pulse_n               = 1'b1;
 
                     state_n                         = S_COMP;
                 end
@@ -303,7 +289,6 @@ module AIDC_LITE_COMP_ENGINE
 
             blk_cnt                         <= 'd0;
             beat_cnt                        <= 'd0;
-            blk_ready_pulse                 <= 'd0;
 
             hbusreq                         <= 1'b0;
             haddr                           <= 'd0;
@@ -315,7 +300,6 @@ module AIDC_LITE_COMP_ENGINE
 
             blk_cnt                         <= blk_cnt_n;
             beat_cnt                        <= beat_cnt_n;
-            blk_ready_pulse                 <= blk_ready_pulse_n;
 
             hbusreq                         <= hbusreq_n;
             haddr                           <= haddr_n;
@@ -323,14 +307,55 @@ module AIDC_LITE_COMP_ENGINE
             hwrite                          <= hwrite_n;
         end
 
-    assign  done_o                          = (state==S_IDLE);
+    //----------------------------------------------------------
+    // from 32-bit data to 64-bit data
+    //----------------------------------------------------------
+    logic                               comp_wren,      comp_wren_n;
+    logic                               comp_sop,       comp_sop_n;
+    logic                               comp_eop,       comp_eop_n;
+    logic   [63:0]                      comp_wdata,     comp_wdata_n;
 
-    assign  buf_wren_o                      = buf_wren;
-    assign  buf_waddr_o                     = buf_waddr;
-    assign  buf_wbe_o                       = buf_wbe;
-    assign  buf_wdata_o                     = buf_wdata;
+    always_comb begin
+        comp_wren_n                     = 1'b0;
+        comp_sop_n                      = 1'bx;
+        comp_eop_n                      = 1'bx;
+        comp_wdata_n                    = comp_wdata;
 
-    assign  comp_start_o                    = blk_ready_pulse;
+        if (beat_en) begin
+            if (beat_cnt[0]==1'b0) begin        // odd cycles
+                comp_wdata_n[63:32]             = ahb_if.hrdata;
+            end
+            else begin
+                comp_wren_n                     = 1'b1;
+                comp_sop_n                      = (beat_cnt[4:1]=='d0);
+                comp_eop_n                      = (beat_cnt[4:1]==4'hF);
+                comp_wdata_n[31:0]              = ahb_if.hrdata;
+            end
+        end
+    end
+
+    always_ff @(posedge clk) begin
+        if (!rst_n) begin
+            comp_wren                       <= 1'b0;
+            comp_sop                        <= 'hx;
+            comp_eop                        <= 'hx;
+            comp_wdata                      <= 'hx;
+        end
+        else begin
+            comp_wren                       <= comp_wren_n;
+            comp_sop                        <= comp_sop_n;
+            comp_eop                        <= comp_eop_n;
+            comp_wdata                      <= comp_wdata_n;
+        end
+    end
+
+    //----------------------------------------------------------
+    // Output assignments
+    //----------------------------------------------------------
+
+    // !start_i condition is to prevent back-to-back CMD write
+    // and STATUS read from mal-functioning.
+    assign  done_o                          = (state==S_IDLE) & !start_i;
 
     assign  ahb_if.hbusreq                  = hbusreq;
     assign  ahb_if.haddr                    = haddr;
@@ -339,5 +364,10 @@ module AIDC_LITE_COMP_ENGINE
     assign  ahb_if.hsize                    = 3'b010;   // 4 byte;
     assign  ahb_if.hburst                   = 3'b111;   // 16-beat incrementing
     assign  ahb_if.hprot                    = 4'b0001;  // data access
+
+    assign  comp_wren_o                     = comp_wren;
+    assign  comp_sop_o                      = comp_sop;
+    assign  comp_eop_o                      = comp_eop;
+    assign  comp_wdata_o                    = comp_wdata;
 
 endmodule

@@ -28,10 +28,15 @@ module AIDC_LITE_COMP_TOP
         .done_i                         (cfg_done)
     );
 
-    wire                                buf_wren;
-    wire    [3:0]                       buf_waddr;
-    wire    [7:0]                       buf_wbe;
-    wire    [63:0]                      buf_wdata;
+    wire                                comp_wren;
+    wire                                comp_sop;
+    wire                                comp_eop;
+    wire    [63:0]                      comp_wdata;
+
+    wire                                zrle_buf_wren;
+    wire    [3:0]                       zrle_buf_waddr;
+    wire    [63:0]                      zrle_buf_wdata;
+    wire    [10:0]                      zrle_blk_size;
 
     AIDC_LITE_COMP_ENGINE               u_engine
     (
@@ -46,15 +51,31 @@ module AIDC_LITE_COMP_TOP
 
         .ahb_if                         (ahb_if),
 
-        .buf_wren_o                     (buf_wren),
-        .buf_waddr_o                    (buf_waddr),
-        .buf_wbe_o                      (buf_wbe),
-        .buf_wdata_o                    (buf_wdata),
+        .comp_wren_o                    (comp_wren),
+        .comp_sop_o                     (comp_sop),
+        .comp_eop_o                     (comp_eop),
+        .comp_wdata_o                   (comp_wdata),
 
-        .comp_start_o                   (/* floating */),
+        .zrle_blk_size                  (zrle_blk_size),
         .comp_ready_i                   (1'b1),
         .comp_rden_o                    (/* floating */),
         .comp_rdata_i                   (32'd0)
+    );
+
+    AIDC_LITE_COMP_ZRLE                 u_zrle
+    (
+        .clk                            (clk),
+        .rst_n                          (rst_n),
+
+        .valid_i                        (comp_wren),
+        .sop_i                          (comp_sop),
+        .eop_i                          (comp_eop),
+        .data_i                         (comp_wdata),
+
+        .valid_o                        (zrle_buf_wren),
+        .addr_o                         (zrle_buf_waddr),
+        .data_o                         (zrle_buf_wdata),
+        .blk_size_o                     (zrle_blk_size)
     );
 
     AIDC_LITE_COMP_BUFFER               u_buffer
@@ -62,10 +83,9 @@ module AIDC_LITE_COMP_TOP
         .clk                            (clk),
         .rst_n                          (rst_n),
 
-        .wren_i                         (buf_wren),
-        .waddr_i                        (buf_waddr),
-        .wbe_i                          (buf_wbe),
-        .wdata_i                        (buf_wdata),
+        .wren_i                         (zrle_buf_wren),
+        .waddr_i                        (zrle_buf_waddr),
+        .wdata_i                        (zrle_buf_wdata),
 
         .rden_i                         (1'b0),
         .raddr_i                        (4'd0),
