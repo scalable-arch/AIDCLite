@@ -30,7 +30,7 @@ module TB_TOP;
     //----------------------------------------------------------
     // Design-Under-Test
     //----------------------------------------------------------
-    AIDC_LITE_COMP_TOP                  dut
+    AIDC_LITE_COMP_TOP                  u_dut
     (
         .clk                            (clk),
         .rst_n                          (rst_n),
@@ -59,12 +59,12 @@ module TB_TOP;
     );
 
     //initial begin
-    //    $dumpvars(0, dut);
+    //    $dumpvars(0, u_dut);
     //    $dumpfile("dump.vcd");
     //end
     initial begin
         $fsdbDumpfile("dump.fsdb");
-        $fsdbDumpvars(0, dut);
+        $fsdbDumpvars(0, u_dut);
     end
 
     //----------------------------------------------------------

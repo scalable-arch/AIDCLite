@@ -22,7 +22,8 @@ module AIDC_LITE_CODE_CONCATENATE
 );
 
     logic                               valid,      valid_n;
-    logic   [3:0]                       addr,       addr_n;
+    logic   [3:0]                       cnt,        cnt_n;
+    logic   [3:0]                       cnt_reg;
     logic   [63:0]                      data,       data_n;
 
     // clk      : __--__--__--__--__--__--__--__--__--__--__--__--__--__--__--
@@ -52,7 +53,7 @@ module AIDC_LITE_CODE_CONCATENATE
 
     always_comb begin
         valid_n                         = 1'b0;
-        addr_n                          = addr;
+        cnt_n                           = cnt;
         data_n                          = 'dx;
 
         blk_size_n                      = blk_size;
@@ -70,6 +71,7 @@ module AIDC_LITE_CODE_CONCATENATE
             if (eop_i) begin
                 // EOP -> flush the buffered data regardless of blk_size
                 valid_n                         = 1'b1;
+                cnt_n                           = 'd0;
                 data_n                          = tmp_buf[TMP_BUF_SIZE-1:TMP_BUF_SIZE-64];
 
                 // preload the 2-bit prefix for the next block
@@ -81,23 +83,17 @@ module AIDC_LITE_CODE_CONCATENATE
                 // if the new block size is different from the old size
                 // in bit 6, it means a full 64-bit is ready
                 valid_n                         = 1'b1;
+                cnt_n                           = cnt + 'd1;
                 data_n                          = tmp_buf[TMP_BUF_SIZE-1:TMP_BUF_SIZE-64];
                 code_buf_n                      = tmp_buf[TMP_BUF_SIZE-65:0];
             end
             else begin
-                assert (blk_size_n[7]==blk_size[7]); // no +128 case
+                assert (blk_size_n[7]==blk_size[7]); // no +(128+) case
 
                 // partial data is ready
                 valid_n                         = 1'b0;
                 data_n                          = 'dx;
                 code_buf_n                      = tmp_buf[TMP_BUF_SIZE-1:TMP_BUF_SIZE-62];
-            end
-
-            if (sop_i) begin
-                addr_n                          = 'd0;
-            end
-            else begin
-                addr_n                          = addr + 'd1;
             end
         end
     end
@@ -105,7 +101,8 @@ module AIDC_LITE_CODE_CONCATENATE
     always_ff @(posedge clk)
         if  (~rst_n) begin
             valid                           <= 1'b0;
-            addr                            <= 'dx;
+            cnt                             <= 'd0;
+            cnt_reg                         <= 'dx;
             data                            <= 'dx;
 
             // the default value is 2 to represent 2-bit prefix
@@ -114,11 +111,20 @@ module AIDC_LITE_CODE_CONCATENATE
         end
         else begin
             valid                           <= valid_n;
-            addr                            <= addr_n;
+            cnt                             <= cnt_n;
+            cnt_reg                         <= cnt;
             data                            <= data_n;
 
             blk_size                        <= blk_size_n;
             code_buf                        <= code_buf_n;
         end
+
+    //----------------------------------------------------------
+    // Output assignments
+    //----------------------------------------------------------
+    assign  valid_o                         = valid;
+    assign  addr_o                          = cnt_reg;
+    assign  data_o                          = data;
+    assign  blk_size_o                      = blk_size;
 
 endmodule

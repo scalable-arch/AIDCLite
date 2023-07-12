@@ -16,7 +16,9 @@ module AIDC_LITE_COMP_ENGINE
     output  logic                       comp_eop_o,
     output  logic   [63:0]              comp_wdata_o,
 
-    input   wire    [10:0]              zrle_blk_size_i,
+    input   wire                        comp0_fail,
+    input   wire                        comp1_fail,
+    input   wire                        comp2_fail,
     input   wire                        comp_ready_i,
     output  logic                       comp_rden_o,
     input   wire    [31:0]              comp_rdata_i
