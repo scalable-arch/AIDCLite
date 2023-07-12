@@ -1,3 +1,4 @@
+/*
 module AIDC_LITE_DECOMP_ZRLE (
     input   wire                        clk,
     input   wire                        rst_n,
@@ -16,6 +17,16 @@ module AIDC_LITE_DECOMP_ZRLE (
     output  logic   [63:0]              data_o,
     output  logic                       done_o
 );
+*/
+module ZRLE_DECOMP (
+	input wire				rst_n,
+	input wire				clk,
+	
+	input wire 				valid_i,
+	input wire [63:0]			data_i,
+	input wire				sop_i,
+	input wire				eop_i,
+	
 	input wire				ready_i,
 
 	output wire				ready_o,
@@ -25,6 +36,7 @@ module AIDC_LITE_DECOMP_ZRLE (
 	output wire				valid_o,
 	output wire [63:0]			data_o
 );
+
 
 	reg [6:0]				size, size_n, size_nn;
 	reg [127:0]				code_buf, code_buf_n, code_buf_nn;		
