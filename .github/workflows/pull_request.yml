@@ -42,17 +42,16 @@ jobs:
         with:
           name: moresimple.rpt
           path: reports/moresimple.rpt
-  Design-Compiler-UMC28nm:
-    runs-on: self-hosted        # runs on a server with Synopsys Design Compiler installed
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-      - name: Synthesis
-        run: |
-          source ${{github.workspace}}/env.source ${{github.workspace}}
-          #action.syn
+#  Design-Compiler-UMC28nm:
+#    runs-on: self-hosted        # runs on a server with Synopsys Design Compiler installed
+#    steps:
+#      - uses: actions/checkout@v3
+#      - uses: actions/setup-node@v3
+#      - name: Synthesis
+#        run: |
+#          source ${{github.workspace}}/env.source ${{github.workspace}}
+#          action.syn
   PeakRDL-RDL:
-    #runs-on: self-hosted        # runs on a server with Synopsys Design Compiler installed
     runs-on: ubuntu-latest    # GitHub runner
     steps:
       - uses: actions/checkout@v3
