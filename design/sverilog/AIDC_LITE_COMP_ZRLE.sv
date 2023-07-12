@@ -12,6 +12,7 @@ module AIDC_LITE_COMP_ZRLE
     output  logic                       valid_o,
     output  logic   [3:0]               addr_o,
     output  logic   [63:0]              data_o,
+    output  logic                       done_o,
     output  logic                       fail_o
 );
 
@@ -114,6 +115,7 @@ module AIDC_LITE_COMP_ZRLE
         .valid_o                        (valid_o),
         .addr_o                         (addr_o),
         .data_o                         (data_o),
+        .done_o                         (done_o),
         .blk_size_o                     (blk_size)
     );
 

@@ -12,7 +12,8 @@ module AIDC_LITE_COMP_SR
     output  logic                       valid_o,
     output  logic   [3:0]               addr_o,
     output  logic   [63:0]              data_o,
-    output  logic                       fail_o  // valid on eop
+    output  logic                       done_o,
+    output  logic                       fail_o
 );
 
     // clk      : __--__--__--__--__--__--__ ... --__--__--__--__--__
@@ -35,6 +36,7 @@ module AIDC_LITE_COMP_SR
     logic                               valid,      valid_n;
     logic   [3:0]                       addr,       addr_n;
     logic   [63:0]                      data,       data_n;
+    logic                               done,       done_n;
     logic                               fail,       fail_n;
 
     always_comb begin
@@ -43,16 +45,20 @@ module AIDC_LITE_COMP_SR
         valid_n                         = 1'b0;
         addr_n                          = addr;
         data_n                          = data;
+        done_n                          = done;
         fail_n                          = fail;
 
         if (valid_i) begin
             case (state)
                 S_FIRST: begin
                     // the first cycle
+                    // synopsys translate_off
                     assert(sop_i);
+                    // synopsys translate_on
 
                     valid_n                         = 1'b0;
                     addr_n                          = 'd0;
+                    done_n                          = 1'b0;
                     state_n                         = S_SECOND;
                     data_n[63:32]                   = {1'b1,
                                                        data_i[54:48],
@@ -103,6 +109,9 @@ module AIDC_LITE_COMP_SR
                                                      |((data_i[47:39]!= 9'd0)&(data_i[47:39]!= 9'h1FF))
                                                      |((data_i[31:23]!= 9'd0)&(data_i[31:23]!= 9'h1FF))
                                                      |((data_i[15: 7]!= 9'd0)&(data_i[15: 7]!= 9'h1FF));
+                    if (eop_i) begin
+                        done_n                          = 1'b1;
+                    end
                 end
             endcase
         end
@@ -113,9 +122,10 @@ module AIDC_LITE_COMP_SR
             state                           <= S_FIRST;
 
             valid                           <= 1'b0;
-            // data doesn't require reset
+            // doesn't require reset
             //addr                            <= 'd0;
             //data                            <= 'd0;
+            done                            <= 1'b1;
             fail                            <= 1'b0;
         end
         else begin
@@ -124,6 +134,7 @@ module AIDC_LITE_COMP_SR
             valid                           <= valid_n;
             addr                            <= addr_n;
             data                            <= data_n;
+            done                            <= done_n;
             fail                            <= fail_n;
         end
 
@@ -131,6 +142,7 @@ module AIDC_LITE_COMP_SR
     assign  valid_o                         = valid;
     assign  addr_o                          = addr;
     assign  data_o                          = data;
+    assign  done_o                          = done;
     assign  fail_o                          = fail;
 
 endmodule

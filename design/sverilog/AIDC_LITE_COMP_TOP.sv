@@ -33,15 +33,23 @@ module AIDC_LITE_COMP_TOP
     wire                                comp_eop;
     wire    [63:0]                      comp_wdata;
 
-    wire                                zrle_buf_wren;
-    wire    [3:0]                       zrle_buf_waddr;
-    wire    [63:0]                      zrle_buf_wdata;
-    wire                                zrle_fail;
-
     wire                                sr_buf_wren;
     wire    [3:0]                       sr_buf_waddr;
     wire    [63:0]                      sr_buf_wdata;
+    wire                                sr_done;
     wire                                sr_fail;
+
+    wire                                zrle_buf_wren;
+    wire    [3:0]                       zrle_buf_waddr;
+    wire    [63:0]                      zrle_buf_wdata;
+    wire                                zrle_done;
+    wire                                zrle_fail;
+
+    wire                                bpc_buf_wren;
+    wire    [3:0]                       bpc_buf_waddr;
+    wire    [63:0]                      bpc_buf_wdata;
+    wire                                bpc_done;
+    wire                                bpc_fail;
 
     AIDC_LITE_COMP_ENGINE               u_engine
     (
@@ -61,6 +69,9 @@ module AIDC_LITE_COMP_TOP
         .comp_eop_o                     (comp_eop),
         .comp_wdata_o                   (comp_wdata),
 
+        .comp0_done                     (sr_done),
+        .comp1_done                     (zrle_done),
+        .comp2_done                     (1'b1),
         .comp0_fail                     (sr_fail),
         .comp1_fail                     (zrle_fail),
         .comp2_fail                     (1'b1),
@@ -82,7 +93,8 @@ module AIDC_LITE_COMP_TOP
         .valid_o                        (sr_buf_wren),
         .addr_o                         (sr_buf_waddr),
         .data_o                         (sr_buf_wdata),
-        .fail_o                         (sr_fail)             
+        .done_o                         (sr_done),
+        .fail_o                         (sr_fail)
     );
 
     AIDC_LITE_COMP_BUFFER               u_sr_buffer
@@ -111,6 +123,7 @@ module AIDC_LITE_COMP_TOP
         .valid_o                        (zrle_buf_wren),
         .addr_o                         (zrle_buf_waddr),
         .data_o                         (zrle_buf_wdata),
+        .done_o                         (zrle_done),
         .fail_o                         (zrle_fail)
     );
 
@@ -125,6 +138,23 @@ module AIDC_LITE_COMP_TOP
 
         .raddr_i                        (4'd0),
         .rdata_o                        (/* */)
+    );
+
+    AIDC_LITE_COMP_BPC                  u_bpc
+    (
+        .clk                            (clk),
+        .rst_n                          (rst_n),
+
+        .valid_i                        (comp_wren),
+        .sop_i                          (comp_sop),
+        .eop_i                          (comp_eop),
+        .data_i                         (comp_wdata),
+
+        .valid_o                        (bpc_buf_wren),
+        .addr_o                         (bpc_buf_waddr),
+        .data_o                         (bpc_buf_wdata),
+        .done_o                         (bpc_done),
+        .fail_o                         (bpc_fail)
     );
 
 endmodule

@@ -18,6 +18,7 @@ module AIDC_LITE_CODE_CONCATENATE
     output  logic                       valid_o,
     output  logic   [3:0]               addr_o,
     output  logic   [63:0]              data_o,
+    output  logic                       done_o,
     output  logic   [10:0]              blk_size_o
 );
 
@@ -25,6 +26,7 @@ module AIDC_LITE_CODE_CONCATENATE
     logic   [3:0]                       cnt,        cnt_n;
     logic   [3:0]                       cnt_reg;
     logic   [63:0]                      data,       data_n;
+    logic                               done,       done_n;
 
     // clk      : __--__--__--__--__--__--__--__--__--__--__--__--__--__--__--
     // valid_i  : ______------------------------
@@ -55,6 +57,7 @@ module AIDC_LITE_CODE_CONCATENATE
         valid_n                         = 1'b0;
         cnt_n                           = cnt;
         data_n                          = 'dx;
+        done_n                          = done;
 
         blk_size_n                      = blk_size;
         code_buf_n                      = code_buf;
@@ -88,12 +91,21 @@ module AIDC_LITE_CODE_CONCATENATE
                 code_buf_n                      = tmp_buf[TMP_BUF_SIZE-65:0];
             end
             else begin
+                // synopsys translate_off
                 assert (blk_size_n[7]==blk_size[7]); // no +(128+) case
+                // synopsys translate_on
 
                 // partial data is ready
                 valid_n                         = 1'b0;
                 data_n                          = 'dx;
                 code_buf_n                      = tmp_buf[TMP_BUF_SIZE-1:TMP_BUF_SIZE-62];
+            end
+
+            if (sop_i) begin
+                done_n                          = 1'b0;
+            end
+            else if (eop_i) begin
+                done_n                          = 1'b1;
             end
         end
     end
@@ -104,6 +116,7 @@ module AIDC_LITE_CODE_CONCATENATE
             cnt                             <= 'd0;
             cnt_reg                         <= 'dx;
             data                            <= 'dx;
+            done                            <= 1'b1;
 
             // the default value is 2 to represent 2-bit prefix
             blk_size                        <= 'd2;
@@ -114,6 +127,7 @@ module AIDC_LITE_CODE_CONCATENATE
             cnt                             <= cnt_n;
             cnt_reg                         <= cnt;
             data                            <= data_n;
+            done                            <= done_n;
 
             blk_size                        <= blk_size_n;
             code_buf                        <= code_buf_n;
@@ -125,6 +139,7 @@ module AIDC_LITE_CODE_CONCATENATE
     assign  valid_o                         = valid;
     assign  addr_o                          = cnt_reg;
     assign  data_o                          = data;
+    assign  done_o                          = done;
     assign  blk_size_o                      = blk_size;
 
 endmodule
