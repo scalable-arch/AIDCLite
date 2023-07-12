@@ -4,6 +4,7 @@ module TB_TOP;
     // clock and reset generation
     //----------------------------------------------------------
     parameter                           CLK_PERIOD      = 10;
+    parameter                           TIMEOUT         = (CLK_PERIOD * 100000);
 
     logic                               clk;
     logic                               rst_n;
@@ -18,6 +19,14 @@ module TB_TOP;
 
         repeat (3) @(posedge clk)
         rst_n                           = 1'b1;
+    end
+
+    //----------------------------------------------------------
+    // Simulation timeout
+    //----------------------------------------------------------
+    initial begin
+        #TIMEOUT
+        $fatal("Simulation timed out");
     end
 
     //----------------------------------------------------------
