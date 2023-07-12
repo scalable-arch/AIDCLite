@@ -1,6 +1,6 @@
 module AHB2_MEM
 #(
-    parameter   ADDR_WIDTH              = 16
+    parameter   ADDR_WIDTH              = 18
  )
 (
     input   wire                        clk,

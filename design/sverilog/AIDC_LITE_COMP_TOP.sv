@@ -28,10 +28,26 @@ module AIDC_LITE_COMP_TOP
         .done_i                         (cfg_done)
     );
 
-    wire                                buf_wren;
-    wire    [3:0]                       buf_waddr;
-    wire    [7:0]                       buf_wbe;
-    wire    [63:0]                      buf_wdata;
+    wire                                comp_wren;
+    wire                                comp_sop;
+    wire                                comp_eop;
+    wire    [63:0]                      comp_wdata;
+
+    wire                                sr_buf_wren;
+    wire    [2:0]                       sr_buf_waddr;
+    wire    [63:0]                      sr_buf_wdata;
+    wire                                sr_done;
+    wire                                sr_fail;
+
+    wire                                zrle_buf_wren;
+    wire    [2:0]                       zrle_buf_waddr;
+    wire    [63:0]                      zrle_buf_wdata;
+    wire                                zrle_done;
+    wire                                zrle_fail;
+
+    wire    [2:0]                       buf_addr;
+    wire    [63:0]                      sr_buf_rdata;
+    wire    [63:0]                      zrle_buf_rdata;
 
     AIDC_LITE_COMP_ENGINE               u_engine
     (
@@ -46,30 +62,107 @@ module AIDC_LITE_COMP_TOP
 
         .ahb_if                         (ahb_if),
 
-        .buf_wren_o                     (buf_wren),
-        .buf_waddr_o                    (buf_waddr),
-        .buf_wbe_o                      (buf_wbe),
-        .buf_wdata_o                    (buf_wdata),
+        .comp_wren_o                    (comp_wren),
+        .comp_sop_o                     (comp_sop),
+        .comp_eop_o                     (comp_eop),
+        .comp_wdata_o                   (comp_wdata),
 
-        .comp_start_o                   (/* floating */),
-        .comp_ready_i                   (1'b1),
-        .comp_rden_o                    (/* floating */),
-        .comp_rdata_i                   (32'd0)
+        .comp0_done_i                   (sr_done),
+        .comp1_done_i                   (zrle_done),
+        .comp2_done_i                   (1'b1),
+        .comp0_fail_i                   (sr_fail),
+        .comp1_fail_i                   (zrle_fail),
+        .comp2_fail_i                   (1'b1),
+
+        .buf_addr_o                     (buf_addr),
+        .comp0_rdata_i                  (sr_buf_rdata),
+        .comp1_rdata_i                  (zrle_buf_rdata),
+        .comp2_rdata_i                  (64'd0)
     );
 
-    AIDC_LITE_COMP_BUFFER               u_buffer
+    AIDC_LITE_COMP_SR                   u_sr
     (
         .clk                            (clk),
         .rst_n                          (rst_n),
 
-        .wren_i                         (buf_wren),
-        .waddr_i                        (buf_waddr),
-        .wbe_i                          (buf_wbe),
-        .wdata_i                        (buf_wdata),
+        .valid_i                        (comp_wren),
+        .sop_i                          (comp_sop),
+        .eop_i                          (comp_eop),
+        .data_i                         (comp_wdata),
 
-        .rden_i                         (1'b0),
-        .raddr_i                        (4'd0),
-        .rdata_o                        (/* */)
+        .valid_o                        (sr_buf_wren),
+        .addr_o                         (sr_buf_waddr),
+        .data_o                         (sr_buf_wdata),
+        .done_o                         (sr_done),
+        .fail_o                         (sr_fail)
     );
+
+    AIDC_LITE_COMP_BUFFER               u_sr_buffer
+    (
+        .clk                            (clk),
+        .rst_n                          (rst_n),
+
+        .wren_i                         (sr_buf_wren),
+        .waddr_i                        (sr_buf_waddr),
+        .wdata_i                        (sr_buf_wdata),
+
+        .raddr_i                        (buf_addr),
+        .rdata_o                        (sr_buf_rdata)
+    );
+
+    AIDC_LITE_COMP_ZRLE                 u_zrle
+    (
+        .clk                            (clk),
+        .rst_n                          (rst_n),
+
+        .valid_i                        (comp_wren),
+        .sop_i                          (comp_sop),
+        .eop_i                          (comp_eop),
+        .data_i                         (comp_wdata),
+
+        .valid_o                        (zrle_buf_wren),
+        .addr_o                         (zrle_buf_waddr),
+        .data_o                         (zrle_buf_wdata),
+        .done_o                         (zrle_done),
+        .fail_o                         (zrle_fail)
+    );
+
+    AIDC_LITE_COMP_BUFFER               u_zrle_buffer
+    (
+        .clk                            (clk),
+        .rst_n                          (rst_n),
+
+        .wren_i                         (zrle_buf_wren),
+        .waddr_i                        (zrle_buf_waddr),
+        .wdata_i                        (zrle_buf_wdata),
+
+        .raddr_i                        (buf_addr),
+        .rdata_o                        (zrle_buf_rdata)
+    );
+
+    /*
+    wire                                bpc_buf_wren;
+    wire    [2:0]                       bpc_buf_waddr;
+    wire    [63:0]                      bpc_buf_wdata;
+    wire                                bpc_done;
+    wire                                bpc_fail;
+
+    AIDC_LITE_COMP_BPC                  u_bpc
+    (
+        .clk                            (clk),
+        .rst_n                          (rst_n),
+
+        .valid_i                        (comp_wren),
+        .sop_i                          (comp_sop),
+        .eop_i                          (comp_eop),
+        .data_i                         (comp_wdata),
+
+        .valid_o                        (bpc_buf_wren),
+        .addr_o                         (bpc_buf_waddr),
+        .data_o                         (bpc_buf_wdata),
+        .done_o                         (bpc_done),
+        .fail_o                         (bpc_fail)
+    );
+    */
 
 endmodule
