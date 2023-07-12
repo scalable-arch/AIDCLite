@@ -16,15 +16,15 @@ module AIDC_LITE_CODE_CONCATENATE
     input   wire    [6:0]               size_i,
 
     output  logic                       valid_o,
-    output  logic   [3:0]               addr_o,
+    output  logic   [2:0]               addr_o,
     output  logic   [63:0]              data_o,
     output  logic                       done_o,
     output  logic   [10:0]              blk_size_o
 );
 
     logic                               valid,      valid_n;
-    logic   [3:0]                       cnt,        cnt_n;
-    logic   [3:0]                       cnt_reg;
+    logic   [2:0]                       cnt,        cnt_n;
+    logic   [2:0]                       cnt_reg;
     logic   [63:0]                      data,       data_n;
     logic                               done,       done_n;
 
@@ -68,8 +68,8 @@ module AIDC_LITE_CODE_CONCATENATE
             // calculate new block size (in bits)
             blk_size_n                      = blk_size + size_i;
             // concate the old data and new data
-            tmp_buf                         = {code_buf, 64'd0};
-            tmp_buf                        |= {data_i, 62'd0}>>blk_size[5:0];
+            tmp_buf                         =  {code_buf, 64'd0}
+                                             |({data_i, 62'd0}>>blk_size[5:0]);
 
             if (eop_i) begin
                 // EOP -> flush the buffered data regardless of blk_size

@@ -10,7 +10,7 @@ module AIDC_LITE_COMP_ZRLE
     input   wire    [63:0]              data_i,
 
     output  logic                       valid_o,
-    output  logic   [3:0]               addr_o,
+    output  logic   [2:0]               addr_o,
     output  logic   [63:0]              data_o,
     output  logic                       done_o,
     output  logic                       fail_o

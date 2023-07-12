@@ -10,7 +10,7 @@ module AIDC_LITE_COMP_SR
     input   wire    [63:0]              data_i,
 
     output  logic                       valid_o,
-    output  logic   [3:0]               addr_o,
+    output  logic   [2:0]               addr_o,
     output  logic   [63:0]              data_o,
     output  logic                       done_o,
     output  logic                       fail_o
@@ -34,7 +34,7 @@ module AIDC_LITE_COMP_SR
     }                                   state,      state_n;
 
     logic                               valid,      valid_n;
-    logic   [3:0]                       addr,       addr_n;
+    logic   [2:0]                       addr,       addr_n;
     logic   [63:0]                      data,       data_n;
     logic                               done,       done_n;
     logic                               fail,       fail_n;

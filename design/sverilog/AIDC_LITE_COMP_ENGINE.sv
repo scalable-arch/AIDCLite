@@ -16,15 +16,17 @@ module AIDC_LITE_COMP_ENGINE
     output  logic                       comp_eop_o,
     output  logic   [63:0]              comp_wdata_o,
 
-    input   wire                        comp0_done,
-    input   wire                        comp1_done,
-    input   wire                        comp2_done,
-    input   wire                        comp0_fail,
-    input   wire                        comp1_fail,
-    input   wire                        comp2_fail,
-    input   wire                        comp_ready_i,
-    output  logic                       comp_rden_o,
-    input   wire    [31:0]              comp_rdata_i
+    input   wire                        comp0_done_i,
+    input   wire                        comp1_done_i,
+    input   wire                        comp2_done_i,
+    input   wire                        comp0_fail_i,
+    input   wire                        comp1_fail_i,
+    input   wire                        comp2_fail_i,
+
+    output  logic   [2:0]               buf_addr_o,
+    input   wire    [63:0]              comp0_rdata_i,
+    input   wire    [63:0]              comp1_rdata_i,
+    input   wire    [63:0]              comp2_rdata_i
 );
 
     // A block: 128B data
@@ -60,7 +62,12 @@ module AIDC_LITE_COMP_ENGINE
     logic   [1:0]                       htrans,     htrans_n;
     logic                               hwrite,     hwrite_n;
 
+    logic   [1:0]                       owner,      owner_n;
+    wire    [63:0]                      owner_data;
     logic                               comp_rden;
+
+    assign  owner_data                  = (owner==2'd2) ? comp2_rdata_i :
+                                          (owner==2'd1) ? comp1_rdata_i : comp0_rdata_i;
 
     //--------------------------------------------------------------------------------------
     // Timing diagram (part 1)
@@ -91,6 +98,8 @@ module AIDC_LITE_COMP_ENGINE
         hwrite_n                        = hwrite;
 
         beat_en                         = 1'b0;
+
+        owner_n                         = owner;
         comp_rden                       = 1'b0;
 
         case (state)
@@ -217,8 +226,19 @@ module AIDC_LITE_COMP_ENGINE
                 end
             end
             S_COMP: begin
-                // compression finished
-                if (comp_ready_i) begin
+                if (comp0_done_i & comp1_done_i & comp2_done_i) begin
+                    // compression finished
+                    if (!comp2_fail_i) begin
+                        owner_n                         = 2'd2;
+                    end
+                    else if (!comp1_fail_i) begin
+                        owner_n                         = 2'd1;
+                    end
+                    else 
+                    begin
+                        owner_n                         = 2'd0;
+                    end
+
                     hbusreq_n                       = 1'b1;
                     state_n                         = S_WR_BUSREQ;
                 end
@@ -300,6 +320,8 @@ module AIDC_LITE_COMP_ENGINE
             haddr                           <= 'd0;
             htrans                          <= HTRANS_IDLE;
             hwrite                          <= 1'b0;
+
+            owner                           <= 2'd0;
         end
         else begin
             state                           <= state_n;
@@ -311,6 +333,8 @@ module AIDC_LITE_COMP_ENGINE
             haddr                           <= haddr_n;
             htrans                          <= htrans_n;
             hwrite                          <= hwrite_n;
+
+            owner                           <= owner_n;
         end
 
     //----------------------------------------------------------
@@ -323,8 +347,8 @@ module AIDC_LITE_COMP_ENGINE
 
     always_comb begin
         comp_wren_n                     = 1'b0;
-        comp_sop_n                      = 1'bx;
-        comp_eop_n                      = 1'bx;
+        comp_sop_n                      = 1'b0;
+        comp_eop_n                      = 1'b0;
         comp_wdata_n                    = comp_wdata;
 
         if (beat_en) begin
@@ -343,9 +367,9 @@ module AIDC_LITE_COMP_ENGINE
     always_ff @(posedge clk) begin
         if (!rst_n) begin
             comp_wren                       <= 1'b0;
-            comp_sop                        <= 'hx;
-            comp_eop                        <= 'hx;
-            comp_wdata                      <= 'hx;
+            comp_sop                        <= 1'b0;
+            comp_eop                        <= 1'b0;
+            comp_wdata                      <= 'h0;
         end
         else begin
             comp_wren                       <= comp_wren_n;
