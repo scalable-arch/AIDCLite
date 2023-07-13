@@ -5,6 +5,12 @@
 // Follows AMBA2 AHB v1.0 specification, 1999
 // (ARM IHI 0011A)
 
+// For clocking block (verfication part)
+// sample -0.1ns before a posedge
+`define ISAMPLE_TIME            0.1
+// drive 0.1ns after a posedge
+`define OSAMPLE_TIME            0.1
+
 parameter   logic   [1:0]           HTRANS_IDLE     = 2'b00;
 parameter   logic   [1:0]           HTRANS_BUSY     = 2'b01;
 parameter   logic   [1:0]           HTRANS_NONSEQ   = 2'b10;
@@ -65,6 +71,29 @@ interface AHB2_MST_INTF
 
     // synopsys translate_off
     // - for verification only
+    clocking master_cb @(posedge clk);
+        default input #`ISAMPLE_TIME output #`OSAMPLE_TIME;
+
+        output      hbusreq, haddr, htrans, hwrite, hsize, hburst, hprot, hwdata;
+        input       hgrant, hrdata, hready, hresp; 
+    endclocking
+    
+    clocking slave_cb @(posedge clk);
+        default input #`ISAMPLE_TIME output #`OSAMPLE_TIME;
+
+        input       hbusreq, haddr, htrans, hwrite, hsize, hburst, hprot, hwdata;
+        output      hgrant, hrdata, hready, hresp; 
+    endclocking
+    
+    clocking mon_cb @(posedge clk);
+        default input #`ISAMPLE_TIME output #`OSAMPLE_TIME;
+
+        input       hbusreq, haddr, htrans, hwrite, hsize, hburst, hprot, hwdata;
+        input       hgrant, hrdata, hready, hresp; 
+    endclocking
+
+    modport master_tb   (clocking master_cb, input hclk, hreset_n);
+    modport slave_tb    (clocking slave_cb, input hclk, hreset_n);
     // synopsys translate_on
 
 endinterface
@@ -100,6 +129,29 @@ interface AHB2_SLV_INTF
 
     // synopsys translate_off
     // - for verification only
+    clocking master_cb @(posedge clk);
+        default input #`ISAMPLE_TIME output #`OSAMPLE_TIME;
+
+        output      hsel, haddr, htrans, hwrite, hsize, hburst, hprot, hwdata, hreadyi,
+        input       hrdata, hreadyo, hresp
+    endclocking
+    
+    clocking slave_cb @(posedge clk);
+        default input #`ISAMPLE_TIME output #`OSAMPLE_TIME;
+
+        input       hsel, haddr, htrans, hwrite, hsize, hburst, hprot, hwdata, hreadyi,
+        output      hrdata, hreadyo, hresp
+    endclocking
+    
+    clocking mon_cb @(posedge clk);
+        default input #`ISAMPLE_TIME output #`OSAMPLE_TIME;
+
+        input       hsel, haddr, htrans, hwrite, hsize, hburst, hprot, hwdata, hreadyi,
+        input       hrdata, hreadyo, hresp
+    endclocking
+
+    modport master_tb   (clocking master_cb, input hclk, hreset_n);
+    modport slave_tb    (clocking slave_cb, input hclk, hreset_n);
     // synopsys translate_on
 
 endinterface
