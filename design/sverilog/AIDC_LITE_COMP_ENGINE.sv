@@ -89,8 +89,8 @@ module AIDC_LITE_COMP_ENGINE
     // state    :  IDL  |  R1B  |1A |  MIDDLE//   |LAS|  R2B  |1A | MIDDLE //     |LAS|
     // beat_cnt :                   | 0 | 1 |//14 |15 |            16 |17 |// |30 |31 |
 
-    // hbusreq_o: _______--------____________//________--------_____________//______________
-    // hgrant_i : ___________----____________//____________----_____________//______________
+    // hbusreq_o: _______--------------------//________--------------------//______________
+    // hgrant_i : ___________----------------//____________----------------//______________
     // haddr_o  :               |+0 |+4 |+8 |//+60|           |+64|+68|+72| //+124|
     // hsize_o  :                         constant (4B)
     // hburst_o :                         constant (16-beat)
@@ -127,9 +127,6 @@ module AIDC_LITE_COMP_ENGINE
             S_RD1_BUSREQ: begin
                 // request granted
                 if (ahb_if.hgrant) begin
-                    // deassert hbusreq
-                    hbusreq_n                       = 1'b0;
-
                     // address phase part (prepation)
                     // set the address and SRC_ADDR + BLK_CNT*128
                     haddr_n                         = src_addr_i + {blk_cnt, 7'd0};
@@ -163,6 +160,10 @@ module AIDC_LITE_COMP_ENGINE
                     beat_en                         = 1'b1;
                     beat_cnt_n                      = beat_cnt + 'd1;
 
+                    if (beat_cnt=='d13) begin
+                        // deassert hbusreq
+                        hbusreq_n                       = 1'b0;
+                    end
                     if (beat_cnt=='d14) begin
                         // last address (=last data - 1) of the access
                         htrans_n                        = HTRANS_IDLE;
@@ -185,9 +186,6 @@ module AIDC_LITE_COMP_ENGINE
             S_RD2_BUSREQ: begin
                 // request granted
                 if (ahb_if.hgrant) begin
-                    // deassert hbusreq
-                    hbusreq_n                       = 1'b0;
-
                     // address phase part (prepation)
                     // continue using haddr and hwrite from the 1st access
                     htrans_n                        = HTRANS_NONSEQ;
@@ -214,6 +212,11 @@ module AIDC_LITE_COMP_ENGINE
                     // data phase part
                     beat_en                         = 1'b1;
                     beat_cnt_n                      = beat_cnt + 'd1;
+
+                    if (beat_cnt=='d29) begin
+                        // deassert hbusreq
+                        hbusreq_n                       = 1'b0;
+                    end
 
                     if (beat_cnt=='d30) begin
                         // last address (=last data - 1) of the access
@@ -254,9 +257,6 @@ module AIDC_LITE_COMP_ENGINE
             end
             S_WR_BUSREQ: begin
                 if (ahb_if.hgrant) begin
-                    // deassert hbusreq
-                    hbusreq_n                       = 1'b0;
-
                     // address phase part
                     // set the address and SRC_ADDR + BLK_CNT*64
                     haddr_n                         = dst_addr_i + {blk_cnt, 6'd0};
@@ -301,6 +301,11 @@ module AIDC_LITE_COMP_ENGINE
                     end
                     else begin
                         hwdata_n                        = owner_data[63:32];
+                    end
+
+                    if (beat_cnt=='d14) begin
+                        // deassert hbusreq
+                        hbusreq_n                       = 1'b0;
                     end
 
                     if (beat_cnt=='d15) begin

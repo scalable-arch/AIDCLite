@@ -81,9 +81,9 @@ module AIDC_LITE_DECOMP_ENGINE
     // state    :  IDL  |  BUS  |1A |  MIDDLE//   |LAS|  DECOMP  |  BUS   |
     // beat_cnt :                   | 0 | 1 |//14 |15 |
 
-    // hbusreq_o: _______--------____________//___________________--------__________________
-    // hgrant_i : ___________----____________//_______________________----__________________
-    // haddr_o  :               |+0 |+4 |+8 |//+60|                       |+0 |+4 |+8|
+    // hbusreq_o: _______--------------------//___________________---------------------_____
+    // hgrant_i : ___________----------------//_______________________-----------------_____
+    // haddr_o  :               |+0 |+4 |+8 |//+60|                       |+0 |+4 |+8 |
     // hsize_o  :                         constant (4B)
     // hburst_o :                         constant (16-beat)
     // hready_i : _______________------------//-------____________________-------------------
@@ -117,9 +117,6 @@ module AIDC_LITE_DECOMP_ENGINE
             S_RD_BUSREQ: begin
                 // request granted
                 if (ahb_if.hgrant) begin
-                    // deassert hbusreq
-                    hbusreq_n                       = 1'b0;
-
                     // address phase part (prepation)
                     // set the address and SRC_ADDR + BLK_CNT*128
                     haddr_n                         = src_addr_i + {blk_cnt, 6'd0};
@@ -153,6 +150,11 @@ module AIDC_LITE_DECOMP_ENGINE
                     beat_en                         = 1'b1;
                     beat_cnt_n                      = beat_cnt + 'd1;
 
+                    if (beat_cnt=='d13) begin
+                        // deassert hbusreq
+                        hbusreq_n                       = 1'b0;
+                    end
+
                     if (beat_cnt=='d14) begin
                         // last address (=last data - 1) of the access
                         htrans_n                        = HTRANS_IDLE;
@@ -179,9 +181,6 @@ module AIDC_LITE_DECOMP_ENGINE
             S_WR1_BUSREQ: begin
                 // request granted
                 if (ahb_if.hgrant) begin
-                    // deassert hbusreq
-                    hbusreq_n                       = 1'b0;
-
                     // address phase part (prepation)
                     // continue using haddr and hwrite from the 1st access
                     //  x2 for block_cnt than source as destination contains
@@ -212,7 +211,12 @@ module AIDC_LITE_DECOMP_ENGINE
                     // data phase part
                     beat_cnt_n                      = beat_cnt + 'd1;
 
-                    if (beat_cnt=='d30) begin
+                    if (beat_cnt=='d14) begin
+                        // deassert hbusreq
+                        hbusreq_n                       = 1'b0;
+                    end
+
+                    if (beat_cnt=='d15) begin
                         // last address (=last data - 1) of the access
                         htrans_n                        = HTRANS_IDLE;
                         state_n                         = S_WR1_LAST_DATA;
@@ -231,9 +235,6 @@ module AIDC_LITE_DECOMP_ENGINE
             end
             S_WR2_BUSREQ: begin
                 if (ahb_if.hgrant) begin
-                    // deassert hbusreq
-                    hbusreq_n                       = 1'b0;
-
                     // address phase part
                     // set the address and SRC_ADDR + BLK_CNT*64
                     htrans_n                        = HTRANS_NONSEQ;
@@ -262,7 +263,12 @@ module AIDC_LITE_DECOMP_ENGINE
                     haddr_n                         = haddr + 'd4;
                     beat_cnt_n                      = beat_cnt + 'd1;
 
-                    if (beat_cnt=='d15) begin
+                    if (beat_cnt=='d30) begin
+                        // deassert hbusreq
+                        hbusreq_n                       = 1'b0;
+                    end
+
+                    if (beat_cnt=='d31) begin
                         // last address (=last data - 1) of the access
                         htrans_n                        = HTRANS_IDLE;
                         state_n                         = S_WR2_LAST_DATA;

@@ -100,7 +100,6 @@ module AIDC_LITE_COMP_ZRLE
     //----------------------------------------------------------
     // Code concatenate
     //----------------------------------------------------------
-    wire    [10:0]                      blk_size;
     AIDC_LITE_CODE_CONCATENATE          u_concat
     (
         .clk                            (clk),
@@ -116,9 +115,7 @@ module AIDC_LITE_COMP_ZRLE
         .addr_o                         (addr_o),
         .data_o                         (data_o),
         .done_o                         (done_o),
-        .blk_size_o                     (blk_size)
+        .fail_o                         (fail_o)
     );
-
-    assign  fail_o                      = (blk_size>11'd512);
 
 endmodule

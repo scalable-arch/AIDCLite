@@ -1,0 +1,3 @@
+[submodule "sim/gen_amba"]
+	path = sim/gen_amba
+	url = https://github.com/adki/gen_amba.git
