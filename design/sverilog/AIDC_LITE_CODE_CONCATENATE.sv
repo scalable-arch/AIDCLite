@@ -59,8 +59,8 @@ module AIDC_LITE_CODE_CONCATENATE
     always_comb begin
         logic   [TMP_BUF_SIZE-1:0]      tmp_buf;
         valid_n                         = 1'b0;
-        addr_n                          = addr;
-        data_n                          = data;
+        addr_n                          = 'hX;
+        data_n                          = 'hX;
         done_n                          = done;
         fail_n                          = fail;
 
@@ -138,8 +138,8 @@ module AIDC_LITE_CODE_CONCATENATE
     always_ff @(posedge clk)
         if  (~rst_n) begin
             valid                           <= 1'b0;
-            addr                            <= 'd0;
-            data                            <= 'd0;
+            //addr                            <= 'd0;
+            //data                            <= 'd0;
             done                            <= 1'b1;
             fail                            <= 1'b0;
 
