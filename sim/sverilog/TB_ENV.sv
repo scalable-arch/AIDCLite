@@ -64,7 +64,7 @@ class apb_env;
         this.apb_if         = apb_if;
     endfunction
     
-    task reset();
+    task apb_reset();
         apb_if.reset_master();
     endtask
 
@@ -95,7 +95,7 @@ class apb_env;
 
     task run();
         logic [31:0] rdata;
-        reset();
+        apb_reset();
         
         apb_write();
         apb_read(rdata);

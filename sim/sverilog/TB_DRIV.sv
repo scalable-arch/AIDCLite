@@ -16,10 +16,14 @@ class Driver;
         wait (!mst_ahb_if.rst_n);    // #5;
         $display("[ DRIVER ] ----- Reset Started ----- ");
 
-        `DRIV_IF.wlast         <= 0;    // wi
-        `DRIV_IF.wvalid        <= 0;    
-        `DRIV_IF.wdata         <= 0;    
-        `DRIV_IF.wstrb         <= 0;    
+        `DRIV_IF.hbusreq       <= 0;    
+        `DRIV_IF.haddr         <= 0;    
+        `DRIV_IF.htrans        <= 0;    
+        `DRIV_IF.hwrite        <= 0;    
+        `DRIV_IF.hsize         <= 0;    
+        `DRIV_IF.hburst        <= 0;    
+        `DRIV_IF.hprot         <= 0;    
+        `DRIV_IF.hwdata        <= 0;    
         
         wait (mst_ahb_if.rst_n);    // #5;
         $display("[ DRIVER ] ----- Reset Ended -----");
@@ -30,30 +34,39 @@ class Driver;
         forever begin
             int cycle2cycle_delay = 0;
             int trans2trans_delay = 0;
-            gen2driv.get(trans);
+            gen_driv.get(trans);
             for (int i=0; i<16; i=i+1) begin
                 // drive data. The data will not change until it is received by ready.
-                `DRIV_IF.wvalid               <= trans.valid;
-                `DRIV_IF.wid                  <= trans.id;
-                `DRIV_IF.wlast                <= (i==15);
-                `DRIV_IF.wdata                <= trans.data[i];
-                `DRIV_IF.wstrb                <= trans.strb & 8'b11111111;         // 8'b00000 0001 (라인별 1씩 shift) 
-                @(posedge vif_w.clk);
-                while (!`DRIV_IF_ICNT_W.wready) begin
-                    @(posedge vif_w.clk);
+                `DRIV_IF.hbusreq       <= 0;    
+                `DRIV_IF.haddr         <= 0;    
+                `DRIV_IF.htrans        <= 0;    
+                `DRIV_IF.hwrite        <= 0;    
+                `DRIV_IF.hsize         <= 0;    
+                `DRIV_IF.hburst        <= 0;    
+                `DRIV_IF.hprot         <= 0;    
+                `DRIV_IF.hwdata        <= 0;    
+                @(posedge mst_ahb_if.clk);
+                while (!`DRIV_IF.hgrant) begin
+                    @(posedge mst_ahb_if.clk);
                 end
-                `DRIV_IF.wvalid               <= 1'b0;
-                `DRIV_IF.wid                  <= 'bx;
-                `DRIV_IF.wlast                <= 1'bx;
-                `DRIV_IF.wdata                <= 'hx;
-                `DRIV_IF.wstrb                <= 'bx;
+                `DRIV_IF.hbusreq       <= 0;    
+                `DRIV_IF.haddr         <= 0;    
+                `DRIV_IF.htrans        <= 0;    
+                `DRIV_IF.hwrite        <= 0;    
+                `DRIV_IF.hsize         <= 0;    
+                `DRIV_IF.hburst        <= 0;    
+                `DRIV_IF.hprot         <= 0;    
+                `DRIV_IF.hwdata        <= 0;    
                 repeat(cycle2cycle_delay) @(posedge vif_w.clk);
             end
-            `DRIV_IF.wvalid               <= 1'b0;
-            `DRIV_IF.wid                  <= 'bx;
-            `DRIV_IF.wlast                <= 1'bx;
-            `DRIV_IF.wdata                <= 'hx;
-            `DRIV_IF.wstrb                <= 'bx;
+            `DRIV_IF.hbusreq       <= 0;    
+            `DRIV_IF.haddr         <= 0;    
+            `DRIV_IF.htrans        <= 0;    
+            `DRIV_IF.hwrite        <= 0;    
+            `DRIV_IF.hsize         <= 0;    
+            `DRIV_IF.hburst        <= 0;    
+            `DRIV_IF.hprot         <= 0;    
+            `DRIV_IF.hwdata        <= 0;    
             repeat(trans2trans_delay) @(posedge vif_w.clk);
         end
     endtask
