@@ -17,11 +17,6 @@ module AIDC_LITE_DECOMP_ZRLE
     output  logic   [63:0]              data_o,
     output  logic                       done_o
 );
-
-    logic   [4:0]                       cnt,        cnt_n;
-    logic   [8:0]                       size,       size_n;
-    logic   [CODE_BUF_SIZE-1:0]         code_buf,   code_buf_n;
-
     logic                               valid,      valid_n;
     // addr and data will be ORed to share a buffer among decompressors
     // Therefore, these signals must be 0 when the current decompressor
@@ -29,16 +24,20 @@ module AIDC_LITE_DECOMP_ZRLE
     logic   [3:0]                       addr,       addr_n;
     logic   [63:0]                      data,       data_n;
     logic                               done,       done_n;
+    
+    logic   [CODE_BUF_SIZE-1:0]         code_buf,   code_buf_n;
+    logic   [8:0]                       buf_size,   buf_size_n;
+    logic   [4:0]                       cnt,        cnt_n;
 
     always_comb begin
-        cnt_n                           = cnt;
-        size_n                          = size;
-        code_buf_n                      = code_buf;
-
         valid_n                         = 1'b0;
-        addr_n                          = addr;
-        data_n                          = 'd0;
+        addr_n                          = 'hX;
+        data_n                          = 'hX;
         done_n                          = done;
+        
+        code_buf_n                      = code_buf;
+        buf_size_n                      = buf_size;
+        cnt_n                           = cnt;
 
         // output generation
         if (cnt < 'd8) begin
@@ -50,7 +49,7 @@ module AIDC_LITE_DECOMP_ZRLE
                                                            16'd0,
                                                            16'd0,
                                                            16'd0};
-                        size_n                          = size - 'd6;
+                        buf_size_n                      = buf_size - 'd6;
                         code_buf_n                      = code_buf << 6;
                     end
                 end
@@ -61,7 +60,7 @@ module AIDC_LITE_DECOMP_ZRLE
                                                            16'd0,
                                                            16'd0,
                                                            code_buf[CODE_BUF_SIZE-7 -: 16]};
-                        size_n                          = size - 'd22;
+                        buf_size_n                      = buf_size - 'd22;
                         code_buf_n                      = code_buf << 22;
                     end
                 end
@@ -72,7 +71,7 @@ module AIDC_LITE_DECOMP_ZRLE
                                                            16'd0,
                                                            code_buf[CODE_BUF_SIZE-6 -: 16],
                                                            16'd0};
-                        size_n                          = size - 'd21;
+                        buf_size_n                      = buf_size - 'd21;
                         code_buf_n                      = code_buf << 21;
                     end
                 end
@@ -83,7 +82,7 @@ module AIDC_LITE_DECOMP_ZRLE
                                                            code_buf[CODE_BUF_SIZE-6 -: 16],
                                                            16'd0,
                                                            16'd0};
-                        size_n                          = size - 'd21;
+                        buf_size_n                      = buf_size - 'd21;
                         code_buf_n                      = code_buf << 21;
                     end
                 end
@@ -94,7 +93,7 @@ module AIDC_LITE_DECOMP_ZRLE
                                                            16'd0,
                                                            16'd0,
                                                            16'd0};
-                        size_n                          = size - 'd21;
+                        buf_size_n                      = buf_size - 'd21;
                         code_buf_n                      = code_buf << 21;
                     end
                 end
@@ -105,7 +104,7 @@ module AIDC_LITE_DECOMP_ZRLE
                                                            16'd0,
                                                            code_buf[CODE_BUF_SIZE-5 -: 16],
                                                            code_buf[CODE_BUF_SIZE-21 -: 16]};
-                        size_n                          = size - 'd36;
+                        buf_size_n                      = buf_size - 'd36;
                         code_buf_n                      = code_buf << 36;
                     end
                 end
@@ -116,7 +115,7 @@ module AIDC_LITE_DECOMP_ZRLE
                                                            code_buf[CODE_BUF_SIZE-5 -: 16],
                                                            16'd0,
                                                            code_buf[CODE_BUF_SIZE-21 -: 16]};
-                        size_n                          = size - 'd36;
+                        buf_size_n                      = buf_size - 'd36;
                         code_buf_n                      = code_buf << 36;
                     end
                 end
@@ -127,7 +126,7 @@ module AIDC_LITE_DECOMP_ZRLE
                                                            16'd0,
                                                            16'd0,
                                                            code_buf[CODE_BUF_SIZE-21 -: 16]};
-                        size_n                          = size - 'd36;
+                        buf_size_n                      = buf_size - 'd36;
                         code_buf_n                      = code_buf << 36;
                     end
                 end
@@ -138,7 +137,7 @@ module AIDC_LITE_DECOMP_ZRLE
                                                            code_buf[CODE_BUF_SIZE-5 -: 16],
                                                            code_buf[CODE_BUF_SIZE-21 -: 16],
                                                            16'd0};
-                        size_n                          = size - 'd36;
+                        buf_size_n                      = buf_size - 'd36;
                         code_buf_n                      = code_buf << 36;
                     end
                 end
@@ -149,7 +148,7 @@ module AIDC_LITE_DECOMP_ZRLE
                                                            16'd0,
                                                            code_buf[CODE_BUF_SIZE-21 -: 16],
                                                            16'd0};
-                        size_n                          = size - 'd36;
+                        buf_size_n                      = buf_size - 'd36;
                         code_buf_n                      = code_buf << 36;
                     end
                 end
@@ -160,7 +159,7 @@ module AIDC_LITE_DECOMP_ZRLE
                                                            code_buf[CODE_BUF_SIZE-21 -: 16],
                                                            16'd0,
                                                            16'd0};
-                        size_n                          = size - 'd36;
+                        buf_size_n                      = buf_size - 'd36;
                         code_buf_n                      = code_buf << 36;
                     end
                 end
@@ -171,7 +170,7 @@ module AIDC_LITE_DECOMP_ZRLE
                                                            code_buf[CODE_BUF_SIZE-5 -: 16],
                                                            code_buf[CODE_BUF_SIZE-21 -: 16],
                                                            code_buf[CODE_BUF_SIZE-37 -: 16]};
-                        size_n                          = size - 'd52;
+                        buf_size_n                      = buf_size - 'd52;
                         code_buf_n                      = code_buf << 52;
                     end
                 end
@@ -182,7 +181,7 @@ module AIDC_LITE_DECOMP_ZRLE
                                                            16'd0,
                                                            code_buf[CODE_BUF_SIZE-21 -: 16],
                                                            code_buf[CODE_BUF_SIZE-37 -: 16]};
-                        size_n                          = size - 'd52;
+                        buf_size_n                      = buf_size - 'd52;
                         code_buf_n                      = code_buf << 52;
                     end
                 end
@@ -193,7 +192,7 @@ module AIDC_LITE_DECOMP_ZRLE
                                                            code_buf[CODE_BUF_SIZE-21 -: 16],
                                                            16'd0,
                                                            code_buf[CODE_BUF_SIZE-37 -: 16]};
-                        size_n                          = size - 'd52;
+                        buf_size_n                      = buf_size - 'd52;
                         code_buf_n                      = code_buf << 52;
                     end
                 end
@@ -204,7 +203,7 @@ module AIDC_LITE_DECOMP_ZRLE
                                                            code_buf[CODE_BUF_SIZE-21 -: 16],
                                                            code_buf[CODE_BUF_SIZE-37 -: 16],
                                                            16'd0};
-                        size_n                          = size - 'd52;
+                        buf_size_n                      = buf_size - 'd52;
                         code_buf_n                      = code_buf << 52;
                     end
                 end
@@ -212,7 +211,7 @@ module AIDC_LITE_DECOMP_ZRLE
                     if (size >= 'd66) begin
                         valid_n                         = 1'b1;
                         data_n                          = code_buf[CODE_BUF_SIZE-3 -: 64];
-                        size_n                          = size - 'd66;
+                        buf_size_n                      = buf_size - 'd66;
                         code_buf_n                      = code_buf << 66;
                     end
                 end
