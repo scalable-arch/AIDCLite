@@ -7,16 +7,7 @@ on:
     branches:
       - main
 jobs:
-  VCS-Compile-Only:
-    runs-on: self-hosted        # runs on a server with Synopsys VCS installed
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-      - name: compile
-        run: |
-          source ${{github.workspace}}/env.source ${{github.workspace}}
-          action.compile_only
-  VCS-Sim:
+  Sim-VCS:
     runs-on: self-hosted        # runs on a server with Synopsys VCS installed
     steps:
       - uses: actions/checkout@v3
@@ -25,9 +16,9 @@ jobs:
         run: |
           source ${{github.workspace}}/env.source ${{github.workspace}}
           action.sim
-          ./simv
-#../simv
-  Spyglass-Lint-RTL-Handoff:
+      - name: Sim-No-Dump
+        run: ./simv
+  Lint-Spyglass-RTL-Handoff:
     runs-on: self-hosted        # runs on a server with Synopsys Spyglass installed
     steps:
       - uses: actions/checkout@v3
@@ -52,7 +43,7 @@ jobs:
 #        run: |
 #          source ${{github.workspace}}/env.source ${{github.workspace}}
 #          action.syn
-  PeakRDL-RDL:
+  RDL-PeakRDL:
     runs-on: ubuntu-latest    # GitHub runner
     steps:
       - uses: actions/checkout@v3
