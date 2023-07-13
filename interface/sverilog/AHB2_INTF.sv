@@ -74,6 +74,13 @@ interface AHB2_MST_INTF
     // synopsys translate_off
     // - for verification only
     function reset_master();
+        hgrant                      = 'd0;
+        hrdata                      = 'dx;
+        hready                      = 'd0;
+        hresp                       = 'dx;
+    endfunction
+
+    function reset_slave();
         hbusreq                     = 'd0;
         haddr                       = 'dx;
         htrans                      = 'dx;
@@ -104,34 +111,46 @@ interface AHB2_MST_INTF
     modport master_tb   (clocking master_cb, input hclk, hreset_n);
     modport slave_tb    (clocking slave_cb,  input hclk, hreset_n);
 
-    task write (input int burst,
+    task m_read (input logic [31:0] haddr,
+                 input logic [31:0] hrdata
+        );
+        #1;
+        reset_master();
+        while(!master_cb.hbusreq)begin
+            @(posedge hclk);
+        end
+        master_cb.hgrant                            <= 1'b1;
+        master_cb.hrdata                            <= hrdata;
+        master_cb.hready                            <= 1'b1;
+        master_cb.hresp                             <= HRESP_OKAY;
+        @(posedge hclk);
+    endtask
+ 
+    task s_write (input int burst,
                 input logic [31:0]  haddr,
                 input logic [31:0]  hwdata);
-        #1
-        master_cb.hwrite                            <= 1'b1;
-        master_cb.haddr                             <= haddr;
-        master_cb.hburst                            <= HBUSRT_WRAP16;
-        master_cb.hsize                             <= HSIZE_1024BITS;
-        master_cb.hprot                             <= 4'b0011; 
+        #1;
+        slave_cb.hwrite                            <= 1'b1;
+        slave_cb.haddr                             <= haddr;
+        slave_cb.hburst                            <= HBUSRT_WRAP16;
+        slave_cb.hsize                             <= HSIZE_1024BITS;
+        slave_cb.hprot                             <= 4'b0011; 
 
-        master_cb.htrans                            <= HTRANS_IDLE;
+        slave_cb.htrans                            <= HTRANS_IDLE;
         if(i ==0) begin
-            master_cb.htrans                    <= HTRANS_NONSEQ;
+            slave_cb.htrans                    <= HTRANS_NONSEQ;
         end
         else begin
-            master_cb.htrans                    <= HTRANS_SEQ;
+            slave_cb.htrans                    <= HTRANS_SEQ;
         end
-        master_cb.hwdata                        <= hwdata;
-        while(!master_cb.hready) begin
+        slave_cb.hwdata                        <= hwdata;
+        while(!slave_cb.hready) begin
             @(posedge hclk);
         end
         @(posedge hclk);
-        reset_master();
+        reset_slave();
     endtask
 
-    task read (input logic [31:0] haddr);
-        
-    endtask
     
     // synopsys translate_on
 

@@ -32,7 +32,7 @@ class ahb_env;
         gen             = new(gen_driv, gen_score);
         driv            = new(mst_ahb_if, gen_driv);
         mon             = new(slv_ahb_if, mon_score);
-        score           = new(mon_score);
+        score           = new(gen_score, mon_score);
     endtask
 
     task reset();

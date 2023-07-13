@@ -1,6 +1,6 @@
 program AHB_TEST(
-        AHB2_MST_INTF               mst_ahb_if  (.hclk(clk), .hreset_n(rst_n));
-        AHB2_SLV_INTF               slv_ahb_if  (.hclk(clk), .hreset_n(rst_n));
+        AHB2_MST_INTF.master_tb               mst_ahb_if  (.hclk(clk), .hreset_n(rst_n));
+        AHB2_SLV_INTF.slave_tb                slv_ahb_if  (.hclk(clk), .hreset_n(rst_n));
     );
 
     ahb_env env;
