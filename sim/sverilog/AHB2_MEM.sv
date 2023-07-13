@@ -30,7 +30,7 @@ module AHB2_MEM
             if (ahb_if.hsel & ahb_if.htrans[1] & ahb_if.hreadyi & !ahb_if.hwrite) begin
                 hrdata                              <= mem[ahb_if.haddr[ADDR_WIDTH+1:2]];
                 // synopsys translate_off
-                $display("@%08t %m RD addr=0x%08x data=0x%08x", $time, ahb_if.haddr, hrdata);
+                $display("@%08t %m RD addr=0x%08x data=0x%08x", $time, ahb_if.haddr, mem[ahb_if.haddr[ADDR_WIDTH+1:2]]);
                 // synopsys translate_on
             end
             else begin
