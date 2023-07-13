@@ -72,6 +72,21 @@ module AHB2_MEM
             mem[i]                      = i;
         end
     endtask
+
+    task read_word (
+        input   [31:0]                  addr,
+        output  [31:0]                  rdata
+    );
+        rdata                           = mem[addr[ADDR_WIDTH-1:2]];
+    endtask
+
+    
+    task write_word (
+        input   [31:0]                  addr,
+        input   [31:0]                  wdata
+    );
+        mem[addr[ADDR_WIDTH-1:2]]       = wdata;
+    endtask
     // synopsys translate_on
 
 endmodule
