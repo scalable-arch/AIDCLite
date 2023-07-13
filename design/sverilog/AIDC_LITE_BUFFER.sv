@@ -1,4 +1,4 @@
-module AIDC_LITE_COMP_BUFFER
+module AIDC_LITE_BUFFER
 #(
     parameter   ADDR_WIDTH              = 3
 )

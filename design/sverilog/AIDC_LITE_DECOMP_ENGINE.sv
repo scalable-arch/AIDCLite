@@ -16,12 +16,12 @@ module AIDC_LITE_DECOMP_ENGINE
     output  logic                       decomp2_wren_o,
     output  logic                       decomp_sop_o,
     output  logic                       decomp_eop_o,
-    output  logic   [63:0]              decomp_wdata_o,
+    output  logic   [31:0]              decomp_wdata_o,
 
     input   wire                        decomp_done_i,
 
     output  logic   [3:0]               buf_addr_o,
-    input   wire    [63:0]              decomp_data_i
+    input   wire    [63:0]              decomp_rdata_i
 );
 
     // A block: 64B data
@@ -321,7 +321,7 @@ module AIDC_LITE_DECOMP_ENGINE
     logic                               decomp2_wren,   decomp2_wren_n;
     logic                               decomp_sop,     decomp_sop_n;
     logic                               decomp_eop,     decomp_eop_n;
-    logic   [63:0]                      decomp_wdata,   decomp_wdata_n;
+    logic   [31:0]                      decomp_wdata,   decomp_wdata_n;
 
     always_comb begin
         decomp0_wren_n                  = 1'b0;
@@ -345,17 +345,12 @@ module AIDC_LITE_DECOMP_ENGINE
                 end
             end
 
-            if (beat_cnt[0]==1'b0) begin        // odd cycles
-                decomp_wdata_n[63:32]           = ahb_if.hrdata;
-            end
-            else begin
-                decomp0_wren_n                  = (owner==2'd0);
-                decomp1_wren_n                  = (owner==2'd1);
-                decomp2_wren_n                  = (owner==2'd2);
-                decomp_sop_n                    = (beat_cnt[3:1]=='d0);
-                decomp_eop_n                    = (beat_cnt[3:1]==3'h7);
-                decomp_wdata_n[31:0]            = ahb_if.hrdata;
-            end
+            decomp0_wren_n                  = (owner_n==2'd0);
+            decomp1_wren_n                  = (owner_n==2'd1);
+            decomp2_wren_n                  = (owner_n==2'd2);
+            decomp_sop_n                    = (beat_cnt[3:0]==4'h0);
+            decomp_eop_n                    = (beat_cnt[3:0]==4'hF);
+            decomp_wdata_n                  = ahb_if.hrdata;
         end
     end
 
@@ -366,7 +361,7 @@ module AIDC_LITE_DECOMP_ENGINE
             decomp2_wren                    <= 1'b0;
             decomp_sop                      <= 1'b0;
             decomp_eop                      <= 1'b0;
-            decomp_wdata                    <= 'h0;
+            decomp_wdata                    <= 32'd0;
             owner                           <= 2'd0;
         end
         else begin

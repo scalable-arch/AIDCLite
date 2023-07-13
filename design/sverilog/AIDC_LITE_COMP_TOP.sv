@@ -97,7 +97,7 @@ module AIDC_LITE_COMP_TOP
         .fail_o                         (sr_fail)
     );
 
-    AIDC_LITE_COMP_BUFFER               u_sr_buffer
+    AIDC_LITE_BUFFER #(.ADDR_WIDTH(3))  u_sr_buffer
     (
         .clk                            (clk),
         .rst_n                          (rst_n),
@@ -127,7 +127,7 @@ module AIDC_LITE_COMP_TOP
         .fail_o                         (zrle_fail)
     );
 
-    AIDC_LITE_COMP_BUFFER               u_zrle_buffer
+    AIDC_LITE_BUFFER #(.ADDR_WIDTH(3))  u_zrle_buffer
     (
         .clk                            (clk),
         .rst_n                          (rst_n),

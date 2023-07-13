@@ -1,8 +1,8 @@
-/*
-module AIDC_LITE_DECOMP_ZRLE (
-    input   wire                        clk,
-    input   wire                        rst_n,
-
+module AIDC_LITE_DECOMP_ZRLE
+#(
+    parameter   CODE_BUF_SIZE           = (512-2)
+)
+(
     input   wire                        clk,
     input   wire                        rst_n,
 
@@ -10,325 +10,268 @@ module AIDC_LITE_DECOMP_ZRLE (
     input   wire                        valid_i,
     input   wire                        sop_i,
     input   wire                        eop_i,
-    input   wire    [63:0]              data_i,
+    input   wire    [31:0]              data_i,
 
     output  logic                       valid_o,
-    output  logic   [2:0]               addr_o,
+    output  logic   [3:0]               addr_o,
     output  logic   [63:0]              data_o,
     output  logic                       done_o
 );
-*/
-module ZRLE_DECOMP (
-	input wire				rst_n,
-	input wire				clk,
-	
-	input wire 				valid_i,
-	input wire [63:0]			data_i,
-	input wire				sop_i,
-	input wire				eop_i,
-	
-	input wire				ready_i,
 
-	output wire				ready_o,
-	output wire				sop_o,
-	output wire 				eop_o,
-	
-	output wire				valid_o,
-	output wire [63:0]			data_o
-);
+    logic   [4:0]                       cnt,        cnt_n;
+    logic   [8:0]                       size,       size_n;
+    logic   [CODE_BUF_SIZE-1:0]         code_buf,   code_buf_n;
 
+    logic                               valid,      valid_n;
+    // addr and data will be ORed to share a buffer among decompressors
+    // Therefore, these signals must be 0 when the current decompressor
+    // does not write (valid is deassert)
+    logic   [3:0]                       addr,       addr_n;
+    logic   [63:0]                      data,       data_n;
+    logic                               done,       done_n;
 
-	reg [6:0]				size, size_n, size_nn;
-	reg [127:0]				code_buf, code_buf_n, code_buf_nn;		
-	// shift buffer => will be full => output ready = 0
-	
-	reg 					ready;
-	reg [63:0] 				data_out, data_out_n;
-	reg 					sop;
-	reg 					eop;	
-	reg 					valid_out, valid_out_n;
-    reg                     done,done_n;
-	// output data at next cycle is valid => valid_out_n = 1
-	
-	reg [3:0]				in_bcnt, in_bcnt_n;		// burst count
-	reg [3:0] 				out_bcnt, out_bcnt_n;
-	// Seqen //////////////////////////////////////////////
-	always @(posedge clk or negedge rst_n) begin
-		if (!rst_n) begin
-			size 		<= 'b0;
-			code_buf 	<= 'b0;
-			data_out 	<= 'b0;
-			valid_out	<= 'b0;
-			in_bcnt		<= 'b0;
-			out_bcnt 	<= 'b0;
-			done 	<= 'b0;
-		end
-        else if(ready_i) begin
-            size 		<= size_nn;
-			code_buf 	<= code_buf_nn;
-			data_out 	<= data_out_n;
-		
-			valid_out 	<= valid_out_n;
-			in_bcnt 	<= in_bcnt_n;
-			out_bcnt	<= out_bcnt_n;
+    always_comb begin
+        cnt_n                           = cnt;
+        size_n                          = size;
+        code_buf_n                      = code_buf;
 
-			done		<= done_n;
-        end 
-		else begin
-			size 		<= size;
-			code_buf 	<= code_buf;
-			data_out 	<= data_out;
-		
-			valid_out 	<= valid_out;
-			in_bcnt 	<= in_bcnt;
-			out_bcnt	<= out_bcnt;
+        valid_n                         = 1'b0;
+        addr_n                          = addr;
+        data_n                          = 'd0;
+        done_n                          = done;
 
-			done		<= done_n;
-		end
-	end
-	///////////////////////////////////////////////////////
-	// rstn 	____----------------------------------------
-	// clk		____----____----____----____----____----____
-	// data_i	____x=======x=======x===============x=======
-	// valid_i	____----------------------------------------
-	// ready	____----------------________----------------
-	// 
-	// data_o	____________x=======x=======x=======x=======
-	// valid_o	____________--------------------------------
-	// Comb ///////////////////////////////////////////////
-	always @(*) begin
-		data_out_n 	= data_out;
-		in_bcnt_n	= in_bcnt;
-		out_bcnt_n 	= out_bcnt;
-		valid_out_n	= 0;
-		size_nn 	= size_n;
-		size_n		= size;
-		code_buf_nn	= code_buf_n;
-		code_buf_n	= code_buf;
-		done_n		= done;
-        
-        // 
-		if ((!valid_out | (valid_out & ready_i)) & !done_n) begin // & (in_bcnt > out_bcnt)
-			casez (code_buf[127:122])
-				6'b000000: begin
-					if (size >= 'd6) begin
-						data_out_n = 64'b0;
-						valid_out_n = 1'b1;
-						size_n = size - 6;
-						code_buf_n = code_buf << 6;
-						out_bcnt_n = out_bcnt + 1;
-					end
-				end
-				6'b000001: begin
-					if (size >= 'd22) begin
-						data_out_n = {16'b0, 16'b0, 16'b0, code_buf[121:106]};
-						valid_out_n = 1'b1;
-						size_n = size - 22;
-						code_buf_n = code_buf << 22;
-						out_bcnt_n = out_bcnt + 1;
-					end
-				end
-				6'b00001?: begin
-					if (size >= 'd21) begin
-						data_out_n = {16'b0, 16'b0, code_buf[122:107], 16'b0};
-						valid_out_n = 1'b1;
-						size_n = size - 21;
-						code_buf_n = code_buf << 21;
-						out_bcnt_n = out_bcnt + 1;
-					end
-				end
-				6'b00010?: begin
-					if (size >= 'd21) begin
-						data_out_n = {16'b0, code_buf[122:107], 16'b0, 16'b0};
-						valid_out_n = 1'b1;
-						size_n = size - 21;
-						code_buf_n = code_buf << 21;
-						out_bcnt_n = out_bcnt + 1;
-					end
-				end
-				6'b00011?: begin
-					if (size >= 'd21) begin
-						data_out_n = {code_buf[122:107], 16'b0, 16'b0, 16'b0};
-						valid_out_n = 1'b1;
-						size_n = size - 21;
-						code_buf_n = code_buf << 21;
-						out_bcnt_n = out_bcnt + 1;
-					end
-				end
-				6'b0010??: begin
-					if (size >= 'd36) begin
-						data_out_n = {16'b0, 16'b0, code_buf[123:108], code_buf[107:92]};
-						valid_out_n = 1'b1;
-						size_n = size - 36;
-						code_buf_n = code_buf << 36;
-						out_bcnt_n = out_bcnt + 1;
-					end
-				end
-				6'b0011??: begin
-					if (size >= 'd36) begin
-						data_out_n = {16'b0, code_buf[123:108], 16'b0, code_buf[107:92]};
-						valid_out_n = 1'b1;
-						size_n = size - 36;
-						code_buf_n = code_buf << 36;
-						out_bcnt_n = out_bcnt + 1;
-					end
-				end
-				6'b0100??: begin
-					if (size >= 'd36) begin
-						data_out_n = {code_buf[123:108], 16'b0, 16'b0, code_buf[107:92]};
-						valid_out_n = 1'b1;
-						size_n = size - 36;
-						code_buf_n = code_buf << 36;
-						out_bcnt_n = out_bcnt + 1;
-					end
-				end
-				6'b0101??: begin
-					if (size >= 'd36) begin
-						data_out_n = {16'b0, code_buf[123:108], code_buf[107:92], 16'b0};
-						valid_out_n = 1'b1;
-						size_n = size - 36;
-						code_buf_n = code_buf << 36;
-						out_bcnt_n = out_bcnt + 1;
-					end
-				end
-				6'b0110??: begin
-					if (size >= 'd36) begin
-						data_out_n = {code_buf[123:108], 16'b0, code_buf[107:92], 16'b0};
-						valid_out_n = 1'b1;
-						size_n = size - 36;
-						code_buf_n = code_buf << 36;
-						out_bcnt_n = out_bcnt + 1;
-					end
-				end
-				6'b0111??: begin
-					if (size >= 'd36) begin
-						data_out_n = {code_buf[123:108], code_buf[107:92], 16'b0, 16'b0};
-						valid_out_n = 1'b1;
-						size_n = size - 36;
-						code_buf_n = code_buf << 36;
-						out_bcnt_n = out_bcnt + 1;
-					end
-				end
-				6'b1000??: begin
-					if (size >= 'd52) begin
-						data_out_n = {16'b0, code_buf[123:108], code_buf[107:92], code_buf[91:76]};
-						valid_out_n = 1'b1;
-						size_n = size - 52;
-						code_buf_n = code_buf << 52;
-						out_bcnt_n = out_bcnt + 1;
-					end
-				end
-				6'b1001??: begin
-					if (size >= 'd52) begin
-						data_out_n = {code_buf[123:108], 16'b0, code_buf[107:92], code_buf[91:76]};
-						valid_out_n = 1'b1;
-						size_n = size - 52;
-						code_buf_n = code_buf << 52;
-						out_bcnt_n = out_bcnt + 1;
-					end
-				end
-				6'b1010??: begin
-					if (size >= 'd52) begin
-						data_out_n = {code_buf[123:108], code_buf[107:92], 16'b0, code_buf[91:76]};
-						valid_out_n = 1'b1;
-						size_n = size - 52;
-						code_buf_n = code_buf << 52;
-						out_bcnt_n = out_bcnt + 1;
-					end
-				end
-				6'b1011??: begin
-					if (size >= 'd52) begin
-						data_out_n = {code_buf[123:108], code_buf[107:92], code_buf[91:76], 16'b0};
-						valid_out_n = 1'b1;
-						size_n = size - 52;
-						code_buf_n = code_buf << 52;
-						out_bcnt_n = out_bcnt + 1;
-					end
-				end
-				6'b11????: begin
-					if (size >= 'd66) begin
-						data_out_n = code_buf[125:62];
-						valid_out_n = 1'b1;
-						size_n = size - 66;
-						code_buf_n = code_buf << 66;
-						out_bcnt_n = out_bcnt + 1;
-					end
-				end
-				// default: begin
-				// 	valid_out_n = 1'b0;
-				// end
-			endcase
-        	end
-		else if (done_n) begin
-			data_out_n = 0;
-			valid_out_n = 0;
-			size_n = 0;
-			code_buf = 0;
-		end
-		else begin
-			code_buf_n = code_buf;
-			size_n = size;
-		end
-		// output burst sart & end signal sop_o & eop_o
-		sop = (out_bcnt == 'd1 & valid_out & !done_n);
-		eop = (out_bcnt == 'd0 & valid_out);
+        // output generation
+        if (cnt < 'd8) begin
+            casez (code_buf[CODE_BUF_SIZE-1:CODE_BUF_SIZE-6])
+                6'b00_0000: begin   // Z-Z-Z-Z
+                    if (size >= 'd6) begin
+                        valid_n                         = 1'b1;
+                        data_n                          = {16'd0,
+                                                           16'd0,
+                                                           16'd0,
+                                                           16'd0};
+                        size_n                          = size - 'd6;
+                        code_buf_n                      = code_buf << 6;
+                    end
+                end
+                6'b00_0001: begin   // Z-Z-Z-N
+                    if (size >= 'd22) begin
+                        valid_n                         = 1'b1;
+                        data_n                          = {16'd0,
+                                                           16'd0,
+                                                           16'd0,
+                                                           code_buf[CODE_BUF_SIZE-7 -: 16]};
+                        size_n                          = size - 'd22;
+                        code_buf_n                      = code_buf << 22;
+                    end
+                end
+                6'b00_001?: begin   // Z-Z-N-Z
+                    if (size >= 'd21) begin
+                        valid_n                         = 1'b1;
+                        data_n                          = {16'd0,
+                                                           16'd0,
+                                                           code_buf[CODE_BUF_SIZE-6 -: 16],
+                                                           16'd0};
+                        size_n                          = size - 'd21;
+                        code_buf_n                      = code_buf << 21;
+                    end
+                end
+                6'b00_010?: begin   // Z-N-Z-Z
+                    if (size >= 'd21) begin
+                        valid_n                         = 1'b1;
+                        data_n                          = {16'd0,
+                                                           code_buf[CODE_BUF_SIZE-6 -: 16],
+                                                           16'd0,
+                                                           16'd0};
+                        size_n                          = size - 'd21;
+                        code_buf_n                      = code_buf << 21;
+                    end
+                end
+                6'b00_011?: begin   // N-Z-Z-Z
+                    if (size >= 'd21) begin
+                        valid_n                         = 1'b1;
+                        data_n                          = {code_buf[CODE_BUF_SIZE-6 -: 16],
+                                                           16'd0,
+                                                           16'd0,
+                                                           16'd0};
+                        size_n                          = size - 'd21;
+                        code_buf_n                      = code_buf << 21;
+                    end
+                end
+                6'b00_10??: begin   // Z-Z-N-N
+                    if (size >= 'd36) begin
+                        valid_n                         = 1'b1;
+                        data_n                          = {16'd0,
+                                                           16'd0,
+                                                           code_buf[CODE_BUF_SIZE-5 -: 16],
+                                                           code_buf[CODE_BUF_SIZE-21 -: 16]};
+                        size_n                          = size - 'd36;
+                        code_buf_n                      = code_buf << 36;
+                    end
+                end
+                6'b00_11??: begin   // Z-N-Z-N
+                    if (size >= 'd36) begin
+                        valid_n                         = 1'b1;
+                        data_n                          = {16'd0,
+                                                           code_buf[CODE_BUF_SIZE-5 -: 16],
+                                                           16'd0,
+                                                           code_buf[CODE_BUF_SIZE-21 -: 16]};
+                        size_n                          = size - 'd36;
+                        code_buf_n                      = code_buf << 36;
+                    end
+                end
+                6'b01_00??: begin   // N-Z-Z-N
+                    if (size >= 'd36) begin
+                        valid_n                         = 1'b1;
+                        data_n                          = {code_buf[CODE_BUF_SIZE-5 -: 16],
+                                                           16'd0,
+                                                           16'd0,
+                                                           code_buf[CODE_BUF_SIZE-21 -: 16]};
+                        size_n                          = size - 'd36;
+                        code_buf_n                      = code_buf << 36;
+                    end
+                end
+                6'b01_01??: begin   // Z-N-N-Z
+                    if (size >= 'd36) begin
+                        valid_n                         = 1'b1;
+                        data_n                          = {16'd0,
+                                                           code_buf[CODE_BUF_SIZE-5 -: 16],
+                                                           code_buf[CODE_BUF_SIZE-21 -: 16],
+                                                           16'd0};
+                        size_n                          = size - 'd36;
+                        code_buf_n                      = code_buf << 36;
+                    end
+                end
+                6'b01_10??: begin   // N-Z-N-Z
+                    if (size >= 'd36) begin
+                        valid_n                         = 1'b1;
+                        data_n                          = {code_buf[CODE_BUF_SIZE-5 -: 16],
+                                                           16'd0,
+                                                           code_buf[CODE_BUF_SIZE-21 -: 16],
+                                                           16'd0};
+                        size_n                          = size - 'd36;
+                        code_buf_n                      = code_buf << 36;
+                    end
+                end
+                6'b01_11??: begin   // N-N-Z-Z
+                    if (size >= 'd36) begin
+                        valid_n                         = 1'b1;
+                        data_n                          = {code_buf[CODE_BUF_SIZE-5 -: 16],
+                                                           code_buf[CODE_BUF_SIZE-21 -: 16],
+                                                           16'd0,
+                                                           16'd0};
+                        size_n                          = size - 'd36;
+                        code_buf_n                      = code_buf << 36;
+                    end
+                end
+                6'b10_00??: begin   // Z-N-N-N
+                    if (size >= 'd52) begin
+                        valid_n                         = 1'b1;
+                        data_n                          = {16'd0,
+                                                           code_buf[CODE_BUF_SIZE-5 -: 16],
+                                                           code_buf[CODE_BUF_SIZE-21 -: 16],
+                                                           code_buf[CODE_BUF_SIZE-37 -: 16]};
+                        size_n                          = size - 'd52;
+                        code_buf_n                      = code_buf << 52;
+                    end
+                end
+                6'b10_01??: begin   // N-Z-N-N
+                    if (size >= 'd52) begin
+                        valid_n                         = 1'b1;
+                        data_n                          = {code_buf[CODE_BUF_SIZE-5 -: 16],
+                                                           16'd0,
+                                                           code_buf[CODE_BUF_SIZE-21 -: 16],
+                                                           code_buf[CODE_BUF_SIZE-37 -: 16]};
+                        size_n                          = size - 'd52;
+                        code_buf_n                      = code_buf << 52;
+                    end
+                end
+                6'b10_10??: begin   // N-N-Z-N
+                    if (size >= 'd52) begin
+                        valid_n                         = 1'b1;
+                        data_n                          = {code_buf[CODE_BUF_SIZE-5 -: 16],
+                                                           code_buf[CODE_BUF_SIZE-21 -: 16],
+                                                           16'd0,
+                                                           code_buf[CODE_BUF_SIZE-37 -: 16]};
+                        size_n                          = size - 'd52;
+                        code_buf_n                      = code_buf << 52;
+                    end
+                end
+                6'b10_11??: begin   // N-N-N-Z
+                    if (size >= 'd52) begin
+                        valid_n                         = 1'b1;
+                        data_n                          = {code_buf[CODE_BUF_SIZE-5 -: 16],
+                                                           code_buf[CODE_BUF_SIZE-21 -: 16],
+                                                           code_buf[CODE_BUF_SIZE-37 -: 16],
+                                                           16'd0};
+                        size_n                          = size - 'd52;
+                        code_buf_n                      = code_buf << 52;
+                    end
+                end
+                default: begin  // 6'b11_????   // N-N-N-N
+                    if (size >= 'd66) begin
+                        valid_n                         = 1'b1;
+                        data_n                          = code_buf[CODE_BUF_SIZE-3 -: 64];
+                        size_n                          = size - 'd66;
+                        code_buf_n                      = code_buf << 66;
+                    end
+                end
+            endcase
+        end
 
-		if (size_n >= 'd64) begin
-			ready = 1'b0;
-		end
-        	else if(done_n) begin
-            ready = 1'b1;
-        	end
-		else begin
-			if (in_bcnt >= 8) begin
-				ready = 1'b0;
-			end
-			else	ready = 1'b1;
-		end
+        if (valid_n) begin
+            cnt_n                           = cnt + 'd1;
+        end
 
-		if (valid_i & ready) begin
-			if (sop_i) begin
-				code_buf_nn = code_buf_n | (data_i[61:0] << (66 - size_n)); // 1번 sop일 때, 62bit 전송. code_buf_nn  = {data_i,66{0}}; 
-				size_nn = size_n + 62;  // 22.09.21                         // size 62bit
-				out_bcnt_n = 0;
-				done_n = 0;
-			end
-			else begin
-                 if(eop_i & done_n) begin
-                     done_n = 1'b0;
-                 end
-                 else if(eop_i & !done_n) begin
-                     code_buf_nn = code_buf_n | (data_i << (64 - size_n));
-			      size_nn = size_n + 64;
-                 end
-                 else begin
-                    code_buf_nn = code_buf_n | (data_i << (64 - size_n));
-				size_nn = size_n + 64;
-                 end
-            	end                                                     // eop 일 때 
-			in_bcnt_n = in_bcnt + 1;
-		end
-		else begin
-			code_buf_nn = code_buf_n;
-			size_nn = size_n;
-		end
-		
-		if (eop) begin
-			in_bcnt_n = 0;
-			code_buf_nn = 0;
-			size_nn = 0;
-            size_n = 0;     // 22.09.21
-            size = 0;       // 22.09.21
-            done_n = 1;       // 22.09.21
-          end
-	end
-	///////////////////////////////////////////////////////
-	
-	assign ready_o 	= ready;
-	assign data_o 	= data_out;
-	assign valid_o 	= valid_out;
-	assign sop_o 	= sop;
-	assign eop_o 	= eop;
+        // input buffer
+        if (valid_i) begin
+            if (sop_i) begin
+                // synopsys translate_off
+                assert(!valid_n);
+                // synopsys translate_on
+                // upper 2 bits, containing prefix, is discarded
+                code_buf_n[CODE_BUF_SIZE-1 -: 30] = data_i[29:0];
+                size_n                          = 'd30;
+                cnt_n                           = 'd0;
+                done_n                          = 1'b0;
+            end
+            else begin
+                code_buf_n                      = code_buf_n
+                                                 |({data_i[31:0], {CODE_BUF_SIZE{1'b0}}} >> size_n);
+                size_n                          = size_n + 'd32;
+            end
+        end
+    end
+
+    always_ff @(posedge clk)
+        if (!rst_n) begin
+            cnt                             <= 'd0;
+            size                            <= 'd0;
+            code_buf                        <= 'd0;
+
+            valid                           <= 1'b0;
+            addr                            <= 'd0;
+            data                            <= 'd0;
+            done                            <= 1'b0;
+        end
+        else begin
+            cnt                             <= cnt_n;
+            size                            <= size_n;
+            code_buf                        <= code_buf_n;
+
+            valid                           <= valid_n;
+            addr                            <= addr_n;
+            data                            <= data_n;
+            done                            <= done_n;
+        end
+
+    //----------------------------------------------------------
+    // Output assignments
+    //----------------------------------------------------------
+    assign  valid_o                         = valid;
+    assign  addr_o                          = addr;
+    assign  data_o                          = data;
+    assign  done_o                          = done;
 
 endmodule
 
