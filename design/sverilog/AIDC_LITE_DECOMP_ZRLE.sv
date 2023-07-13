@@ -219,6 +219,7 @@ module AIDC_LITE_DECOMP_ZRLE
         end
 
         if (valid_n) begin
+            addr_n                          = cnt;
             cnt_n                           = cnt + 'd1;
         end
 
