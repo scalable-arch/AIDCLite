@@ -43,7 +43,7 @@ module AIDC_LITE_DECOMP_ZRLE
         if (cnt < 'd8) begin
             casez (code_buf[CODE_BUF_SIZE-1:CODE_BUF_SIZE-6])
                 6'b00_0000: begin   // Z-Z-Z-Z
-                    if (size >= 'd6) begin
+                    if (buf_size >= 'd6) begin
                         valid_n                         = 1'b1;
                         data_n                          = {16'd0,
                                                            16'd0,
@@ -54,7 +54,7 @@ module AIDC_LITE_DECOMP_ZRLE
                     end
                 end
                 6'b00_0001: begin   // Z-Z-Z-N
-                    if (size >= 'd22) begin
+                    if (buf_size >= 'd22) begin
                         valid_n                         = 1'b1;
                         data_n                          = {16'd0,
                                                            16'd0,
@@ -65,7 +65,7 @@ module AIDC_LITE_DECOMP_ZRLE
                     end
                 end
                 6'b00_001?: begin   // Z-Z-N-Z
-                    if (size >= 'd21) begin
+                    if (buf_size >= 'd21) begin
                         valid_n                         = 1'b1;
                         data_n                          = {16'd0,
                                                            16'd0,
@@ -76,7 +76,7 @@ module AIDC_LITE_DECOMP_ZRLE
                     end
                 end
                 6'b00_010?: begin   // Z-N-Z-Z
-                    if (size >= 'd21) begin
+                    if (buf_size >= 'd21) begin
                         valid_n                         = 1'b1;
                         data_n                          = {16'd0,
                                                            code_buf[CODE_BUF_SIZE-6 -: 16],
@@ -87,7 +87,7 @@ module AIDC_LITE_DECOMP_ZRLE
                     end
                 end
                 6'b00_011?: begin   // N-Z-Z-Z
-                    if (size >= 'd21) begin
+                    if (buf_size >= 'd21) begin
                         valid_n                         = 1'b1;
                         data_n                          = {code_buf[CODE_BUF_SIZE-6 -: 16],
                                                            16'd0,
@@ -98,7 +98,7 @@ module AIDC_LITE_DECOMP_ZRLE
                     end
                 end
                 6'b00_10??: begin   // Z-Z-N-N
-                    if (size >= 'd36) begin
+                    if (buf_size >= 'd36) begin
                         valid_n                         = 1'b1;
                         data_n                          = {16'd0,
                                                            16'd0,
@@ -109,7 +109,7 @@ module AIDC_LITE_DECOMP_ZRLE
                     end
                 end
                 6'b00_11??: begin   // Z-N-Z-N
-                    if (size >= 'd36) begin
+                    if (buf_size >= 'd36) begin
                         valid_n                         = 1'b1;
                         data_n                          = {16'd0,
                                                            code_buf[CODE_BUF_SIZE-5 -: 16],
@@ -120,7 +120,7 @@ module AIDC_LITE_DECOMP_ZRLE
                     end
                 end
                 6'b01_00??: begin   // N-Z-Z-N
-                    if (size >= 'd36) begin
+                    if (buf_size >= 'd36) begin
                         valid_n                         = 1'b1;
                         data_n                          = {code_buf[CODE_BUF_SIZE-5 -: 16],
                                                            16'd0,
@@ -131,7 +131,7 @@ module AIDC_LITE_DECOMP_ZRLE
                     end
                 end
                 6'b01_01??: begin   // Z-N-N-Z
-                    if (size >= 'd36) begin
+                    if (buf_size >= 'd36) begin
                         valid_n                         = 1'b1;
                         data_n                          = {16'd0,
                                                            code_buf[CODE_BUF_SIZE-5 -: 16],
@@ -142,7 +142,7 @@ module AIDC_LITE_DECOMP_ZRLE
                     end
                 end
                 6'b01_10??: begin   // N-Z-N-Z
-                    if (size >= 'd36) begin
+                    if (buf_size >= 'd36) begin
                         valid_n                         = 1'b1;
                         data_n                          = {code_buf[CODE_BUF_SIZE-5 -: 16],
                                                            16'd0,
@@ -153,7 +153,7 @@ module AIDC_LITE_DECOMP_ZRLE
                     end
                 end
                 6'b01_11??: begin   // N-N-Z-Z
-                    if (size >= 'd36) begin
+                    if (buf_size >= 'd36) begin
                         valid_n                         = 1'b1;
                         data_n                          = {code_buf[CODE_BUF_SIZE-5 -: 16],
                                                            code_buf[CODE_BUF_SIZE-21 -: 16],
@@ -164,7 +164,7 @@ module AIDC_LITE_DECOMP_ZRLE
                     end
                 end
                 6'b10_00??: begin   // Z-N-N-N
-                    if (size >= 'd52) begin
+                    if (buf_size >= 'd52) begin
                         valid_n                         = 1'b1;
                         data_n                          = {16'd0,
                                                            code_buf[CODE_BUF_SIZE-5 -: 16],
@@ -175,7 +175,7 @@ module AIDC_LITE_DECOMP_ZRLE
                     end
                 end
                 6'b10_01??: begin   // N-Z-N-N
-                    if (size >= 'd52) begin
+                    if (buf_size >= 'd52) begin
                         valid_n                         = 1'b1;
                         data_n                          = {code_buf[CODE_BUF_SIZE-5 -: 16],
                                                            16'd0,
@@ -186,7 +186,7 @@ module AIDC_LITE_DECOMP_ZRLE
                     end
                 end
                 6'b10_10??: begin   // N-N-Z-N
-                    if (size >= 'd52) begin
+                    if (buf_size >= 'd52) begin
                         valid_n                         = 1'b1;
                         data_n                          = {code_buf[CODE_BUF_SIZE-5 -: 16],
                                                            code_buf[CODE_BUF_SIZE-21 -: 16],
@@ -197,7 +197,7 @@ module AIDC_LITE_DECOMP_ZRLE
                     end
                 end
                 6'b10_11??: begin   // N-N-N-Z
-                    if (size >= 'd52) begin
+                    if (buf_size >= 'd52) begin
                         valid_n                         = 1'b1;
                         data_n                          = {code_buf[CODE_BUF_SIZE-5 -: 16],
                                                            code_buf[CODE_BUF_SIZE-21 -: 16],
@@ -208,7 +208,7 @@ module AIDC_LITE_DECOMP_ZRLE
                     end
                 end
                 default: begin  // 6'b11_????   // N-N-N-N
-                    if (size >= 'd66) begin
+                    if (buf_size >= 'd66) begin
                         valid_n                         = 1'b1;
                         data_n                          = code_buf[CODE_BUF_SIZE-3 -: 64];
                         buf_size_n                      = buf_size - 'd66;
