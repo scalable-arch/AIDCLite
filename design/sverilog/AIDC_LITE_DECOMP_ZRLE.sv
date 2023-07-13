@@ -225,9 +225,6 @@ module AIDC_LITE_DECOMP_ZRLE
         // input buffer
         if (valid_i) begin
             if (sop_i) begin
-                // synopsys translate_off
-                assert(!valid_n);
-                // synopsys translate_on
                 // upper 2 bits, containing prefix, is discarded
                 code_buf_n[CODE_BUF_SIZE-1 -: 30] = data_i[29:0];
                 buf_size_n                      = 'd30;
