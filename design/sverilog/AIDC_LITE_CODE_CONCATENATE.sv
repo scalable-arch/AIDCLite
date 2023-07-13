@@ -91,7 +91,7 @@ module AIDC_LITE_CODE_CONCATENATE
 
         if (buf_size_n >= 'd64) begin
             // enough data has accumulated   -> forward
-            if (cmt < 'd8) begin    // write up to 8 words
+            if (cnt < 'd8) begin    // write up to 8 words
                 valid_n                         = 1'b1;
                 addr_n                          = cnt;
                 data_n                          = tmp_buf[TMP_BUF_SIZE-1:TMP_BUF_SIZE-64];
@@ -103,6 +103,7 @@ module AIDC_LITE_CODE_CONCATENATE
                 fail_n                          = (blk_size > 'd512);
                 flush_n                         = 1'b0;
 
+                // preload for the next block
                 code_buf_n[CODE_BUF_SIZE-1:CODE_BUF_SIZE-2] = PREFIX;
                 code_buf_n[CODE_BUF_SIZE-3:0]   = 'd0;
                 blk_size_n                      = 'd2;
