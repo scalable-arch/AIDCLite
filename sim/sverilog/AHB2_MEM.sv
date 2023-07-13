@@ -29,6 +29,9 @@ module AHB2_MEM
             // read
             if (ahb_if.hsel & ahb_if.htrans[1] & ahb_if.hreadyi & !ahb_if.hwrite) begin
                 hrdata                              <= mem[ahb_if.haddr[ADDR_WIDTH+1:2]];
+                // synopsys translate_off
+                $display("@=%0t %m RD addr=0x%0x data=0x%0x", $time, ahb_if.haddr, hrdata);
+                // synopsys translate_on
             end
             else begin
                 hrdata                              <= 'hX;
@@ -49,6 +52,9 @@ module AHB2_MEM
     // write
     always @(posedge clk) begin
         if (wren_reg) begin
+            // synopsys translate_off
+            $display("@=%0t %m WR addr=0x%0x data=0x%0x", $time, {addr_reg, 2'd0}, ahb_if.hwdata);
+            // synopsys translate_on
             mem[addr_reg[ADDR_WIDTH+1:2]]       <= ahb_if.hwdata;
         end
     end
