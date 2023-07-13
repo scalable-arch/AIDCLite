@@ -23,6 +23,7 @@ module AIDC_LITE_CODE_CONCATENATE
 );
 
     logic                               valid,      valid_n;
+    logic   [2:0]                       addr,       addr_n;
     logic   [63:0]                      data,       data_n;
     logic                               done,       done_n;
     logic                               fail,       fail_n;
@@ -57,6 +58,7 @@ module AIDC_LITE_CODE_CONCATENATE
 
     always_comb begin
         valid_n                         = 1'b0;
+        addr_n                          = addr;
         data_n                          = data;
         done_n                          = done;
         fail_n                          = fail;
@@ -71,6 +73,7 @@ module AIDC_LITE_CODE_CONCATENATE
             if (sop_i) begin
                 done_n                          = 1'b0;
                 fail_n                          = 1'b0;
+                flush_n                         = 1'b0;
             end
 
             // calculate new block size (in bits)
@@ -83,12 +86,20 @@ module AIDC_LITE_CODE_CONCATENATE
 
         if (buf_size_n >= 'd64) begin
             // enough data has accumulated   -> forward
-            valid_n                         = (blk_size[10:6] < 'd8);
+            valid_n                         = (blk_size[10:6] < 'd8);   // write up to 8 words
+            addr_n                          = blk_size[8:6];
             data_n                          = tmp_buf[TMP_BUF_SIZE-1:TMP_BUF_SIZE-64];
 
             // shift 64 bits
             code_buf_n                      = tmp_buf[TMP_BUF_SIZE-65:0];
             buf_size_n                      = buf_size_n - 'd64;
+
+            if (valid_i & eop_i) begin
+            end
+        end
+        else begin
+            if (valid_i & eop_i) begin
+            end
         end
 
         if (valid_i & eop_i) begin
@@ -140,6 +151,7 @@ module AIDC_LITE_CODE_CONCATENATE
     always_ff @(posedge clk)
         if  (~rst_n) begin
             valid                           <= 1'b0;
+            addr                            <= 'd0;
             data                            <= 'd0;
             done                            <= 1'b1;
             fail                            <= 1'b0;
@@ -152,6 +164,7 @@ module AIDC_LITE_CODE_CONCATENATE
         end
         else begin
             valid                           <= valid_n;
+            addr                            <= addr_n;
             data                            <= data_n;
             done                            <= done_n;
             fail                            <= fail_n;
@@ -165,7 +178,7 @@ module AIDC_LITE_CODE_CONCATENATE
     // Output assignments
     //----------------------------------------------------------
     assign  valid_o                         = valid;
-    assign  addr_o                          = 'd0;
+    assign  addr_o                          = addr;
     assign  data_o                          = data;
     assign  done_o                          = done;
     assign  fail_o                          = fail;
