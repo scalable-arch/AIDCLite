@@ -81,7 +81,7 @@ module AHB2_MEM
     endtask
 
     
-    task read_word (
+    task write_word (
         input   [31:0]                  addr,
         input   [31:0]                  wdata
     );
