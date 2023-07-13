@@ -230,38 +230,38 @@ module AIDC_LITE_DECOMP_ZRLE
                 // synopsys translate_on
                 // upper 2 bits, containing prefix, is discarded
                 code_buf_n[CODE_BUF_SIZE-1 -: 30] = data_i[29:0];
-                size_n                          = 'd30;
+                buf_size_n                      = 'd30;
                 cnt_n                           = 'd0;
                 done_n                          = 1'b0;
             end
             else begin
                 code_buf_n                      = code_buf_n
                                                  |({data_i[31:0], {CODE_BUF_SIZE{1'b0}}} >> size_n);
-                size_n                          = size_n + 'd32;
+                buf_size_n                      = buf_size_n + 'd32;
             end
         end
     end
 
     always_ff @(posedge clk)
         if (!rst_n) begin
-            cnt                             <= 'd0;
-            size                            <= 'd0;
-            code_buf                        <= 'd0;
-
             valid                           <= 1'b0;
             addr                            <= 'd0;
             data                            <= 'd0;
             done                            <= 1'b0;
+            
+            code_buf                        <= 'd0;
+            buf_size                        <= 'd0;
+            cnt                             <= 'd0;
         end
         else begin
-            cnt                             <= cnt_n;
-            size                            <= size_n;
-            code_buf                        <= code_buf_n;
-
             valid                           <= valid_n;
             addr                            <= addr_n;
             data                            <= data_n;
             done                            <= done_n;
+            
+            code_buf                        <= code_buf_n;
+            buf_size                        <= buf_size_n;
+            cnt                             <= cnt_n;
         end
 
     //----------------------------------------------------------
