@@ -104,18 +104,33 @@ interface AHB2_MST_INTF
     modport master_tb   (clocking master_cb, input hclk, hreset_n);
     modport slave_tb    (clocking slave_cb,  input hclk, hreset_n);
 
-    task write (input logic [31:0]  haddr,
+    task write (input int burst,
+                input logic [31:0]  haddr,
                 input logic [31:0]  hwdata);
         #1
-        master_cb.hbusreq                     <= 1'b1;
-        master_cb.htrans                      <= HTRANS_BUSY;
-        master_cb.hwrite                      <= 1'b1;
-        master_cb.hsize                       <= HSIZE_1024BITS;
-        master_cb.hburst                      <= HBUSRT_WRAP16;
-        master_cb.hprot                       <= 4'b0011; 
-        master_cb.hwdata                      <= hwdata;
-        @(posedge clk);
+        master_cb.hwrite                            <= 1'b1;
+        master_cb.haddr                             <= haddr;
+        master_cb.hburst                            <= HBUSRT_WRAP16;
+        master_cb.hsize                             <= HSIZE_1024BITS;
+        master_cb.hprot                             <= 4'b0011; 
 
+        master_cb.htrans                            <= HTRANS_IDLE;
+        if(i ==0) begin
+            master_cb.htrans                    <= HTRANS_NONSEQ;
+        end
+        else begin
+            master_cb.htrans                    <= HTRANS_SEQ;
+        end
+        master_cb.hwdata                        <= hwdata;
+        while(!master_cb.hready) begin
+            @(posedge hclk);
+        end
+        @(posedge hclk);
+        reset_master();
+    endtask
+
+    task read (input logic [31:0] haddr);
+        
     endtask
     
     // synopsys translate_on

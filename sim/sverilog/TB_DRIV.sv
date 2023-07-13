@@ -37,25 +37,11 @@ class Driver;
             gen_driv.get(trans);
             for (int i=0; i<16; i=i+1) begin
                 // drive data. The data will not change until it is received by ready.
-                `DRIV_IF.hbusreq       <= 0;    
-                `DRIV_IF.haddr         <= 0;    
-                `DRIV_IF.htrans        <= 0;    
-                `DRIV_IF.hwrite        <= 0;    
-                `DRIV_IF.hsize         <= 0;    
-                `DRIV_IF.hburst        <= 0;    
-                `DRIV_IF.hprot         <= 0;    
-                `DRIV_IF.hwdata        <= 0;    
+                //ahb_if.write(,);    
                 @(posedge mst_ahb_if.clk);
                 while (!`DRIV_IF.hgrant) begin
                     @(posedge mst_ahb_if.clk);
                 end
-                `DRIV_IF.hbusreq       <= 0;    
-                `DRIV_IF.haddr         <= 0;    
-                `DRIV_IF.htrans        <= 0;    
-                `DRIV_IF.hwrite        <= 0;    
-                `DRIV_IF.hsize         <= 0;    
-                `DRIV_IF.hburst        <= 0;    
-                `DRIV_IF.hprot         <= 0;    
                 `DRIV_IF.hwdata        <= 0;    
                 repeat(cycle2cycle_delay) @(posedge vif_w.clk);
             end
