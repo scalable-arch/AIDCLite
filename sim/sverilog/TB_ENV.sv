@@ -1,4 +1,4 @@
-class Test_env;
+class ahb_env;
     
     // TB Subclass
     Generator           gen;

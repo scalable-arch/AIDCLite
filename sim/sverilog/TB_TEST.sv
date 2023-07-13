@@ -1,24 +1,23 @@
-program TEST_CASE_1(
+program AHB_TEST(
         AHB2_MST_INTF               mst_ahb_if  (.hclk(clk), .hreset_n(rst_n));
         AHB2_SLV_INTF               slv_ahb_if  (.hclk(clk), .hreset_n(rst_n));
-  
     );
 
-    Test_env env;
+    ahb_env env;
     
     initial begin
-        $display("Test Case 1 start");
+        $display("AHB_Test start");
 
-        $display("Test_env initialize");
+        $display("AHB_env initialize");
         env = new(
             mst_ahb_if
             slv_ahb_if
             );
 
-        $display("Test_env run");
+        $display("AHB_env run");
         env.run();
         
-        $display("Test Case 1 end");
+        $display("AHB_Test end");
         $finish();
     end
 

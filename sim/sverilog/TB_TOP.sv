@@ -80,33 +80,46 @@ module TB_TOP;
     // Test sequence
     //----------------------------------------------------------
     initial begin
-        logic   [31:0]      rdata;
-
-        apb_if.reset_master();
         u_mem.init_mem_with_addr();
-
-        repeat (10) @(posedge clk);
-
-        apb_if.write(32'h0, 32'h0001_0000);
-        apb_if.write(32'h4, 32'h0002_0000);
-        apb_if.write(32'h8, 32'h0000_1000);
-        apb_if.write(32'hC, 32'd1);
-
-        for (int i=0; i<10000; i++) begin
-            apb_if.read(32'h10, rdata);
-            if (rdata==32'h1) begin
-                break;
-            end
-            $write(".");
-            repeat (100) @(posedge clk);
-        end
-        $display("");   // new line
-        repeat (50) @(posedge clk);
-
-        $display("---------------------------------------------------");
-        $display("Command completed");
-        $display("---------------------------------------------------");
-
-        $finish;
     end
+    
+    APB_TEST (
+            apb_if
+        );
+
+    AHB_TEST (
+            mst_ahb_if,
+            slv_ahb_if
+        );
+
+    //initial begin
+    //    logic   [31:0]      rdata;
+
+    //    apb_if.reset_master();
+    //    u_mem.init_mem_with_addr();
+
+    //    repeat (10) @(posedge clk);
+
+    //    apb_if.write(32'h0, 32'h0001_0000);
+    //    apb_if.write(32'h4, 32'h0002_0000);
+    //    apb_if.write(32'h8, 32'h0000_1000);
+    //    apb_if.write(32'hC, 32'd1);
+
+    //    for (int i=0; i<10000; i++) begin
+    //        apb_if.read(32'h10, rdata);
+    //        if (rdata==32'h1) begin
+    //            break;
+    //        end
+    //        $write(".");
+    //        repeat (100) @(posedge clk);
+    //    end
+    //    $display("");   // new line
+    //    repeat (50) @(posedge clk);
+
+    //    $display("---------------------------------------------------");
+    //    $display("Command completed");
+    //    $display("---------------------------------------------------");
+
+    //    $finish;
+    //end
 endmodule
