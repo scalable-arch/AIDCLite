@@ -49,7 +49,6 @@ module AIDC_LITE_CODE_CONCATENATE
     //                              |D2 |
 
     localparam  TMP_BUF_SIZE            = 64 + CODE_BUF_SIZE;
-    logic   [TMP_BUF_SIZE-1:0]          tmp_buf;
 
     logic   [CODE_BUF_SIZE-1:0]         code_buf,   code_buf_n;
     logic   [10:0]                      blk_size,   blk_size_n;
@@ -57,6 +56,7 @@ module AIDC_LITE_CODE_CONCATENATE
     logic                               flush,      flush_n;
 
     always_comb begin
+        logic   [TMP_BUF_SIZE-1:0]      tmp_buf;
         valid_n                         = 1'b0;
         addr_n                          = addr;
         data_n                          = data;
@@ -140,6 +140,7 @@ module AIDC_LITE_CODE_CONCATENATE
             code_buf[CODE_BUF_SIZE-3:0]     <= 'd0;
             blk_size                        <= 'd2;
             buf_size                        <= 'd2;
+            flush                           <= 1'b0;
         end
         else begin
             valid                           <= valid_n;
@@ -151,6 +152,7 @@ module AIDC_LITE_CODE_CONCATENATE
             code_buf                        <= code_buf_n;
             blk_size                        <= blk_size_n;
             buf_size                        <= buf_size_n;
+            flush                           <= flush_n;
         end
 
     //----------------------------------------------------------
