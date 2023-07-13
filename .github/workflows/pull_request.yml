@@ -29,11 +29,11 @@ jobs:
           action.lint
       - name: Report (moresimple)
         run: cat reports/moresimple.rpt
-      - name: Upload Lint report
-        uses: actions/upload-artifact@v3
-        with:
-          name: moresimple.rpt
-          path: reports/moresimple.rpt
+#      - name: Upload Lint report
+#        uses: actions/upload-artifact@v3
+#        with:
+#          name: moresimple.rpt
+#          path: reports/moresimple.rpt
 #  Design-Compiler-UMC28nm:
 #    runs-on: self-hosted        # runs on a server with Synopsys Design Compiler installed
 #    steps:
