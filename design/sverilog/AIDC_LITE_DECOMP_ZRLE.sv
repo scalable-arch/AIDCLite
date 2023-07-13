@@ -233,7 +233,7 @@ module AIDC_LITE_DECOMP_ZRLE
             end
             else begin
                 code_buf_n                      = code_buf_n
-                                                 |({data_i[31:0], {CODE_BUF_SIZE{1'b0}}} >> size_n);
+                                                 |({data_i[31:0], {CODE_BUF_SIZE{1'b0}}} >> buf_size_n);
                 buf_size_n                      = buf_size_n + 'd32;
             end
         end
