@@ -69,7 +69,11 @@ module AIDC_LITE_CODE_CONCATENATE
         buf_size_n                      = buf_size;
         cnt_n                           = cnt;
         flush_n                         = flush;
-
+    
+        // concate the old data and new data
+        tmp_buf                         =  {code_buf, 64'd0}        // 62 + 64
+                                         |({data_i, 60'd0}>>blk_size[5:0]);
+        
         if (valid_i) begin
             // new data arrived
             if (sop_i) begin
@@ -84,9 +88,6 @@ module AIDC_LITE_CODE_CONCATENATE
             // calculate new block size (in bits)
             blk_size_n                      = blk_size + size_i;
             buf_size_n                      = buf_size + size_i;
-            // concate the old data and new data
-            tmp_buf                         =  {code_buf, 64'd0}        // 62 + 64
-                                             |({data_i, 60'd0}>>blk_size[5:0]);
         end
 
         if (buf_size_n >= 'd64) begin
