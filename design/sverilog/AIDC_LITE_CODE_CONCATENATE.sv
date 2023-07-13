@@ -23,7 +23,7 @@ module AIDC_LITE_CODE_CONCATENATE
 );
 
     logic                               valid,      valid_n;
-    logic   [2:0]                       addr,       addr_n;
+    logic   [4:0]                       addr,       addr_n;  // +2 bits
     logic   [63:0]                      data,       data_n;
     logic                               done,       done_n;
     logic                               fail,       fail_n;
@@ -74,6 +74,10 @@ module AIDC_LITE_CODE_CONCATENATE
                 done_n                          = 1'b0;
                 fail_n                          = 1'b0;
                 flush_n                         = 1'b0;
+                addr_n                          = 'd0;
+            end
+            if (eop_i) begin
+                flush_n                         = 1'b1;
             end
 
             // calculate new block size (in bits)
@@ -86,66 +90,41 @@ module AIDC_LITE_CODE_CONCATENATE
 
         if (buf_size_n >= 'd64) begin
             // enough data has accumulated   -> forward
-            valid_n                         = (blk_size[10:6] < 'd8);   // write up to 8 words
-            addr_n                          = blk_size[8:6];
+            valid_n                         = (addr < 'd8);   // write up to 8 words
+            addr_n                          = addr_n + 'd1;
             data_n                          = tmp_buf[TMP_BUF_SIZE-1:TMP_BUF_SIZE-64];
 
-            // shift 64 bits
-            code_buf_n                      = tmp_buf[TMP_BUF_SIZE-65:0];
-            buf_size_n                      = buf_size_n - 'd64;
+            if ((buf_size_n == 'd64) & flush_n) begin
+                done_n                          = 1'b1;
+                fail_n                          = (blk_size > 'd512);
+                flush_n                         = 1'b0;
 
-            if (valid_i & eop_i) begin
+                code_buf_n[CODE_BUF_SIZE-1:CODE_BUF_SIZE-2] = PREFIX;
+                code_buf_n[CODE_BUF_SIZE-3:0]   = 'd0;
+                blk_size_n                      = 'd2;
+                buf_size_n                      = 'd2;
             end
-        end
-        else begin
-            if (valid_i & eop_i) begin
-            end
-        end
-
-        if (valid_i & eop_i) begin
-            if (buf_size_n < 'd64) begin
-                valid_n                         = 1'b1;
-                data_n                          = tmp_buf[TMP_BUF_SIZE-1:TMP_BUF_SIZE-64];
-
+            else begin                
                 // shift 64 bits
                 code_buf_n                      = tmp_buf[TMP_BUF_SIZE-65:0];
                 buf_size_n                      = buf_size_n - 'd64;
             end
         end
-        /*
-        if (eop_pending) begin
-            // enough data has accumulated   -> forward
-            valid_n                         = (blk_size[10:6] < 'd8);
-            data_n                          = tmp_buf[TMP_BUF_SIZE-1:TMP_BUF_SIZE-64];
-
-            code_buf_n[CODE_BUF_SIZE-1:CODE_BUF_SIZE-2] = PREFIX;
-            code_buf_n[CODE_BUF_SIZE-3:0]   = 'd0;
-            blk_size_n                      = 'd2;
-            buf_size_n                      = 'd2;
-        end
-
-
-            if (eop_i) begin
-                // EOP -> flush the buffered data regardless of blk_size
+        else begin 
+            if (flush_n) begin
                 valid_n                         = 1'b1;
                 data_n                          = tmp_buf[TMP_BUF_SIZE-1:TMP_BUF_SIZE-64];
-                cnt_n                           = 'd0;
-                fail_n                          = 1'b0;
 
-                // preload the 2-bit prefix for the next block
-                blk_size_n                      = 'd2;
+                done_n                          = 1'b1;
+                fail_n                          = (blk_size > 'd512);
+                flush_n                         = 1'b0;
+
                 code_buf_n[CODE_BUF_SIZE-1:CODE_BUF_SIZE-2] = PREFIX;
-            end
-            else if (blk_size_n[6]!=blk_size[6]) begin
-                // if the new block size is different from the old size
-                // in bit 6, it means a full 64-bit is ready
-                valid_n                         = 1'b1;
-                cnt_n                           = cnt + 'd1;
-                data_n                          = tmp_buf[TMP_BUF_SIZE-1:TMP_BUF_SIZE-64];
-                code_buf_n                      = tmp_buf[TMP_BUF_SIZE-65:0];
+                code_buf_n[CODE_BUF_SIZE-3:0]   = 'd0;
+                blk_size_n                      = 'd2;
+                buf_size_n                      = 'd2;
             end
         end
-        */
     end
 
     always_ff @(posedge clk)
@@ -178,7 +157,7 @@ module AIDC_LITE_CODE_CONCATENATE
     // Output assignments
     //----------------------------------------------------------
     assign  valid_o                         = valid;
-    assign  addr_o                          = addr;
+    assign  addr_o                          = addr[2:0];
     assign  data_o                          = data;
     assign  done_o                          = done;
     assign  fail_o                          = fail;
