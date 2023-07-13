@@ -23,7 +23,7 @@ module AIDC_LITE_CODE_CONCATENATE
 );
 
     logic                               valid,      valid_n;
-    logic   [4:0]                       addr,       addr_n;  // +2 bits
+    logic   [2:0]                       addr,       addr_n;
     logic   [63:0]                      data,       data_n;
     logic                               done,       done_n;
     logic                               fail,       fail_n;
@@ -53,6 +53,7 @@ module AIDC_LITE_CODE_CONCATENATE
     logic   [CODE_BUF_SIZE-1:0]         code_buf,   code_buf_n;
     logic   [10:0]                      blk_size,   blk_size_n;
     logic   [10:0]                      buf_size,   buf_size_n;
+    logic   [3:0]                       cnt,        cnt_n;    // +1 bit
     logic                               flush,      flush_n;
 
     always_comb begin
@@ -66,6 +67,7 @@ module AIDC_LITE_CODE_CONCATENATE
         code_buf_n                      = code_buf;
         blk_size_n                      = blk_size;
         buf_size_n                      = buf_size;
+        cnt_n                           = cnt;
         flush_n                         = flush;
 
         if (valid_i) begin
@@ -74,7 +76,6 @@ module AIDC_LITE_CODE_CONCATENATE
                 done_n                          = 1'b0;
                 fail_n                          = 1'b0;
                 flush_n                         = 1'b0;
-                addr_n                          = 'd0;
             end
             if (eop_i) begin
                 flush_n                         = 1'b1;
@@ -90,10 +91,13 @@ module AIDC_LITE_CODE_CONCATENATE
 
         if (buf_size_n >= 'd64) begin
             // enough data has accumulated   -> forward
-            valid_n                         = (addr < 'd8);   // write up to 8 words
-            addr_n                          = addr_n + 'd1;
-            data_n                          = tmp_buf[TMP_BUF_SIZE-1:TMP_BUF_SIZE-64];
-
+            if (cmt < 'd8) begin    // write up to 8 words
+                valid_n                         = 1'b1;
+                addr_n                          = cnt;
+                data_n                          = tmp_buf[TMP_BUF_SIZE-1:TMP_BUF_SIZE-64];
+                cnt_n                           = cnt + 'd1;
+            end
+            
             if ((buf_size_n == 'd64) & flush_n) begin
                 done_n                          = 1'b1;
                 fail_n                          = (blk_size > 'd512);
@@ -103,6 +107,7 @@ module AIDC_LITE_CODE_CONCATENATE
                 code_buf_n[CODE_BUF_SIZE-3:0]   = 'd0;
                 blk_size_n                      = 'd2;
                 buf_size_n                      = 'd2;
+                cnt_n                           = 'd0;
             end
             else begin                
                 // shift 64 bits
@@ -113,6 +118,7 @@ module AIDC_LITE_CODE_CONCATENATE
         else begin 
             if (flush_n) begin
                 valid_n                         = 1'b1;
+                addr_n                          = cnt;
                 data_n                          = tmp_buf[TMP_BUF_SIZE-1:TMP_BUF_SIZE-64];
 
                 done_n                          = 1'b1;
@@ -123,6 +129,7 @@ module AIDC_LITE_CODE_CONCATENATE
                 code_buf_n[CODE_BUF_SIZE-3:0]   = 'd0;
                 blk_size_n                      = 'd2;
                 buf_size_n                      = 'd2;
+                cnt_n                           = 'd0;
             end
         end
     end
@@ -140,6 +147,7 @@ module AIDC_LITE_CODE_CONCATENATE
             code_buf[CODE_BUF_SIZE-3:0]     <= 'd0;
             blk_size                        <= 'd2;
             buf_size                        <= 'd2;
+            cnt                             <= 'd0;
             flush                           <= 1'b0;
         end
         else begin
@@ -152,6 +160,7 @@ module AIDC_LITE_CODE_CONCATENATE
             code_buf                        <= code_buf_n;
             blk_size                        <= blk_size_n;
             buf_size                        <= buf_size_n;
+            cnt                             <= cnt_n;
             flush                           <= flush_n;
         end
 
