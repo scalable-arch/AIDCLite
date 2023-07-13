@@ -22,9 +22,10 @@ module AIDC_LITE_CODE_CONCATENATE
     output  logic   [10:0]              blk_size_o
 );
 
-    logic                               valid,      valid_n;
     logic   [2:0]                       cnt,        cnt_n;
     logic   [2:0]                       cnt_reg;
+
+    logic                               valid,      valid_n;
     logic   [63:0]                      data,       data_n;
     logic                               done,       done_n;
 
@@ -55,10 +56,10 @@ module AIDC_LITE_CODE_CONCATENATE
 
     always_comb begin
         valid_n                         = 1'b0;
-        cnt_n                           = cnt;
         data_n                          = data;
         done_n                          = done;
 
+        cnt_n                           = cnt;
         blk_size_n                      = blk_size;
         code_buf_n                      = code_buf;
 
@@ -74,8 +75,8 @@ module AIDC_LITE_CODE_CONCATENATE
             if (eop_i) begin
                 // EOP -> flush the buffered data regardless of blk_size
                 valid_n                         = 1'b1;
-                cnt_n                           = 'd0;
                 data_n                          = tmp_buf[TMP_BUF_SIZE-1:TMP_BUF_SIZE-64];
+                cnt_n                           = 'd0;
 
                 // preload the 2-bit prefix for the next block
                 blk_size_n                      = 'd2;

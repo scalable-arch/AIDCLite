@@ -33,10 +33,10 @@ module AIDC_LITE_DECOMP_TOP
                                         decomp2_wren;
     wire                                decomp_sop;
     wire                                decomp_eop;
-    wire    [63:0]                      decomp_wdata;
+    wire    [31:0]                      decomp_wdata;
 
     logic   [3:0]                       buf_addr;
-    wire    [63:0]                      decomp_rdata;
+    wire    [63:0]                      buf_rdata;
 
     AIDC_LITE_DECOMP_ENGINE             u_engine
     (
@@ -61,92 +61,62 @@ module AIDC_LITE_DECOMP_TOP
         .decomp_done_i                  (1'b1),
 
         .buf_addr_o                     (buf_addr),
-        .decomp_data_i                  (decomp_rdata)
+        .decomp_rdata_i                 (buf_rdata)
     );
 
-    /*
-    AIDC_LITE_COMP_SR                   u_sr
+    wire                                sr_buf_wren;
+    wire    [3:0]                       sr_buf_waddr;
+    wire    [63:0]                      sr_buf_wdata;
+    wire                                sr_done;
+
+    wire                                zrle_buf_wren;
+    wire    [3:0]                       zrle_buf_waddr;
+    wire    [63:0]                      zrle_buf_wdata;
+    wire                                zrle_done;
+
+    AIDC_LITE_DECOMP_SR                 u_sr
     (
         .clk                            (clk),
         .rst_n                          (rst_n),
 
-        .valid_i                        (comp_wren),
-        .sop_i                          (comp_sop),
-        .eop_i                          (comp_eop),
-        .data_i                         (comp_wdata),
+        .valid_i                        (decomp0_wren),
+        .sop_i                          (decomp_sop),
+        .eop_i                          (decomp_eop),
+        .data_i                         (decomp_wdata),
 
         .valid_o                        (sr_buf_wren),
         .addr_o                         (sr_buf_waddr),
         .data_o                         (sr_buf_wdata),
-        .done_o                         (sr_done),
-        .fail_o                         (sr_fail)
+        .done_o                         (sr_done)
     );
 
-    AIDC_LITE_COMP_BUFFER               u_sr_buffer
+    AIDC_LITE_DECOMP_ZRLE               u_zrle
     (
         .clk                            (clk),
         .rst_n                          (rst_n),
 
-        .wren_i                         (sr_buf_wren),
-        .waddr_i                        (sr_buf_waddr),
-        .wdata_i                        (sr_buf_wdata),
-
-        .raddr_i                        (buf_addr),
-        .rdata_o                        (sr_buf_rdata)
-    );
-
-    AIDC_LITE_COMP_ZRLE                 u_zrle
-    (
-        .clk                            (clk),
-        .rst_n                          (rst_n),
-
-        .valid_i                        (comp_wren),
-        .sop_i                          (comp_sop),
-        .eop_i                          (comp_eop),
-        .data_i                         (comp_wdata),
+        .valid_i                        (decomp1_wren),
+        .sop_i                          (decomp_sop),
+        .eop_i                          (decomp_eop),
+        .data_i                         (decomp_wdata),
 
         .valid_o                        (zrle_buf_wren),
         .addr_o                         (zrle_buf_waddr),
         .data_o                         (zrle_buf_wdata),
-        .done_o                         (zrle_done),
-        .fail_o                         (zrle_fail)
+        .done_o                         (zrle_done)
     );
 
-    AIDC_LITE_COMP_BUFFER               u_zrle_buffer
+    AIDC_LITE_BUFFER #(.ADDR_WIDTH(4))  u_buffer
     (
         .clk                            (clk),
         .rst_n                          (rst_n),
 
-        .wren_i                         (zrle_buf_wren),
-        .waddr_i                        (zrle_buf_waddr),
-        .wdata_i                        (zrle_buf_wdata),
+        .wren_i                         (sr_buf_wren  | zrle_buf_wren),
+        .waddr_i                        (sr_buf_waddr | zrle_buf_waddr),
+        .wdata_i                        (sr_buf_wdata | zrle_buf_wdata),
 
         .raddr_i                        (buf_addr),
-        .rdata_o                        (zrle_buf_rdata)
+        .rdata_o                        (buf_rdata)
     );
-
-    wire                                bpc_buf_wren;
-    wire    [2:0]                       bpc_buf_waddr;
-    wire    [63:0]                      bpc_buf_wdata;
-    wire                                bpc_done;
-    wire                                bpc_fail;
-
-    AIDC_LITE_COMP_BPC                  u_bpc
-    (
-        .clk                            (clk),
-        .rst_n                          (rst_n),
-
-        .valid_i                        (comp_wren),
-        .sop_i                          (comp_sop),
-        .eop_i                          (comp_eop),
-        .data_i                         (comp_wdata),
-
-        .valid_o                        (bpc_buf_wren),
-        .addr_o                         (bpc_buf_waddr),
-        .data_o                         (bpc_buf_wdata),
-        .done_o                         (bpc_done),
-        .fail_o                         (bpc_fail)
-    );
-    */
 
 endmodule
