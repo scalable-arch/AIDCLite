@@ -43,24 +43,54 @@ module TB_TOP;
     //----------------------------------------------------------
     // Design-Under-Test
     //----------------------------------------------------------
-    AIDC_LITE_COMP_TOP                  u_comp
+    AIDC_LITE_TOP_WRAPPER               u_dut
     (
         .clk                            (clk),
         .rst_n                          (rst_n),
 
-        .ahb_if                         (ahb_m0_if),
+        .comp_hbusreq_o                 (ahb_m0_if.hbusreq),
+        .comp_hgrant_i                  (ahb_m0_if.hgrant),
+        .comp_haddr_o                   (ahb_m0_if.haddr),
+        .comp_htrans_o                  (ahb_m0_if.htrans),
+        .comp_hwrite_o                  (ahb_m0_if.hwrite),
+        .comp_hsize_o                   (ahb_m0_if.hsize),
+        .comp_hburst_o                  (ahb_m0_if.hburst),
+        .comp_hprot_o                   (ahb_m0_if.hprot),
+        .comp_hwdata_o                  (ahb_m0_if.hwdata),
+        .comp_hrdata_i                  (ahb_m0_if.hrdata),
+        .comp_hready_i                  (ahb_m0_if.hready),
+        .comp_hresp_i                   (ahb_m0_if.hresp),
 
-        .apb_if                         (apb0_if)
-    );
+        .comp_paddr_i                   (apb0_if.paddr),
+        .comp_psel_i                    (apb0_if.psel),
+        .comp_penable_i                 (apb0_if.penable),
+        .comp_pwrite_i                  (apb0_if.pwrite),
+        .comp_pwdata_i                  (apb0_if.pwdata),
+        .comp_pready_o                  (apb0_if.pready),
+        .comp_prdata_o                  (apb0_if.prdata),
+        .comp_pslverr_o                 (apb0_if.pslverr),
 
-    AIDC_LITE_DECOMP_TOP                u_decomp
-    (
-        .clk                            (clk),
-        .rst_n                          (rst_n),
+        .decomp_hbusreq_o               (ahb_m1_if.hbusreq),
+        .decomp_hgrant_i                (ahb_m1_if.hgrant),
+        .decomp_haddr_o                 (ahb_m1_if.haddr),
+        .decomp_htrans_o                (ahb_m1_if.htrans),
+        .decomp_hwrite_o                (ahb_m1_if.hwrite),
+        .decomp_hsize_o                 (ahb_m1_if.hsize),
+        .decomp_hburst_o                (ahb_m1_if.hburst),
+        .decomp_hprot_o                 (ahb_m1_if.hprot),
+        .decomp_hwdata_o                (ahb_m1_if.hwdata),
+        .decomp_hrdata_i                (ahb_m1_if.hrdata),
+        .decomp_hready_i                (ahb_m1_if.hready),
+        .decomp_hresp_i                 (ahb_m1_if.hresp),
 
-        .ahb_if                         (ahb_m1_if),
-
-        .apb_if                         (apb1_if)
+        .decomp_paddr_i                 (apb1_if.paddr),
+        .decomp_psel_i                  (apb1_if.psel),
+        .decomp_penable_i               (apb1_if.penable),
+        .decomp_pwrite_i                (apb1_if.pwrite),
+        .decomp_pwdata_i                (apb1_if.pwdata),
+        .decomp_pready_o                (apb1_if.pready),
+        .decomp_prdata_o                (apb1_if.prdata),
+        .decomp_pslverr_o               (apb1_if.pslverr)
     );
 
     wire    [31:0]                      m_hrdata;

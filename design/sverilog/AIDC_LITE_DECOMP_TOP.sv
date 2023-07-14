@@ -29,11 +29,20 @@ module AIDC_LITE_DECOMP_TOP
     );
 
     wire                                decomp0_wren,
-                                        decomp1_wren,
-                                        decomp2_wren;
+                                        decomp1_wren;
     wire                                decomp_sop;
     wire                                decomp_eop;
     wire    [31:0]                      decomp_wdata;
+
+    wire                                sr_buf_wren;
+    wire    [3:0]                       sr_buf_waddr;
+    wire    [63:0]                      sr_buf_wdata;
+    wire                                sr_done;
+
+    wire                                zrle_buf_wren;
+    wire    [3:0]                       zrle_buf_waddr;
+    wire    [63:0]                      zrle_buf_wdata;
+    wire                                zrle_done;
 
     logic   [3:0]                       buf_addr;
     wire    [63:0]                      buf_rdata;
@@ -53,26 +62,16 @@ module AIDC_LITE_DECOMP_TOP
 
         .decomp0_wren_o                 (decomp0_wren),
         .decomp1_wren_o                 (decomp1_wren),
-        .decomp2_wren_o                 (decomp2_wren),
+        .decomp2_wren_o                 (/* FLOLATING */),
         .decomp_sop_o                   (decomp_sop),
         .decomp_eop_o                   (decomp_eop),
         .decomp_wdata_o                 (decomp_wdata),
 
-        .decomp_done_i                  (1'b1),
+        .decomp_done_i                  (sr_done & zrle_done),
 
         .buf_addr_o                     (buf_addr),
         .decomp_rdata_i                 (buf_rdata)
     );
-
-    wire                                sr_buf_wren;
-    wire    [3:0]                       sr_buf_waddr;
-    wire    [63:0]                      sr_buf_wdata;
-    wire                                sr_done;
-
-    wire                                zrle_buf_wren;
-    wire    [3:0]                       zrle_buf_waddr;
-    wire    [63:0]                      zrle_buf_wdata;
-    wire                                zrle_done;
 
     AIDC_LITE_DECOMP_SR                 u_sr
     (
