@@ -1,6 +1,6 @@
 # This file describes a workflow that runs regression tests
 # on a pull request to the main branch
-name: Regression tests
+name: Pull Request
 run-name: Regression test for a pull request from ${{ github.actor }}
 on:
   pull_request:
