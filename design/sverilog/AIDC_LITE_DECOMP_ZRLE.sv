@@ -245,7 +245,7 @@ module AIDC_LITE_DECOMP_ZRLE
             valid                           <= 1'b0;
             addr                            <= 'd0;
             data                            <= 'd0;
-            done                            <= 1'b0;
+            done                            <= 1'b1;
             
             code_buf                        <= 'd0;
             buf_size                        <= 'd0;

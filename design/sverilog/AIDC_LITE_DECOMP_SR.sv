@@ -73,7 +73,7 @@ module AIDC_LITE_DECOMP_SR
             data                            <= 'd0;
 
             beat_cnt                        <= 'd0;
-            done                            <= 1'b0;
+            done                            <= 1'b1;
         end
         else begin
             valid                           <= valid_n;
