@@ -1,0 +1,101 @@
+Magic 271485
+Revision Verdi_R-2020.12-SP1-1
+
+; Window Layout <x> <y> <width> <height> <signalwidth> <valuewidth>
+viewPort 1080 174 1920 1009 306 65
+
+; File list:
+; openDirFile [-d delimiter] [-s time_offset] [-rf auto_bus_rule_file] path_name file_name
+openDirFile -d / "" "/home/dale40/AIDCLite/sim/sverilog/inter.fsdb"
+
+; file time scale:
+; fileTimeScale ### s|ms|us|ns|ps
+
+; signal spacing:
+signalSpacing 5
+
+; windowTimeUnit is used for zoom, cursor & marker
+; waveform viewport range
+zoom 990500.000000 999319.484241
+cursor 1000000.000000
+marker 0.000000
+
+; user define markers
+; userMarker time_pos marker_name color linestyle
+; visible top row signal index
+top 0
+; marker line index
+markerPos 44
+
+; event list
+; addEvent event_name event_expression
+; curEvent event_name
+
+
+
+COMPLEX_EVENT_BEGIN
+
+
+COMPLEX_EVENT_END
+
+
+
+; toolbar current search type
+; curSTATUS search_type
+curSTATUS ByChange
+
+
+addGroup "Global"
+activeDirFile "" "/home/dale40/AIDCLite/sim/sverilog/inter.fsdb"
+addSignal -h 15 /TB_TOP/u_dut/clk
+addGroup "Comp"
+addSignal -h 15 -UNSIGNED /TB_TOP/u_dut/u_comp/u_engine/state[3:0]
+addSubGroup "apb_if(slave)" -e FALSE
+addSignal -h 15 /TB_TOP/u_dut/u_comp/apb_if/psel
+addSignal -h 15 /TB_TOP/u_dut/u_comp/apb_if/penable
+addSignal -h 15 /TB_TOP/u_dut/u_comp/apb_if/pready
+addSignal -h 15 -UNSIGNED -HEX /TB_TOP/u_dut/u_comp/apb_if/paddr[31:0]
+addSignal -h 15 /TB_TOP/u_dut/u_comp/apb_if/pwrite
+addSignal -h 15 -UNSIGNED -HEX /TB_TOP/u_dut/u_comp/apb_if/pwdata[31:0]
+addSignal -h 15 -UNSIGNED -HEX /TB_TOP/u_dut/u_comp/apb_if/prdata[31:0]
+endSubGroup "apb_if(slave)"
+addSubGroup "ahb_if(master)"
+addSignal -h 15 /TB_TOP/u_dut/u_comp/ahb_if/hbusreq
+addSignal -h 15 /TB_TOP/u_dut/u_comp/ahb_if/hgrant
+addSignal -h 15 -UNSIGNED -HEX /TB_TOP/u_dut/u_comp/ahb_if/haddr[31:0]
+addSignal -h 15 -UNSIGNED -HEX /TB_TOP/u_dut/u_comp/ahb_if/htrans[1:0]
+addSignal -h 15 /TB_TOP/u_dut/u_comp/ahb_if/hwrite
+addSignal -h 15 -UNSIGNED -HEX /TB_TOP/u_dut/u_comp/ahb_if/hsize[2:0]
+addSignal -h 15 -UNSIGNED -HEX /TB_TOP/u_dut/u_comp/ahb_if/hburst[2:0]
+addSignal -h 15 -UNSIGNED -HEX /TB_TOP/u_dut/u_comp/ahb_if/hwdata[31:0]
+addSignal -h 15 -UNSIGNED -HEX /TB_TOP/u_dut/u_comp/ahb_if/hrdata[31:0]
+addSignal -h 15 /TB_TOP/u_dut/u_comp/ahb_if/hready
+endSubGroup "ahb_if(master)"
+addGroup "Decomp"
+addSignal -h 15 -UNSIGNED /TB_TOP/u_dut/u_decomp/u_engine/state[3:0]
+addSubGroup "apb_if(slave)" -e FALSE
+addSignal -h 15 /TB_TOP/u_dut/u_decomp/apb_if/psel
+addSignal -h 15 /TB_TOP/u_dut/u_decomp/apb_if/penable
+addSignal -h 15 /TB_TOP/u_dut/u_decomp/apb_if/pready
+addSignal -h 15 -UNSIGNED -HEX /TB_TOP/u_dut/u_decomp/apb_if/paddr[31:0]
+addSignal -h 15 /TB_TOP/u_dut/u_decomp/apb_if/pwrite
+addSignal -h 15 -UNSIGNED -HEX /TB_TOP/u_dut/u_decomp/apb_if/pwdata[31:0]
+addSignal -h 15 -UNSIGNED -HEX /TB_TOP/u_dut/u_decomp/apb_if/prdata[31:0]
+endSubGroup "apb_if(slave)"
+addSubGroup "ahb_if(master)"
+addSignal -h 15 /TB_TOP/u_dut/u_decomp/ahb_if/hbusreq
+addSignal -h 15 /TB_TOP/u_dut/u_decomp/ahb_if/hgrant
+addSignal -h 15 -UNSIGNED -HEX /TB_TOP/u_dut/u_decomp/ahb_if/haddr[31:0]
+addSignal -h 15 -UNSIGNED -HEX /TB_TOP/u_dut/u_decomp/ahb_if/htrans[1:0]
+addSignal -h 15 /TB_TOP/u_dut/u_decomp/ahb_if/hwrite
+addSignal -h 15 -UNSIGNED -HEX /TB_TOP/u_dut/u_decomp/ahb_if/hsize[2:0]
+addSignal -h 15 -UNSIGNED -HEX /TB_TOP/u_dut/u_decomp/ahb_if/hburst[2:0]
+addSignal -h 15 -UNSIGNED -HEX /TB_TOP/u_dut/u_decomp/ahb_if/hwdata[31:0]
+addSignal -h 15 -UNSIGNED -HEX /TB_TOP/u_dut/u_decomp/ahb_if/hrdata[31:0]
+addSignal -h 15 /TB_TOP/u_dut/u_decomp/ahb_if/hready
+endSubGroup "ahb_if(master)"
+addGroup "G4"
+
+; getSignalForm Scope Hierarchy Status
+; active file of getSignalForm
+
