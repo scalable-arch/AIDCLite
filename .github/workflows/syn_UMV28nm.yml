@@ -5,6 +5,8 @@ run-name: IP-level synthesis (UMC28nm) from ${{ github.actor }}
 on:
   schedule:
     - cron: '30 5 * * *'    # 5:30 AM (UTC) every day
+  workflow_dispatch:
+
 jobs:
   Design-Compiler-UMC28nm:
     runs-on: self-hosted        # runs on a server with Synopsys Design Compiler installed

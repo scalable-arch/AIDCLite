@@ -6,6 +6,8 @@ on:
   pull_request:
     branches:
       - main
+  workflow_dispatch:
+
 jobs:
   Sim-VCS:
     runs-on: self-hosted        # runs on a server with Synopsys VCS installed

@@ -4,7 +4,9 @@ name: Sim-Full-Regression
 run-name: Run all regression simulations from ${{ github.actor }}
 on:
   schedule:
-    - cron: '30 5 * * *'    # 5:30 AM (UTC) every day
+    - cron: '30 5 * * *'    # 5:30 AM (UTC), any day of the month, any month, any day of the week
+  workflow_dispatch:
+
 jobs:
   Sim-VCS:
     runs-on: self-hosted        # runs on a server with Synopsys VCS installed
