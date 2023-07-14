@@ -1,17 +1,19 @@
 # This file describes a workflow that runs regression tests
 # on a pull request to the main branch
-name: Synthesis (UMC28nm 200MHz)
-run-name: IP-level synthesis (UMC28nm 200MHz) from ${{ github.actor }}
+name: Lint-RTL-Handoff
+run-name: Spyglass Lint for a IP-level RTL handoff ${{ github.actor }}
 on:
   schedule:
     - cron: '30 5 * * *'    # 5:30 AM (UTC) every day
 jobs:
-  Design-Compiler-UMC28nm:
-    runs-on: self-hosted        # runs on a server with Synopsys Design Compiler installed
+  Lint-Spyglass-RTL-Handoff:
+    runs-on: self-hosted        # runs on a server with Synopsys Spyglass installed
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
-      - name: Synthesis
+      - name: Spyglass-Lint
         run: |
           source ${{github.workspace}}/env.source ${{github.workspace}}
-#           action.syn
+          action.lint
+      - name: Report (moresimple)
+        run: cat reports/moresimple.rpt
