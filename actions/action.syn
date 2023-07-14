@@ -1,3 +1,4 @@
 #!/bin/bash
 
 # $@: forward all input arguments to VCS
+dc_shell-xg-t < ${ACTION_HOME}/syn/SAED32.tcl --clock=200
