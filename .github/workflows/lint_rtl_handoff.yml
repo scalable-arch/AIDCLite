@@ -1,0 +1,19 @@
+# This file describes a workflow that runs regression tests
+# on a pull request to the main branch
+name: Lint-RTL-Handoff
+run-name: Spyglass Lint for a IP-level RTL handoff ${{ github.actor }}
+on:
+  schedule:
+    - cron: '30 5 * * *'    # 5:30 AM (UTC) every day
+jobs:
+  Lint-Spyglass-RTL-Handoff:
+    runs-on: self-hosted        # runs on a server with Synopsys Spyglass installed
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+      - name: Spyglass-Lint
+        run: |
+          source ${{github.workspace}}/env.source ${{github.workspace}}
+          action.lint
+      - name: Report (moresimple)
+        run: cat reports/moresimple.rpt
