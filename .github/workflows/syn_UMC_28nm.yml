@@ -1,0 +1,17 @@
+# This file describes a workflow that runs regression tests
+# on a pull request to the main branch
+name: Synthesis (UMC28nm 200MHz)
+run-name: IP-level synthesis (UMC28nm 200MHz) from ${{ github.actor }}
+on:
+  schedule:
+    - cron: '30 5 * * *'    # 5:30 AM (UTC) every day
+jobs:
+  Design-Compiler-UMC28nm:
+    runs-on: self-hosted        # runs on a server with Synopsys Design Compiler installed
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+      - name: Synthesis
+        run: |
+          source ${{github.workspace}}/env.source ${{github.workspace}}
+#           action.syn
