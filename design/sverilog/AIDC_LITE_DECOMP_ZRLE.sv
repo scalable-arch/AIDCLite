@@ -31,8 +31,8 @@ module AIDC_LITE_DECOMP_ZRLE
 
     always_comb begin
         valid_n                         = 1'b0;
-        addr_n                          = 'hX;
-        data_n                          = 'hX;
+        addr_n                          = 'd0;
+        data_n                          = 'd0;
         done_n                          = done;
         
         code_buf_n                      = code_buf;

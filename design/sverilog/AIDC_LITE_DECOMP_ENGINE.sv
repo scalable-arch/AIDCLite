@@ -188,6 +188,8 @@ module AIDC_LITE_DECOMP_ENGINE
                     haddr_n                         = dst_addr_i + {blk_cnt[30:6], 7'd0};
                     htrans_n                        = HTRANS_NONSEQ;
                     hwrite_n                        = 1'b1;
+                    // during a WR, beat_cnt counts for address phases
+                    beat_cnt_n                      = 'd0;
 
                     state_n                         = S_WR1_1ST_ADDR;
                 end
@@ -198,7 +200,15 @@ module AIDC_LITE_DECOMP_ENGINE
                     // address phase part
                     haddr_n                         = haddr + 'd4;
                     htrans_n                        = HTRANS_SEQ;
+                    beat_cnt_n                      = beat_cnt + 'd1;
 
+                    // data phase part
+                    if (beat_cnt[0]) begin
+                        hwdata_n                        = decomp_rdata_i[31:0];
+                    end
+                    else begin
+                        hwdata_n                        = decomp_rdata_i[63:32];
+                    end
                     state_n                         = S_WR1_MIDDLE;
                 end
             end
@@ -207,9 +217,15 @@ module AIDC_LITE_DECOMP_ENGINE
                 if (ahb_if.hready) begin
                     // address phase part
                     haddr_n                         = haddr + 'd4;
+                    beat_cnt_n                      = beat_cnt + 'd1;
 
                     // data phase part
-                    beat_cnt_n                      = beat_cnt + 'd1;
+                    if (beat_cnt[0]) begin
+                        hwdata_n                        = decomp_rdata_i[31:0];
+                    end
+                    else begin
+                        hwdata_n                        = decomp_rdata_i[63:32];
+                    end
 
                     if (beat_cnt=='d14) begin
                         // deassert hbusreq
@@ -226,9 +242,6 @@ module AIDC_LITE_DECOMP_ENGINE
             S_WR1_LAST_DATA: begin
                 // receive data
                 if (ahb_if.hready) begin
-                    // data phase part
-                    beat_cnt_n                      = beat_cnt + 'd1;
-
                     hbusreq_n                       = 1'b1;
                     state_n                         = S_WR2_BUSREQ;
                 end
@@ -238,8 +251,6 @@ module AIDC_LITE_DECOMP_ENGINE
                     // address phase part
                     // set the address and SRC_ADDR + BLK_CNT*64
                     htrans_n                        = HTRANS_NONSEQ;
-                    // during a WR, beat_cnt counts for address phases
-                    beat_cnt_n                      = 'd0;
 
                     state_n                         = S_WR2_1ST_ADDR;
                 end
@@ -253,6 +264,14 @@ module AIDC_LITE_DECOMP_ENGINE
 
                     beat_cnt_n                      = beat_cnt + 'd1;
 
+                    // data phase part
+                    if (beat_cnt[0]) begin
+                        hwdata_n                        = decomp_rdata_i[31:0];
+                    end
+                    else begin
+                        hwdata_n                        = decomp_rdata_i[63:32];
+                    end
+
                     state_n                         = S_WR2_MIDDLE;
                 end
             end
@@ -262,6 +281,14 @@ module AIDC_LITE_DECOMP_ENGINE
                     // address phase part
                     haddr_n                         = haddr + 'd4;
                     beat_cnt_n                      = beat_cnt + 'd1;
+
+                    // data phase part
+                    if (beat_cnt[0]) begin
+                        hwdata_n                        = decomp_rdata_i[31:0];
+                    end
+                    else begin
+                        hwdata_n                        = decomp_rdata_i[63:32];
+                    end
 
                     if (beat_cnt=='d30) begin
                         // deassert hbusreq
@@ -405,6 +432,6 @@ module AIDC_LITE_DECOMP_ENGINE
     assign  decomp_eop_o                    = decomp_eop;
     assign  decomp_wdata_o                  = decomp_wdata;
 
-    assign  buf_addr_o                      = beat_cnt[3:1];
+    assign  buf_addr_o                      = beat_cnt[4:1];
 
 endmodule
