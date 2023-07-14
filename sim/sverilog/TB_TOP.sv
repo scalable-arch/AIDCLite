@@ -194,18 +194,21 @@ module TB_TOP;
     //----------------------------------------------------------
     // Test sequence
     //----------------------------------------------------------
-    initial begin
+    task test_comp (
+        input   [31:0]      src_addr,
+        input   [31:0]      dst_addr,
+        input   [31:0]      len
+    );
+    begin
         logic   [31:0]      rdata;
 
-        apb0_if.reset_master();
-        apb1_if.reset_master();
-        u_mem0.init_mem_with_addr();
+        $display("---------------------------------------------------");
+        $display(" Compression test starts");
+        $display("---------------------------------------------------");
 
-        repeat (10) @(posedge clk);
-
-        apb0_if.write(32'h0, 32'h0001_0000);
-        apb0_if.write(32'h4, 32'h0002_0000);
-        apb0_if.write(32'h8, 32'h0000_1000);
+        apb0_if.write(32'h0, src_addr);
+        apb0_if.write(32'h4, dst_addr);
+        apb0_if.write(32'h8, len);
         apb0_if.write(32'hC, 32'd1);
 
         for (int i=0; i<10000; i++) begin
@@ -217,15 +220,30 @@ module TB_TOP;
             repeat (100) @(posedge clk);
         end
         $display("");   // new line
-        repeat (50) @(posedge clk);
+
+        repeat (10) @(posedge clk);
 
         $display("---------------------------------------------------");
-        $display(" Compression completed");
+        $display(" Compression test completed");
+        $display("---------------------------------------------------");
+    end
+    endtask;
+
+    task test_decomp (
+        input   [31:0]      src_addr,
+        input   [31:0]      dst_addr,
+        input   [31:0]      len
+    );
+    begin
+        logic   [31:0]      rdata;
+
+        $display("---------------------------------------------------");
+        $display(" Decompression test starts");
         $display("---------------------------------------------------");
 
-        apb1_if.write(32'h0, 32'h0002_0000);
-        apb1_if.write(32'h4, 32'h0003_0000);
-        apb1_if.write(32'h8, 32'h0000_0800);
+        apb1_if.write(32'h0, src_addr);
+        apb1_if.write(32'h4, dst_addr);
+        apb1_if.write(32'h8, len);
         apb1_if.write(32'hC, 32'd1);
 
         for (int i=0; i<10000; i++) begin
@@ -237,11 +255,49 @@ module TB_TOP;
             repeat (100) @(posedge clk);
         end
         $display("");   // new line
-        repeat (50) @(posedge clk);
+
+        repeat (10) @(posedge clk);
 
         $display("---------------------------------------------------");
-        $display(" Decompression completed");
+        $display(" Decompression test completed");
         $display("---------------------------------------------------");
+    end
+    endtask;
+
+    initial begin
+        apb0_if.reset_master();
+        apb1_if.reset_master();
+        u_mem0.init_mem_with_addr();
+
+        repeat (10) @(posedge clk);
+
+        test_comp(32'h0000_0000,
+                  32'h0002_0000,
+                  32'h0000_0100);
+
+        test_decomp(32'h0002_0000,
+                    32'h0003_0000,
+                    32'h0000_0100);
+
+        repeat (100) @(posedge clk);
+
+        test_comp(32'h0000_0100,
+                  32'h0002_0000,
+                  32'h0000_0100);
+
+        test_decomp(32'h0002_0000,
+                    32'h0003_0000,
+                    32'h0000_0100);
+
+        repeat (100) @(posedge clk);
+
+        test_comp(32'h0001_0000,
+                  32'h0002_0000,
+                  32'h0000_0100);
+
+        test_decomp(32'h0002_0000,
+                    32'h0003_0000,
+                    32'h0000_0100);
 
         $finish;
     end

@@ -274,7 +274,6 @@ module AIDC_LITE_COMP_ENGINE
                     // address phase part
                     haddr_n                         = haddr + 'd4;
                     htrans_n                        = HTRANS_SEQ;
-
                     beat_cnt_n                      = beat_cnt + 'd1;
 
                     // data phase part

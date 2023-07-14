@@ -15,7 +15,7 @@ module AIDC_LITE_DECOMP_SR
     output  logic                       done_o
 );
 
-    logic                               beat_cnt,   beat_cnt_n;
+    logic   [3:0]                       beat_cnt,   beat_cnt_n;
     logic                               done,       done_n;
 
     logic                               valid,      valid_n;
