@@ -1,0 +1,27 @@
+# This file describes a workflow that runs regression tests
+# on a pull request to the main branch
+name: RDL-PeakRDL
+run-name: Generate HDL, UVM, C headers, documents from Register Description Language input from ${{ github.actor }}
+on:
+  pull_request:
+    branches:
+      - main
+  schedule:
+    - cron: '30 5 * * *'    # 5:30 AM (UTC), any day of the month, any month, any day of the week
+  workflow_dispatch:
+
+jobs:
+  RDL-PeakRDL:
+    runs-on: ubuntu-latest    # GitHub runner
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+      - name: Install dependencies
+        run: python3 -m pip install peakrdl
+      - name: RTL generation
+        run: |
+          source ${{github.workspace}}/env.source ${{github.workspace}}
+          peakrdl regblock registers/systemRDL/AIDC_LITE.rdl -o regblock/ --cpuif apb3-flat

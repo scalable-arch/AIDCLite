@@ -3,6 +3,9 @@
 name: Synthesis (UMC28nm)
 run-name: IP-level synthesis (UMC28nm) from ${{ github.actor }}
 on:
+  pull_request:
+    branches:
+      - main
   schedule:
     - cron: '30 5 * * *'    # 5:30 AM (UTC) every day
   workflow_dispatch:

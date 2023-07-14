@@ -3,6 +3,9 @@
 name: Lint-RTL-Handoff
 run-name: Spyglass Lint for a IP-level RTL handoff ${{ github.actor }}
 on:
+  pull_request:
+    branches:
+      - main
   schedule:
     - cron: '30 5 * * *'    # 5:30 AM (UTC), any day of the month, any month, any day of the week
   workflow_dispatch:
@@ -19,3 +22,8 @@ jobs:
           action.lint
       - name: Report (moresimple)
         run: cat reports/moresimple.rpt
+#      - name: Upload Lint report
+#        uses: actions/upload-artifact@v3
+#        with:
+#          name: moresimple.rpt
+#          path: reports/moresimple.rpt
