@@ -34,6 +34,16 @@ module AIDC_LITE_DECOMP_TOP
     wire                                decomp_eop;
     wire    [31:0]                      decomp_wdata;
 
+    wire                                sr_buf_wren;
+    wire    [3:0]                       sr_buf_waddr;
+    wire    [63:0]                      sr_buf_wdata;
+    wire                                sr_done;
+
+    wire                                zrle_buf_wren;
+    wire    [3:0]                       zrle_buf_waddr;
+    wire    [63:0]                      zrle_buf_wdata;
+    wire                                zrle_done;
+
     logic   [3:0]                       buf_addr;
     wire    [63:0]                      buf_rdata;
 
@@ -62,16 +72,6 @@ module AIDC_LITE_DECOMP_TOP
         .buf_addr_o                     (buf_addr),
         .decomp_rdata_i                 (buf_rdata)
     );
-
-    wire                                sr_buf_wren;
-    wire    [3:0]                       sr_buf_waddr;
-    wire    [63:0]                      sr_buf_wdata;
-    wire                                sr_done;
-
-    wire                                zrle_buf_wren;
-    wire    [3:0]                       zrle_buf_waddr;
-    wire    [63:0]                      zrle_buf_wdata;
-    wire                                zrle_done;
 
     AIDC_LITE_DECOMP_SR                 u_sr
     (
