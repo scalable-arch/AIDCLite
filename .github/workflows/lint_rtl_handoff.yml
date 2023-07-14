@@ -4,7 +4,9 @@ name: Lint-RTL-Handoff
 run-name: Spyglass Lint for a IP-level RTL handoff ${{ github.actor }}
 on:
   schedule:
-    - cron: '30 5 * * *'    # 5:30 AM (UTC) every day
+    - cron: '30 5 * * *'    # 5:30 AM (UTC), any day of the month, any month, any day of the week
+  workflow_dispatch:
+
 jobs:
   Lint-Spyglass-RTL-Handoff:
     runs-on: self-hosted        # runs on a server with Synopsys Spyglass installed
