@@ -2,6 +2,19 @@
 
 AI Data Compression Lite
 
+# Integration
+      +------------------------------+
+      |  +------------------------+  |
+APB0 ====| AIDC_LITE_COMP_WRAPPER |  |
+APB1 ====|                        |  |
+      |  +------------------------+  |
+      |         ||       ||          |
+      +---------||-------||----------+
+          AHB0  ||       || AHB1
+         (comp) ||       || (decomp)
+      +---------||-------||----------+
+      |          AHB Bus             |
+      +------------------------------+
 
 # Compressor Block Diagram
 
@@ -24,7 +37,7 @@ APB  ===| CFG  |      /|   SR   |-----|  BUF  | |
 </pre>
 
 
-# Decompressor
+# Decompressor Block Diagram
 
 <pre>
      +------------------------------------------+
