@@ -277,7 +277,7 @@ module TB_TOP;
 
         test_decomp(32'h0002_0000,
                     32'h0003_0000,
-                    32'h0000_0100);
+                    32'h0000_0080);
 
         repeat (100) @(posedge clk);
 
@@ -287,7 +287,7 @@ module TB_TOP;
 
         test_decomp(32'h0002_0000,
                     32'h0003_0000,
-                    32'h0000_0100);
+                    32'h0000_0080);
 
         repeat (100) @(posedge clk);
 
@@ -297,7 +297,7 @@ module TB_TOP;
 
         test_decomp(32'h0002_0000,
                     32'h0003_0000,
-                    32'h0000_0100);
+                    32'h0000_0080);
 
         $finish;
     end
