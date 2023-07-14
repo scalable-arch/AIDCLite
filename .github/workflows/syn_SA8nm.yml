@@ -1,7 +1,7 @@
 # This file describes a workflow that runs regression tests
 # on a pull request to the main branch
 name: Synthesis (Samsung 8nm)
-run-name: IP-level synthesis (Samsung 28nm) from ${{ github.actor }}
+run-name: IP-level synthesis (Samsung 8nm) from ${{ github.actor }}
 on:
   schedule:
     - cron: '30 5 * * *'    # 5:30 AM (UTC) every day
