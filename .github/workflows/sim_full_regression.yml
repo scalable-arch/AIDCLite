@@ -1,0 +1,19 @@
+# This file describes a workflow that runs regression tests
+# on a pull request to the main branch
+name: Sim-Full-Regression
+run-name: Run all regression simulations from ${{ github.actor }}
+on:
+  schedule:
+    - cron: '30 5 * * *'    # 5:30 AM (UTC) every day
+jobs:
+  Sim-VCS:
+    runs-on: self-hosted        # runs on a server with Synopsys VCS installed
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+      - name: Compile
+        run: |
+          source ${{github.workspace}}/env.source ${{github.workspace}}
+          action.sim
+      - name: Sim-No-Dump
+        run: ./simv
