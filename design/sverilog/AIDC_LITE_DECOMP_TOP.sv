@@ -29,8 +29,7 @@ module AIDC_LITE_DECOMP_TOP
     );
 
     wire                                decomp0_wren,
-                                        decomp1_wren,
-                                        decomp2_wren;
+                                        decomp1_wren;
     wire                                decomp_sop;
     wire                                decomp_eop;
     wire    [31:0]                      decomp_wdata;
@@ -53,12 +52,12 @@ module AIDC_LITE_DECOMP_TOP
 
         .decomp0_wren_o                 (decomp0_wren),
         .decomp1_wren_o                 (decomp1_wren),
-        .decomp2_wren_o                 (decomp2_wren),
+        .decomp2_wren_o                 (/* FLOLATING */),
         .decomp_sop_o                   (decomp_sop),
         .decomp_eop_o                   (decomp_eop),
         .decomp_wdata_o                 (decomp_wdata),
 
-        .decomp_done_i                  (1'b1),
+        .decomp_done_i                  (sr_done & zrle_done),
 
         .buf_addr_o                     (buf_addr),
         .decomp_rdata_i                 (buf_rdata)
