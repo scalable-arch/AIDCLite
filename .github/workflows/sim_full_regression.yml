@@ -14,8 +14,8 @@ jobs:
   VCS:
     runs-on: self-hosted        # runs on a server with Synopsys VCS installed
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
       - name: Compile
         run: |
           source ${{github.workspace}}/env.source ${{github.workspace}}
