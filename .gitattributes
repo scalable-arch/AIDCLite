@@ -3,7 +3,7 @@
 
 # Files not included in a tarball/zipball file
 .gitattributes export-ignore
-.gitignore export_ignore
+.gitignore export-ignore
 .github export-ignore
 actions export-ignore
 registers export-ignore
