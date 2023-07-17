@@ -1,7 +1,7 @@
 -sverilog
-+incdir+${AIDC_LITE_HOME}/interface/sverilog
-${AIDC_LITE_HOME}/interface/sverilog/AHB2_INTF.sv
-${AIDC_LITE_HOME}/interface/sverilog/APB_INTF.sv
++incdir+${AIDC_LITE_HOME}/design/interface
+${AIDC_LITE_HOME}/design/interface/AHB2_INTF.sv
+${AIDC_LITE_HOME}/design/interface/APB_INTF.sv
 
 +incdir+${AIDC_LITE_HOME}/design/sverilog
 ${AIDC_LITE_HOME}/design/sverilog/AIDC_LITE_BUFFER.sv

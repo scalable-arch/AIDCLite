@@ -21,7 +21,7 @@ jobs:
           source ${{github.workspace}}/env.source ${{github.workspace}}
           action.lint
       - name: Report (moresimple)
-        run: cat reports/moresimple.rpt
+        run: cat work.lint/reports/moresimple.rpt
 #      - name: Upload Lint report
 #        uses: actions/upload-artifact@v3
 #        with:
