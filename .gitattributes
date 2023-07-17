@@ -2,7 +2,7 @@
 * text=auto
 
 # Exclude files from a tarball/zipball file
-.git* export-ignore
-actions export-ignore
-registers export-ignore
-ENV* export-ignore
+#.git* export-ignore
+#actions export-ignore
+#registers export-ignore
+#ENV* export-ignore
