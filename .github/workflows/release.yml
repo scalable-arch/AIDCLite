@@ -21,8 +21,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.ref }}-${{ github.sha }}
-          release_name: Release ${{ github.ref }}-${{ github.sha }}
+          tag_name: ${{ github.ref }}-${{ github.sha }}.SubString(0, 8)
+          release_name: Release ${{ github.ref }}-${{ github.sha }}.Substring(0, 8)
           draft: false
           prerelease: false
       - name: Upload release asset
