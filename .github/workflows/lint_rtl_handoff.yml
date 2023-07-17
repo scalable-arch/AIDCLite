@@ -11,7 +11,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  Lint-Spyglass-RTL-Handoff:
+  Spyglass:
     runs-on: self-hosted        # runs on a server with Synopsys Spyglass installed
     steps:
       - uses: actions/checkout@v3

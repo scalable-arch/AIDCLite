@@ -11,7 +11,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  Design-Compiler-UMC28nm:
+  Design-Compiler:
     runs-on: self-hosted        # runs on a server with Synopsys Design Compiler installed
     steps:
       - uses: actions/checkout@v3

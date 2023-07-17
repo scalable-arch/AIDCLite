@@ -11,7 +11,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  Sim-VCS:
+  VCS:
     runs-on: self-hosted        # runs on a server with Synopsys VCS installed
     steps:
       - uses: actions/checkout@v3
