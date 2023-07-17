@@ -17,7 +17,7 @@ jobs:
           zip -r delivery.zip . -x ".git*" -x "actions/**" -x "registers/**"
       - name: Create release
         id: create_release
-        uses: actions/create_release@v1
+        uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
