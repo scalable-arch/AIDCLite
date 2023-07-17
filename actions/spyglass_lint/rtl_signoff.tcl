@@ -40,6 +40,7 @@ current_methodology $env(SPYGLASS_HOME)/GuideWare/latest/block/rtl_handoff
 read_file -type sourcelist ${DESIGN_FILELIST}
 
 #Read waiver files
+waive -rule { {NoAssignX-ML} } -comment {Initialization to 'x' can be helpful for debugging.}
 #read_file -type awl ../waiver.awl
 
 set_option enableSV09 yes

@@ -1,7 +1,7 @@
 # This file describes a workflow that runs regression tests
 # on a pull request to the main branch
 name: Lint-RTL-Handoff
-run-name: Spyglass Lint for a IP-level RTL handoff ${{ github.actor }}
+run-name: Spyglass Lint for a IP-level RTL handoff from ${{ github.actor }}
 on:
   pull_request:
     branches:
@@ -21,7 +21,7 @@ jobs:
           source ${{github.workspace}}/env.source ${{github.workspace}}
           action.lint
       - name: Report (moresimple)
-        run: cat reports/moresimple.rpt
+        run: cat work.lint/reports/moresimple.rpt
 #      - name: Upload Lint report
 #        uses: actions/upload-artifact@v3
 #        with:

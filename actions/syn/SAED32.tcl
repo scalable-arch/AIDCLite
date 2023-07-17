@@ -9,10 +9,10 @@ set target_library \
 # ---------------------------------------
 # Step 2: Read designs
 # ---------------------------------------
-set search_path "$env(AIDC_LITE_HOME)/interface/sverilog $search_path"
+set search_path "$env(AIDC_LITE_HOME)/design/interface $search_path"
 
-analyze -format sverilog $env(AIDC_LITE_HOME)/interface/sverilog/AHB2_INTF.sv
-analyze -format sverilog $env(AIDC_LITE_HOME)/interface/sverilog/APB_INTF.sv
+analyze -format sverilog $env(AIDC_LITE_HOME)/design/interface/AHB2_INTF.sv
+analyze -format sverilog $env(AIDC_LITE_HOME)/design/interface/APB_INTF.sv
 analyze -format sverilog $env(AIDC_LITE_HOME)/design/sverilog/AIDC_LITE_COMP_CFG.sv
 analyze -format sverilog $env(AIDC_LITE_HOME)/design/sverilog/AIDC_LITE_CODE_CONCATENATE.sv
 analyze -format sverilog $env(AIDC_LITE_HOME)/design/sverilog/AIDC_LITE_COMP_SR.sv

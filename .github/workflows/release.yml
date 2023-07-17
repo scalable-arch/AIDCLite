@@ -1,0 +1,27 @@
+# This file describes a workflow that runs regression tests
+# on a pull request to the main branch
+name: Release-RTL
+run-name: Build a RTL release package from ${{ github.actor }}
+on:
+  workflow_dispatch:
+
+jobs:
+  Spyglass:
+    runs-on: self-hosted        # runs on a server with Synopsys Spyglass installed
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Create release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }
+          release_name: Release ${{ github.ref }}
+          body: |
+            Changes in this Release
+            - First Change
+            - Second Change
+          draft: false
+          prerelease: false
