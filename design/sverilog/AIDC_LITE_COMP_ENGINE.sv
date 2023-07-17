@@ -1,6 +1,6 @@
 `include "AHB2_PKG.svh"
 
-use AHB2_PKG::*;
+import AHB2_PKG::*;
 
 module AIDC_LITE_COMP_ENGINE
 (
