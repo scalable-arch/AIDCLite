@@ -22,3 +22,6 @@ jobs:
           action.sim
       - name: Sim-No-Dump
         run: ./simv
+      #- name: Sim-Dump
+      #  if: ${{ failure() } }
+      #  run: ./simv
