@@ -14,13 +14,16 @@ set search_path "$env(AIDC_LITE_HOME)/design/interface $search_path"
 
 analyze -format sverilog $env(AIDC_LITE_HOME)/design/interface/AHB2_INTF.sv
 analyze -format sverilog $env(AIDC_LITE_HOME)/design/interface/APB_INTF.sv
-analyze -format sverilog $env(AIDC_LITE_HOME)/design/sverilog/AIDC_LITE_COMP_CFG.sv
+analyze -format sverilog $env(AIDC_LITE_HOME)/design/sverilog/AIDC_LITE_BUFFER.sv
 analyze -format sverilog $env(AIDC_LITE_HOME)/design/sverilog/AIDC_LITE_CODE_CONCATENATE.sv
+
+analyze -format sverilog $env(AIDC_LITE_HOME)/design/sverilog/AIDC_LITE_COMP_CFG.sv
 analyze -format sverilog $env(AIDC_LITE_HOME)/design/sverilog/AIDC_LITE_COMP_SR.sv
 analyze -format sverilog $env(AIDC_LITE_HOME)/design/sverilog/AIDC_LITE_COMP_ZRLE.sv
 analyze -format sverilog $env(AIDC_LITE_HOME)/design/sverilog/AIDC_LITE_COMP_ENGINE.sv
 analyze -format sverilog $env(AIDC_LITE_HOME)/design/sverilog/AIDC_LITE_COMP_TOP.sv
 
+analyze -format sverilog $env(AIDC_LITE_HOME)/design/sverilog/AIDC_LITE_DECOMP_CFG.sv
 analyze -format sverilog $env(AIDC_LITE_HOME)/design/sverilog/AIDC_LITE_DECOMP_SR.sv
 analyze -format sverilog $env(AIDC_LITE_HOME)/design/sverilog/AIDC_LITE_DECOMP_ZRLE.sv
 analyze -format sverilog $env(AIDC_LITE_HOME)/design/sverilog/AIDC_LITE_DECOMP_ENGINE.sv
@@ -119,6 +122,6 @@ insert_dft
 write -hierarchy -format verilog -output  $design_name.scan.netlist.v
 write_test_protocol              -output  $design_name.scan.stil
 write_sdc                                 $design_name.scan.sdc
-}
 
 exit 0
+}
