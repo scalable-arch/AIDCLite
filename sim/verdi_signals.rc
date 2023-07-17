@@ -6,7 +6,7 @@ viewPort 1080 174 1920 1009 306 65
 
 ; File list:
 ; openDirFile [-d delimiter] [-s time_offset] [-rf auto_bus_rule_file] path_name file_name
-openDirFile -d / "" "/home/dale40/AIDCLite/sim/sverilog/inter.fsdb"
+openDirFile -d / -i 0 "" "/home/dale40/AIDCLite/work/inter.fsdb"
 
 ; file time scale:
 ; fileTimeScale ### s|ms|us|ns|ps
@@ -16,12 +16,10 @@ signalSpacing 5
 
 ; windowTimeUnit is used for zoom, cursor & marker
 ; waveform viewport range
-zoom 990500.000000 999319.484241
-cursor 1000000.000000
+zoom 0.000000 15690.350000
+cursor 15535.000000
 marker 0.000000
 
-; user define markers
-; userMarker time_pos marker_name color linestyle
 ; visible top row signal index
 top 0
 ; marker line index
@@ -46,7 +44,7 @@ curSTATUS ByChange
 
 
 addGroup "Global"
-activeDirFile "" "/home/dale40/AIDCLite/sim/sverilog/inter.fsdb"
+activeDirFile "" "/home/dale40/AIDCLite/work/inter.fsdb"
 addSignal -h 15 /TB_TOP/u_dut/clk
 addGroup "Comp"
 addSignal -h 15 -UNSIGNED /TB_TOP/u_dut/u_comp/u_engine/state[3:0]

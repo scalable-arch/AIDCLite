@@ -3,10 +3,13 @@
 name: Release-RTL
 run-name: Build a RTL release package from ${{ github.actor }}
 on:
+  push:
+    tags:
+      - "release*"
   workflow_dispatch:
 
 jobs:
-  Spyglass:
+  Release:
     runs-on: self-hosted        # runs on a server with Synopsys Spyglass installed
     steps:
       - name: Checkout code
@@ -15,7 +18,7 @@ jobs:
         id: create_release
         uses: actions/create-release@v1
         env:
-          GITHUB_TOKEN ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ github.ref }}
           release_name: Release ${{ github.ref }}
@@ -25,3 +28,13 @@ jobs:
             - Second Change
           draft: false
           prerelease: false
+      - name: Upload release asset
+        id: upload_release_asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{steps.create_release.outputs.upload_url }}
+          asset_path: ./my_artifact.zip
+          asset_name: my-artifact.zip
+          asset_content_type: application/zip
