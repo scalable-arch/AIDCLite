@@ -3,32 +3,18 @@
 name: Release-RTL
 run-name: Build a RTL release package from ${{ github.actor }}
 on:
-  push:
-    tags:
-      - "release*"
-  workflow_dispatch:
+  release:
+    types: [created]
 
 jobs:
   Release:
-    runs-on: self-hosted        # runs on a server with Synopsys Spyglass installed
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
       - name: Create release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
-          file: design/* sim/* LICENSE README.md
-          body: |
-            Changes in this Release
-            - First Change
-            - Second Change
-          draft: false
-          prerelease: false
+        run: |
+          zip -r delivery.zip . -x ".git*" -x "actions/**" -x "registers/**"
       - name: Upload release asset
         id: upload_release_asset
         uses: actions/upload-release-asset@v1
@@ -36,6 +22,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{steps.create_release.outputs.upload_url }}
-          asset_path: ./my_artifact.zip
-          asset_name: my_artifact.zip
+          asset_path: ./delivery.zip
+          asset_name: delivery.zip
           asset_content_type: application/zip
