@@ -2,7 +2,9 @@
 * text=auto
 
 # Files not included in a tarball/zipball file
-.github export_ignore
-actions export_ignore
-registers export_ignore
-ENV* export_ignore
+.gitattributes export-ignore
+.gitignore export_ignore
+.github export-ignore
+actions export-ignore
+registers export-ignore
+ENV* export-ignore
