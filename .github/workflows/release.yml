@@ -3,6 +3,9 @@
 name: Release-RTL
 run-name: Build a RTL release package from ${{ github.actor }}
 on:
+  push:
+    tags:
+      - "release*"
   workflow_dispatch:
 
 jobs:
