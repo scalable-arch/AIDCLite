@@ -1,3 +1,4 @@
+try {
 # ---------------------------------------
 # Step 1: Specify libraries
 # ---------------------------------------
@@ -118,5 +119,6 @@ insert_dft
 write -hierarchy -format verilog -output  $design_name.scan.netlist.v
 write_test_protocol              -output  $design_name.scan.stil
 write_sdc                                 $design_name.scan.sdc
+}
 
-exit
+exit 0
