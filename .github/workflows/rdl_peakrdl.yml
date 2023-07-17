@@ -25,3 +25,15 @@ jobs:
         run: |
           source ${{github.workspace}}/env.source ${{github.workspace}}
           peakrdl regblock registers/systemRDL/AIDC_LITE.rdl -o regblock/ --cpuif apb3-flat
+      - name: Commit changes
+        run: |
+          git config --global user.email "no-reply@github.com"
+          git config --global user.name "GitHub Actions"
+          git add regblock/
+          git commit -m "Update RDL-generated files"
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+          with:
+            github_token: ${{ secrets.GITHUB_TOKEN }}
+            force: true
+            
