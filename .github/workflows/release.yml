@@ -1,13 +1,10 @@
 # This file describes a workflow that runs regression tests
 # on a pull request to the main branch
 name: Release-RTL
-run-name: Build a RTL release package from ${{ github.actor }}
+run-name: Build a RTL delivery package from ${{ github.actor }}
 on:
   release:
     types: [released, prereleased]
-#  push:
-#    tags:
-#      - 'v*'
 
 jobs:
   Release:
