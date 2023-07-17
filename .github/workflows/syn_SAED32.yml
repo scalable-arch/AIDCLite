@@ -1,6 +1,6 @@
 # This file describes a workflow that runs regression tests
 # on a pull request to the main branch
-name: Synthesis (Synopsys 32/28nm Generic Library8nm)
+name: Synthesis (Synopsys 32/28nm Generic)
 run-name: IP-level synthesis (SAED32_EDK) from ${{ github.actor }}
 on:
   pull_request:
