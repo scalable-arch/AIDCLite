@@ -27,7 +27,7 @@ jobs:
           prerelease: false
       - name: Upload release asset
         id: upload_release_asset
-        uses: actions/upload-release_asset@v1
+        uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
