@@ -14,8 +14,8 @@ jobs:
   Spyglass:
     runs-on: self-hosted        # runs on a server with Synopsys Spyglass installed
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
       - name: Spyglass-Lint
         run: |
           source ${{github.workspace}}/env.source ${{github.workspace}}

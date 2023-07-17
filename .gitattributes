@@ -5,4 +5,3 @@
 #.git* export-ignore
 #actions export-ignore
 #registers export-ignore
-#ENV* export-ignore
