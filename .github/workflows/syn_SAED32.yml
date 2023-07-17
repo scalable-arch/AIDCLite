@@ -20,3 +20,11 @@ jobs:
         run: |
           source ${{github.workspace}}/env.source ${{github.workspace}}
           action.syn_SAED32
+      - name: Report (Design)
+        run: cat *.design.rpt
+      - name: Report (Timing)
+        run: cat *.timing.rpt
+      - name: Report (Area)
+        run: cat *.area.rpt
+      - name: Report (Power)
+        run: cat *.power.rpt
