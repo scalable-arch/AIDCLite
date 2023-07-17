@@ -1,17 +1,17 @@
 # This file describes a workflow that runs regression tests
 # on a pull request to the main branch
-name: Equivalence Check
-run-name: Synopsys Formality from ${{ github.actor }}
+name: Synthesis (UMC28nm)
+run-name: IP-level synthesis (UMC28nm) from ${{ github.actor }}
 on:
   pull_request:
     branches:
       - main
   schedule:
-    - cron: '30 5 * * *'    # 5:30 AM (UTC), any day of the month, any month, any day of the week
+    - cron: '30 5 * * *'    # 5:30 AM (UTC) every day
   workflow_dispatch:
 
 jobs:
-  Formality:
+  Design-Compiler:
     runs-on: self-hosted        # runs on a server with Synopsys Design Compiler installed
     steps:
       - uses: actions/checkout@v3

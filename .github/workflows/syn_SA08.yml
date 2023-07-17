@@ -1,17 +1,17 @@
 # This file describes a workflow that runs regression tests
 # on a pull request to the main branch
-name: Synthesis (UMC28nm)
-run-name: IP-level synthesis (UMC28nm) from ${{ github.actor }}
+name: Synthesis (Samsung 8nm)
+run-name: IP-level synthesis (Samsung 8nm) from ${{ github.actor }}
 on:
   pull_request:
     branches:
       - main
   schedule:
-    - cron: '30 5 * * *'    # 5:30 AM (UTC) every day
+    - cron: '30 5 * * *'    # 5:30 AM (UTC), any day of the month, any month, any day of the week
   workflow_dispatch:
 
 jobs:
-  Design-Compiler-UMC28nm:
+  Design-Compiler:
     runs-on: self-hosted        # runs on a server with Synopsys Design Compiler installed
     steps:
       - uses: actions/checkout@v3
@@ -19,4 +19,4 @@ jobs:
       - name: Synthesis
         run: |
           source ${{github.workspace}}/env.source ${{github.workspace}}
-#           action.syn
+#action.syn_SAED32
