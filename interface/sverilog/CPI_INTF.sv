@@ -1,3 +1,5 @@
+`define CPI_EPOCH_ID_WIDTH  10
+
 interface CPI_GLOBAL (input clk, int rst_n);
     logic                               txcon_req;
     logic                               rxcon_ack;
@@ -20,20 +22,9 @@ interface CPI_GLOBAL (input clk, int rst_n);
         output          rxcon_ack, rxdiscon_nack, rx_empty
     );
 
-    // synthesis translate_off
+    // synopsys translate_off
     task reset();
 
     endtask
-    // synthesis translate_on
+    // synopsys translate_on
 endinterface
-
-
-module CXL_CTRL
-(
-        input               clk,
-        input               rst_n,
-
-        CPI_GLOBAL.AGENT    cpi_intf
-);
-
-    cpi_intf.txcon_req          = 1'b1;

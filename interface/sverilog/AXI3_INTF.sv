@@ -12,7 +12,7 @@
 interface AXI3_A_INTF
 #(
     parameter   ID_WIDTH                = 4,
-    parameter   ADDR_WIDTH              = 32
+    parameter   ADDR_WIDTH              = 64
 )
 (
     input   wire                        aclk,
@@ -40,6 +40,7 @@ interface AXI3_A_INTF
         output      aready
     );
 
+    // synopsys translate_off
     function reset_master();
         avalid                          = 'd0;
         aid                             = 'dx;
@@ -55,6 +56,118 @@ interface AXI3_A_INTF
     function reset_slave();
         aready                          = 'd0;
     endfunction
+
+    clocking driver_cb_icnt_aw @(posedge aclk);
+	    //default input #1 output #1;
+
+        // on chip - w
+        output          aid;
+        output          aaddr;
+        output          avalid;
+        output          alen;
+        output          asize;
+        output          aburst;
+        // dram - w
+        input           aready;
+
+    endclocking
+
+    clocking driver_cb_mc_aw @(posedge aclk);
+	    //default input #1 output #1;
+
+        // on chip - w
+        input          aid;
+        input          aaddr;
+        input          avalid;
+        input          alen;
+        input          asize;
+        input          aburst;
+        // dram - w
+        output           aready;
+
+    endclocking
+
+
+    clocking driver_cb_icnt_ar @(posedge aclk);
+	    //default input #1 output #1;
+
+        // on chip - w
+        output          aid;
+        output          aaddr;
+        output          avalid;
+        output          alen;
+        output          asize;
+        output          aburst;
+        // dram - w
+        input           aready;
+
+    endclocking
+
+    clocking driver_cb_mc_ar @(posedge aclk);
+	    //default input #1 output #1;
+
+        // on chip - w
+        input          aid;
+        input          aaddr;
+        input          avalid;
+        input          alen;
+        input          asize;
+        input          aburst;
+        // dram - w
+        output           aready;
+
+    endclocking
+
+/*  clocking monitor_cb_icnt_aw @(posedge aclk);
+	//default input #1 output #1;
+
+        input          aid;
+        input          aaddr;
+        input          avalid;
+        input          alen;
+        input          asize;
+        input          aburst;
+
+        input          aready;
+
+endclocking
+*/
+    clocking monitor_cb_mc_aw @(posedge aclk);
+	    //default input #1 output #1;
+
+        input          aid;
+        input          aaddr;
+        input          avalid;
+        input          alen;
+        input          asize;
+        input          aburst;
+        input          aready;
+
+    endclocking
+
+    clocking monitor_cb_mc_ar @(posedge aclk);
+	    //default input #1 output #1;
+
+        input          aid;
+        input          aaddr;
+        input          avalid;
+        input          alen;
+        input          asize;
+        input          aburst;
+        input          aready;
+
+    endclocking
+
+    modport DRIVER_ICNT_AW (clocking driver_cb_icnt_aw, input aclk, areset_n);
+    modport DRIVER_MC_AW (clocking driver_cb_mc_aw, input aclk, areset_n);
+
+    modport DRIVER_ICNT_AR (clocking driver_cb_icnt_ar, input aclk, areset_n);
+    modport DRIVER_MC_AR (clocking driver_cb_mc_ar, input aclk, areset_n);
+
+    // modport MONITOR_ICNT_AW (clocking monitor_cb_icnt_aw, input aclk, areset_n);
+    modport MONITOR_MC_AW (clocking monitor_cb_mc_aw, input aclk, areset_n);
+    modport MONITOR_MC_AR (clocking monitor_cb_mc_ar, input aclk, areset_n);
+    // synopsys translate_on
 
 endinterface
 
@@ -100,6 +213,7 @@ interface AXI3_W_INTF
         output      wready
     );
 
+    // synopsys translate_off
     function reset_master();
         wvalid                          = 'd0;
         wid                             = 'dx;
@@ -111,6 +225,67 @@ interface AXI3_W_INTF
     function reset_slave();
         wready                          = 'd0;
     endfunction
+
+    clocking driver_cb_icnt_w @(posedge aclk);
+	    //default input #1 output #1;
+
+        // on chip - w
+        output          wid;
+        output          wdata;
+        output          wstrb;
+        output          wlast;
+        output          wvalid;
+        // dram - w
+        input           wready;
+    endclocking
+
+    clocking driver_cb_mc_w @(posedge aclk);
+	    //default input #1 output #1;
+
+	    // on chip - w
+	    input           wid;
+	    input           wdata;
+	    input           wstrb;
+	    input           wlast;
+	    input           wvalid;
+	    // dram - w
+	    output          wready;
+    endclocking
+
+/*  clocking monitor_cb_icnt_w @(posedge aclk);
+	//default input #1 output #1;
+
+	// on chip - w
+	input wready;
+	// dram - w
+	input wid;
+	input wdata;
+	input wstrb;
+	input wlast;
+	input wvalid;
+
+endclocking
+*/
+    clocking monitor_cb_mc_w @(posedge aclk);
+	    //default input #1 output #1;
+
+	    // on chip - w
+	    input           wready;
+        // dram - w
+        input           wid;
+        input           wdata;
+        input           wstrb;
+        input           wlast;
+        input           wvalid;
+    endclocking
+
+    modport DRIVER_ICNT_W (clocking driver_cb_icnt_w, input aclk, areset_n);
+    modport DRIVER_MC_W (clocking driver_cb_mc_w, input aclk, areset_n);
+
+    // modport MONITOR_ICNT_W (clocking monitor_cb_icnt_w, input aclk, areset_n);
+    modport MONITOR_MC_W (clocking monitor_cb_mc_w, input aclk, areset_n);
+
+    // synopsys translate_on
 
 endinterface
 
@@ -148,6 +323,7 @@ interface AXI3_B_INTF
         input       bready
     );
 
+    // synopsys translate_off
     function reset_master();
         bready                          = 'd0;
     endfunction
@@ -157,6 +333,7 @@ interface AXI3_B_INTF
         bid                             = 'dx;
         bresp                           = 'dx;
     endfunction
+    // synopsys translate_on
 
 endinterface
 
@@ -195,6 +372,7 @@ interface AXI3_R_INTF
         input       rready
     );
 
+    // synopsys translate_off
     function reset_master();
         rready                          = 'd0;
     endfunction
@@ -206,6 +384,46 @@ interface AXI3_R_INTF
         rresp                           = 'dx;
         rlast                           = 'dx;
     endfunction
+
+    clocking driver_cb_mc_r @(posedge aclk);
+        // default input #1 output #1;
+
+	    input               rready;
+	    output              rid;
+	    output              rdata;
+	    output              rresp;
+	    output              rlast;
+	    output              rvalid;
+    endclocking
+
+    clocking driver_cb_icnt_r @(posedge aclk);
+        // default input #1 output #1;
+
+        output          rready;
+        input           rid;
+        input           rdata;
+        input           rresp;
+        input           rlast;
+        input           rvalid;
+    endclocking
+
+    clocking monitor_cb_icnt_r @(posedge aclk);
+        // default input #1 output #1;
+
+	    input           rid;
+        input           rresp;
+        input           rdata;
+        input           rlast;
+        input           rvalid;
+        input           rready;
+    endclocking
+
+    modport DRIVER_MC_R (clocking driver_cb_mc_r, input aclk, areset_n);
+    modport DRIVER_ICNT_R (clocking driver_cb_icnt_r, input aclk, areset_n);
+
+    //  modport MONITOR_MC_R (clocking monitor_cb_mc_r, input aclk, areset_n);
+    modport MONITOR_ICNT_R (clocking monitor_cb_icnt_r, input aclk, areset_n);
+    // synopsys translate_on
 
 endinterface
 

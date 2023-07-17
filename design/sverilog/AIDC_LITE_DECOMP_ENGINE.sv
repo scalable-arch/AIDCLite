@@ -1,3 +1,5 @@
+`include "AHB2_PKG.svh"
+
 module AIDC_LITE_DECOMP_ENGINE
 (
     input   wire                        clk,

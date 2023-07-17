@@ -1,7 +1,7 @@
 # This file describes a workflow that runs regression tests
 # on a pull request to the main branch
-name: Synthesis (Samsung 8nm)
-run-name: IP-level synthesis (Samsung 8nm) from ${{ github.actor }}
+name: Synthesis (Synopsys 32/28nm Generic Library8nm)
+run-name: IP-level synthesis (SAED32_EDK) from ${{ github.actor }}
 on:
   pull_request:
     branches:
@@ -11,7 +11,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  Design-Compiler-UMC28nm:
+  Design-Compiler-SAED32-EDK:
     runs-on: self-hosted        # runs on a server with Synopsys Design Compiler installed
     steps:
       - uses: actions/checkout@v3
@@ -19,4 +19,4 @@ jobs:
       - name: Synthesis
         run: |
           source ${{github.workspace}}/env.source ${{github.workspace}}
-#           action.syn
+          action.syn_SAED32

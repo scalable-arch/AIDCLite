@@ -9,7 +9,23 @@ set target_library \
 # ---------------------------------------
 # Step 2: Read designs
 # ---------------------------------------
-read_file {$env(AIDC_LITE_HOME)/interface/sverilog $env(AIDC_LITE_HOME)/design/sverilog} -autoread -format sverilog -recursive -top $env(IP_NAME)
+set search_path "$env(AIDC_LITE_HOME)/interface/sverilog $search_path"
+
+analyze -format sverilog $env(AIDC_LITE_HOME)/interface/sverilog/AHB2_INTF.sv
+analyze -format sverilog $env(AIDC_LITE_HOME)/interface/sverilog/APB_INTF.sv
+analyze -format sverilog $env(AIDC_LITE_HOME)/design/sverilog/AIDC_LITE_COMP_CFG.sv
+analyze -format sverilog $env(AIDC_LITE_HOME)/design/sverilog/AIDC_LITE_CODE_CONCATENATE.sv
+analyze -format sverilog $env(AIDC_LITE_HOME)/design/sverilog/AIDC_LITE_COMP_SR.sv
+analyze -format sverilog $env(AIDC_LITE_HOME)/design/sverilog/AIDC_LITE_COMP_ZRLE.sv
+analyze -format sverilog $env(AIDC_LITE_HOME)/design/sverilog/AIDC_LITE_COMP_ENGINE.sv
+analyze -format sverilog $env(AIDC_LITE_HOME)/design/sverilog/AIDC_LITE_COMP_TOP.sv
+
+analyze -format sverilog $env(AIDC_LITE_HOME)/design/sverilog/AIDC_LITE_DECOMP_SR.sv
+analyze -format sverilog $env(AIDC_LITE_HOME)/design/sverilog/AIDC_LITE_DECOMP_ZRLE.sv
+analyze -format sverilog $env(AIDC_LITE_HOME)/design/sverilog/AIDC_LITE_DECOMP_ENGINE.sv
+analyze -format sverilog $env(AIDC_LITE_HOME)/design/sverilog/AIDC_LITE_DECOMP_TOP.sv
+
+analyze -format sverilog $env(AIDC_LITE_HOME)/design/sverilog/AIDC_LITE_TOP_WRAPPER.sv
 
 set design_name $env(DESIGN_TOP)
 elaborate ${design_name}
