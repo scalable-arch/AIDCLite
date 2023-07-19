@@ -59,8 +59,8 @@ module AIDC_LITE_CODE_CONCATENATE
     always_comb begin
         logic   [TMP_BUF_SIZE-1:0]      tmp_buf;
         valid_n                         = 1'b0;
-        addr_n                          = 'hX;
-        data_n                          = 'hX;
+        addr_n                          = 3'hX;
+        data_n                          = 64'hX;
         done_n                          = done;
         fail_n                          = fail;
 
