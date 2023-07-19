@@ -35,11 +35,11 @@ interface APB_INTF
     // synopsys translate_off
     // - for verification only
     task reset_master();
-        paddr                           = 'hx;
+        paddr                           = 32'hx;
         psel                            = 1'b0;
         penable                         = 1'b0;
-        pwrite                          = 'hx;
-        pwdata                          = 'hx;
+        pwrite                          = 32'hx;
+        pwdata                          = 32'hx;
     endtask
 
     task write (input logic [31:0]      addr,
@@ -69,7 +69,7 @@ interface APB_INTF
         penable                         = 1'b0;
         paddr                           = addr;
         pwrite                          = 1'b0;
-        pwdata                          = 'hx;
+        pwdata                          = 32'hx;
         @(posedge pclk)
         #1
         penable                         = 1'b1;
