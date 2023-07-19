@@ -2,7 +2,7 @@ module AIDC_LITE_CODE_CONCATENATE
 #(
     parameter   PREFIX                  = 2'b00,
     parameter   DATA_SIZE               = 66,
-    parameter   CODE_BUF_SIZE           = 62
+    parameter   CODE_BUF_SIZE           = 64
 )
 (
     input   wire                        clk,
@@ -71,8 +71,8 @@ module AIDC_LITE_CODE_CONCATENATE
         flush_n                         = flush;
     
         // concate the old data and new data
-        tmp_buf                         =  {code_buf, 64'd0}        // 62 + 64
-                                         |({data_i, 60'd0}>>blk_size[5:0]);
+        tmp_buf                         =  {code_buf, 64'd0}        // 64 + 64
+                                         |({data_i, 62'd0}>>blk_size[5:0]);
         
         if (valid_i) begin
             // new data arrived
@@ -88,6 +88,7 @@ module AIDC_LITE_CODE_CONCATENATE
             // calculate new block size (in bits)
             blk_size_n                      = blk_size + size_i;
             buf_size_n                      = buf_size + size_i;
+            code_buf_n                      = tmp_buf[TMP_BUF_SIZE-1:64];
         end
 
         if (buf_size_n >= 'd64) begin
@@ -106,7 +107,7 @@ module AIDC_LITE_CODE_CONCATENATE
 
                 // preload for the next block
                 code_buf_n[CODE_BUF_SIZE-1:CODE_BUF_SIZE-2] = PREFIX;
-                code_buf_n[CODE_BUF_SIZE-3:0]   = 'd0;
+                code_buf_n[CODE_BUF_SIZE-3:0]   = {(CODE_BUF_SIZE-2){1'b0}};
                 blk_size_n                      = 'd2;
                 buf_size_n                      = 'd2;
                 cnt_n                           = 'd0;
@@ -128,7 +129,7 @@ module AIDC_LITE_CODE_CONCATENATE
                 flush_n                         = 1'b0;
 
                 code_buf_n[CODE_BUF_SIZE-1:CODE_BUF_SIZE-2] = PREFIX;
-                code_buf_n[CODE_BUF_SIZE-3:0]   = 'd0;
+                code_buf_n[CODE_BUF_SIZE-3:0]   = {(CODE_BUF_SIZE-2){1'b0}};
                 blk_size_n                      = 'd2;
                 buf_size_n                      = 'd2;
                 cnt_n                           = 'd0;
@@ -146,7 +147,7 @@ module AIDC_LITE_CODE_CONCATENATE
 
             // preload the 2-bit prefix for the next block
             code_buf[CODE_BUF_SIZE-1:CODE_BUF_SIZE-2] <= PREFIX;
-            code_buf[CODE_BUF_SIZE-3:0]     <= 'd0;
+            code_buf[CODE_BUF_SIZE-3:0]     <= {(CODE_BUF_SIZE-2){1'b0}};
             blk_size                        <= 'd2;
             buf_size                        <= 'd2;
             cnt                             <= 'd0;

@@ -327,8 +327,11 @@ module TB_TOP;
         for (int blk_idx=0; blk_idx<trans.blk_cnt; blk_idx=blk_idx+1) begin
             for (int byte_offset=0; byte_offset<128; byte_offset=byte_offset+4) begin
                 u_mem0.read_word(decomp_addr + 128*blk_idx + byte_offset, rdata);
-                if (rdata!==trans.blks[blk_idx].data[byte_offset/4]) begin
+                if (trans.blks[blk_idx].data[byte_offset/4]!=rdata) begin
+                    $display("expected data: %08x, received data: %08x", trans.blks[blk_idx].data[byte_offset/4], rdata);
                     $fatal("Mismatch @blk_idx=%d, byte_offset=%d", blk_idx, byte_offset);
+
+                    $finish;
                 end
             end
         end
@@ -350,10 +353,12 @@ module TB_TOP;
                     32'h0003_0000,
                     32'h0000_0080);
 
-        // random transaction
-        test_random_trans(32'h0001_0000,
-                          32'h0002_0000,
-                          32'h0000_0000);
+        for (int i=0; i<1000; i=i+1) begin
+            // random transaction
+            test_random_trans(32'h0001_0000,
+                              32'h0002_0000,
+                              32'h0000_0000);
+        end
         $finish;
     end
 endmodule

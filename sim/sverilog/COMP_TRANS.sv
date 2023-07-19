@@ -3,6 +3,7 @@ typedef enum {SR, ZRLE, BPC, NONE} CompType;
 class CompData;
     rand    CompType        comp_type;
     rand    bit [31:0]      data[32];
+    rand    bit [63:0]      zero_hword_vec;
 
     // constraint for sign-reduction data
     constraint  data_sr00_c { if (comp_type==SR) { data[00][31:23]=={9{data[00][22]}}; data[00][15:8]=={8{data[00][7]}}; } }
@@ -38,6 +39,25 @@ class CompData;
     constraint  data_sr30_c { if (comp_type==SR) { data[30][31:24]=={8{data[30][23]}}; data[30][15:8]=={8{data[30][7]}}; } }
     constraint  data_sr31_c { if (comp_type==SR) { data[31][31:24]=={8{data[31][23]}}; data[31][15:8]=={8{data[31][7]}}; } }
 
+    // constraint for zero-run-length-encoding data
+    // one zero-half-word saves roughly 14 bits, so there should be at least 37 zero-half-words
+    // to save 512 bits
+    constraint  data_zrle_c { if (comp_type==ZRLE) { $countones(zero_hword_vec) > 37; } }
+
+
+    function void post_randomize();
+        for (int i=0; i<64; i=i+1) begin
+            if (zero_hword_vec[i]) begin
+                if (i%2==0) begin
+                    data[i/2][31:16] = 0;
+                end
+                else begin
+                    data[i/2][15:0] = 0;
+                end
+            end
+        end
+    endfunction
+
     function display;
         for (int i=0; i<32; i=i+1) begin
             $display("%04x %04x", data[i][31:16], data[i][15:0]);
@@ -51,7 +71,8 @@ class CompTransaction #(parameter int MAX=8);
     rand    int             blk_cnt;
     rand    CompData        blks[];
 
-    constraint  comp_type_c     { comp_type inside {SR}; }
+    //constraint  comp_type_c     { comp_type inside {SR, ZRLE}; }
+    constraint  comp_type_c     { comp_type inside {ZRLE}; }
     constraint  blk_cnt_c       { blk_cnt > 0; blk_cnt < MAX; };
     constraint  blk_type_c      { foreach (blks[i]) blks[i].comp_type==comp_type; }
 

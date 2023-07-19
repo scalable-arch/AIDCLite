@@ -40,7 +40,7 @@ module AIDC_LITE_DECOMP_ZRLE
         cnt_n                           = cnt;
 
         // output generation
-        if (cnt < 'd8) begin
+        if (cnt < 'd16) begin
             casez (code_buf[CODE_BUF_SIZE-1:CODE_BUF_SIZE-6])
                 6'b00_0000: begin   // Z-Z-Z-Z
                     if (buf_size >= 'd6) begin
@@ -217,17 +217,22 @@ module AIDC_LITE_DECOMP_ZRLE
                 end
             endcase
         end
+        else begin
+            done_n                          = 1'b1;
+        end
 
         if (valid_n) begin
             addr_n                          = cnt;
             cnt_n                           = cnt + 'd1;
         end
 
-        // input buffer
+        // receive input to a buffer
+        // the buffered data will be used in the next cycle
         if (valid_i) begin
             if (sop_i) begin
                 // upper 2 bits, containing prefix, is discarded
-                code_buf_n[CODE_BUF_SIZE-1 -: 30] = data_i[29:0];
+                code_buf_n[CODE_BUF_SIZE-1:CODE_BUF_SIZE-30] = data_i[29:0];
+                code_buf_n[CODE_BUF_SIZE-31:0]  = {(CODE_BUF_SIZE-30){1'b0}};
                 buf_size_n                      = 'd30;
                 cnt_n                           = 'd0;
                 done_n                          = 1'b0;
@@ -235,9 +240,15 @@ module AIDC_LITE_DECOMP_ZRLE
             else begin
                 code_buf_n                      = code_buf_n
                                                  |({data_i[31:0], {(CODE_BUF_SIZE-32){1'b0}}} >> buf_size_n);
-                buf_size_n                      = buf_size_n + 'd32;
+                if (eop_i) begin
+                    buf_size_n                      = 9'h1FF;       // max to prevent stalling
+                end
+                else begin
+                    buf_size_n                      = buf_size_n + 'd32;
+                end
             end
         end
+
     end
 
     always_ff @(posedge clk)
