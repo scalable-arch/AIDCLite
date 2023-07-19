@@ -294,6 +294,50 @@ module TB_TOP;
     end
     endtask;
 
+    task test_random_trans (
+        input   [31:0]      orig_addr,
+        input   [31:0]      comp_addr,
+        input   [31:0]      decomp_addr
+    );
+    begin
+        logic   [31:0]      rdata;
+
+        CompTransaction     trans;
+        trans = new();
+        trans.randomize();
+        trans.display();
+
+        orig_addr           = 32'h0001_0000;
+        comp_addr           = 32'h0002_0000;
+        decomp_addr         = 32'h0001_0000;
+
+        for (int blk_idx=0; blk_idx<trans.blk_cnt; blk_idx=blk_idx+1) begin
+            for (int byte_offset=0; byte_offset<128; byte_offset=byte_offset+4) begin
+                u_mem0.write_word(orig_addr + 128*blk_idx + byte_offset, trans.blks[blk_idx].data[byte_offset/4]);
+            end
+        end
+        test_comp(orig_addr,
+                  comp_addr,
+                  trans.blk_cnt*128);
+
+        test_decomp(comp_addr,
+                    decomp_addr,
+                    trans.blk_cnt*64);
+
+        for (int blk_idx=0; blk_idx<trans.blk_cnt; blk_idx=blk_idx+1) begin
+            for (int byte_offset=0; byte_offset<128; byte_offset=byte_offset+4) begin
+                u_mem0.read_word(decomp_addr + 128*blk_idx + byte_offset, rdata);
+                if (trans.blks[blk_idx].data[byte_offset/4]!=rdata) begin
+                    $display("expected data: %08x, received data: %08x", trans.blks[blk_idx].data[byte_offset/4], rdata);
+                    $fatal("Mismatch @blk_idx=%d, byte_offset=%d", blk_idx, byte_offset);
+
+                    $finish;
+                end
+            end
+        end
+    end
+    endtask
+
     initial begin
         apb0_if.reset_master();
         apb1_if.reset_master();
@@ -309,26 +353,12 @@ module TB_TOP;
                     32'h0003_0000,
                     32'h0000_0080);
 
-        repeat (100) @(posedge clk);
-
-        test_comp(32'h0000_0100,
-                  32'h0002_0000,
-                  32'h0000_0100);
-
-        test_decomp(32'h0002_0000,
-                    32'h0003_0000,
-                    32'h0000_0080);
-
-        repeat (100) @(posedge clk);
-
-        test_comp(32'h0001_0000,
-                  32'h0002_0000,
-                  32'h0000_0100);
-
-        test_decomp(32'h0002_0000,
-                    32'h0003_0000,
-                    32'h0000_0080);
-
+        for (int i=0; i<1000; i=i+1) begin
+            // random transaction
+            test_random_trans(32'h0001_0000,
+                              32'h0002_0000,
+                              32'h0000_0000);
+        end
         $finish;
     end
 endmodule

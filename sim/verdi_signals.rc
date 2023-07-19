@@ -6,7 +6,7 @@ viewPort 1080 174 1920 1009 306 65
 
 ; File list:
 ; openDirFile [-d delimiter] [-s time_offset] [-rf auto_bus_rule_file] path_name file_name
-openDirFile -d / -i 0 "" "/home/dale40/AIDCLite/work/inter.fsdb"
+openDirFile -d / "" "/home/dale40/HW/AIDCLite/sim/sverilog/inter.fsdb"
 
 ; file time scale:
 ; fileTimeScale ### s|ms|us|ns|ps
@@ -16,14 +16,16 @@ signalSpacing 5
 
 ; windowTimeUnit is used for zoom, cursor & marker
 ; waveform viewport range
-zoom 0.000000 15690.350000
-cursor 15535.000000
+zoom 4692.561830 4816.136053
+cursor 4725.000000
 marker 0.000000
 
+; user define markers
+; userMarker time_pos marker_name color linestyle
 ; visible top row signal index
 top 0
 ; marker line index
-markerPos 44
+markerPos 61
 
 ; event list
 ; addEvent event_name event_expression
@@ -44,7 +46,7 @@ curSTATUS ByChange
 
 
 addGroup "Global"
-activeDirFile "" "/home/dale40/AIDCLite/work/inter.fsdb"
+activeDirFile "" "/home/dale40/HW/AIDCLite/sim/sverilog/inter.fsdb"
 addSignal -h 15 /TB_TOP/u_dut/clk
 addGroup "Comp"
 addSignal -h 15 -UNSIGNED /TB_TOP/u_dut/u_comp/u_engine/state[3:0]
@@ -69,7 +71,7 @@ addSignal -h 15 -UNSIGNED -HEX /TB_TOP/u_dut/u_comp/ahb_if/hwdata[31:0]
 addSignal -h 15 -UNSIGNED -HEX /TB_TOP/u_dut/u_comp/ahb_if/hrdata[31:0]
 addSignal -h 15 /TB_TOP/u_dut/u_comp/ahb_if/hready
 endSubGroup "ahb_if(master)"
-addGroup "Decomp"
+addGroup "Decomp" -e FALSE
 addSignal -h 15 -UNSIGNED /TB_TOP/u_dut/u_decomp/u_engine/state[3:0]
 addSubGroup "apb_if(slave)" -e FALSE
 addSignal -h 15 /TB_TOP/u_dut/u_decomp/apb_if/psel
@@ -92,7 +94,25 @@ addSignal -h 15 -UNSIGNED -HEX /TB_TOP/u_dut/u_decomp/ahb_if/hwdata[31:0]
 addSignal -h 15 -UNSIGNED -HEX /TB_TOP/u_dut/u_decomp/ahb_if/hrdata[31:0]
 addSignal -h 15 /TB_TOP/u_dut/u_decomp/ahb_if/hready
 endSubGroup "ahb_if(master)"
-addGroup "G4"
+addGroup "G7"
+addGroup "ZRLE comp in"
+addSignal -h 15 /TB_TOP/u_dut/u_comp/u_zrle/valid_i
+addSignal -h 15 /TB_TOP/u_dut/u_comp/u_zrle/sop_i
+addSignal -h 15 /TB_TOP/u_dut/u_comp/u_zrle/eop_i
+addSignal -h 15 -UNSIGNED -HEX /TB_TOP/u_dut/u_comp/u_zrle/data_i[63:0]
+addSignal -h 15 -UNSIGNED -HEX /TB_TOP/u_dut/u_comp/u_zrle/zero_vec[3:0]
+addGroup "ZRLE encoding out"
+addSignal -h 15 /TB_TOP/u_dut/u_comp/u_zrle/valid_i
+addSignal -h 15 /TB_TOP/u_dut/u_comp/u_zrle/u_concat/sop_i
+addSignal -h 15 /TB_TOP/u_dut/u_comp/u_zrle/sop_i
+addSignal -h 15 -UNSIGNED -HEX /TB_TOP/u_dut/u_comp/u_zrle/cur_comp_data[65:0]
+addSignal -h 15 -UNSIGNED -HEX /TB_TOP/u_dut/u_comp/u_zrle/cur_comp_size[6:0]
+addGroup "G8"
+addSignal -h 15 -UNSIGNED -HEX /TB_TOP/u_dut/u_comp/u_zrle/u_concat/code_buf[61:0]
+addSignal -h 15 /TB_TOP/u_dut/u_comp/u_zrle/u_concat/valid_i
+addSignal -h 15 /TB_TOP/u_dut/u_comp/u_zrle/u_concat/sop_i
+addSignal -h 15 -UNSIGNED -UDEC /TB_TOP/u_dut/u_comp/u_zrle/u_concat/blk_size_n[10:0]
+addGroup "G9"
 
 ; getSignalForm Scope Hierarchy Status
 ; active file of getSignalForm

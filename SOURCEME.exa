@@ -3,16 +3,16 @@
 export VCS_HOME=/usr/synopsys/vcs/R-2020.12-SP1-1
 #export VCS_HOME=/usr/synopsys/vcs/T-2022.06-SP2-3
 export VERDI_HOME=/usr/synopsys/verdi/R-2020.12-SP1-1
-export OVL_HOME=/usr/accellera/std_ovl
+#export OVL_HOME=/usr/accellera/std_ovl
 export PATH=$VCS_HOME/bin:$VERDI_HOME/bin:$PATH
 export DESIGNWARE_HOME=/media/0/SolvNet/VIP_SOC_Lib
 export SNPSLMD_LICENSE_FILE=27000@semi-lic.skku.edu
 
-export SIM_PATH=`pwd`
-export CMSS_DIR=`pwd`
-export VIP_DIR=$CMSS_DIR/VIP
-export DRAM_CACHE_DIR=$CMSS_DIR/IP/dram_cache
-export XHB_DIR=$CMSS_DIR/IP/XHB
+#export SIM_PATH=`pwd`
+#export CMSS_DIR=`pwd`
+#export VIP_DIR=$CMSS_DIR/VIP
+#export DRAM_CACHE_DIR=$CMSS_DIR/IP/dram_cache
+#export XHB_DIR=$CMSS_DIR/IP/XHB
 
 export VCS_ARCH_OVERRIDE=ubuntu
 
