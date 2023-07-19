@@ -1,6 +1,6 @@
 program AHB_TEST(
-        AHB2_MST_INTF.master_tb               mst_ahb_if  (.hclk(clk), .hreset_n(rst_n));
-        AHB2_SLV_INTF.slave_tb                slv_ahb_if  (.hclk(clk), .hreset_n(rst_n));
+        AHB2_MST_INTF.master_tb               mst_ahb_if  (.hclk(clk), .hreset_n(rst_n)),
+        AHB2_SLV_INTF.slave_tb                slv_ahb_if  (.hclk(clk), .hreset_n(rst_n))
     );
 
     ahb_env env;
@@ -25,7 +25,10 @@ endprogram
 
 
 program APB_TEST(
-        APB_INTF                    apb_if      (.pclk(clk), .preset_n(rst_n));
+        APB_INTF                    apb_if      (.pclk(clk), .preset_n(rst_n)),
+        input           [31:0]      src_addr,
+        input           [31:0]      dst_addr,
+        input           [31:0]      len
     );
     apb_env   env;
     initial begin
@@ -37,7 +40,7 @@ program APB_TEST(
             );
 
         $display("APB_env run");
-        env.run();
+        env.run(src_addr, dst_addr, len);
         
         $display("APB_Test end");
         $finish();

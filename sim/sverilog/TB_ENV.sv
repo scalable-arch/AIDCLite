@@ -68,11 +68,15 @@ class apb_env;
         apb_if.reset_master();
     endtask
 
-    task apb_write();
+    task apb_write(
+            input [31:0]  src_addr,
+            input [31:0]  dst_addr,
+            input [31:0]  len
+        );
         repeat (10) @(posedge clk);
-        apb_if.write(32'h0, 32'h0001_0000);
-        apb_if.write(32'h4, 32'h0002_0000);
-        apb_if.write(32'h8, 32'h0000_1000);
+        apb_if.write(32'h0, src_addr); 
+        apb_if.write(32'h4, dst_addr);  
+        apb_if.write(32'h8, len); 
         apb_if.write(32'hC, 32'd1);
     endtask
 
@@ -93,11 +97,15 @@ class apb_env;
         $display("--------------------------------------------------");
     endtask
 
-    task run();
+    task run(
+        input [31:0]  src_addr,
+        input [31:0]  dst_addr,
+        input [31:0]  len
+        );
         logic [31:0] rdata;
         apb_reset();
         
-        apb_write();
+        apb_write(src_addr, dst_addr, len);
         apb_read(rdata);
     endtask
 endclass
