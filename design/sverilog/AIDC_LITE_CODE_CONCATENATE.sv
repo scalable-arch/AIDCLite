@@ -109,7 +109,6 @@ module AIDC_LITE_CODE_CONCATENATE
                 done_n                          = 1'b0;
                 fail_n                          = 1'b0;
                 flush_n                         = 1'b0;
-                cnt_n                           = 'd0;
             end
             if (eop_i) begin
                 flush_n                         = 1'b1;
@@ -121,52 +120,47 @@ module AIDC_LITE_CODE_CONCATENATE
             buf_size_n                      = buf_size + size_i;
         end
 
-        if (buf_size_n >= 'd64) begin
-            // enough data has accumulated   -> forward
-            if (cnt_n < 'd8) begin    // write up to 8 words
-                valid_n                         = 1'b1;
-                addr_n                          = cnt_n;
-                cnt_n                           = cnt_n + 'd1;
-
-                data_n                          = tmp_buf[TMP_BUF_SIZE-1:TMP_BUF_SIZE-64];
+        if (flush_n) begin
+            if (buf_size_n > 'd64) begin
+                // enough data has accumulated   -> forward
+                if (cnt < 'd8) begin    // write up to 8 words
+                    valid_n                         = 1'b1;
+                    addr_n                          = cnt;
+                    cnt_n                           = cnt + 'd1;
+                    data_n                          = tmp_buf[TMP_BUF_SIZE-1:TMP_BUF_SIZE-64];
+                end
                 code_buf_n                      = tmp_buf[TMP_BUF_SIZE-65:TMP_BUF_SIZE-64-CODE_BUF_SIZE];
                 buf_size_n                      = buf_size_n - 'd64;
-
-                if ((buf_size_n == 'd64) & flush_n) begin
-                    done_n                          = 1'b1;
-                    fail_n                          = (blk_size > 'd512);
-                    flush_n                         = 1'b0;
-
-                    // preload for the next block
-                    code_buf_n[CODE_BUF_SIZE-1:CODE_BUF_SIZE-2] = PREFIX;
-                    code_buf_n[CODE_BUF_SIZE-3:0]   = {(CODE_BUF_SIZE-2){1'b0}};
-                    blk_size_n                      = 'd2;
-                    buf_size_n                      = 'd2;
-                end
             end
             else begin
+                // all data has received and partial data remains
+                if (cnt < 'd8) begin    // write up to 8 words
+                    valid_n                         = 1'b1;
+                    addr_n                          = cnt;
+                    data_n                          = tmp_buf[TMP_BUF_SIZE-1:TMP_BUF_SIZE-64];
+                end
                 done_n                          = 1'b1;
-                fail_n                          = 1'b1;
-
-                code_buf_n                      = tmp_buf[TMP_BUF_SIZE-1:TMP_BUF_SIZE-CODE_BUF_SIZE];
-                buf_size_n                      = buf_size_n - 'd64;
-            end
-        end
-        else begin 
-            // not enough data
-            if (flush_n) begin
-                valid_n                         = 1'b1;
-                addr_n                          = cnt_n;
-                data_n                          = tmp_buf[TMP_BUF_SIZE-1:TMP_BUF_SIZE-64];
-
-                done_n                          = 1'b1;
-                fail_n                          = (blk_size > 'd512);
+                fail_n                          = (blk_size_n > 'd512);
                 flush_n                         = 1'b0;
-
-                code_buf_n[CODE_BUF_SIZE-1:CODE_BUF_SIZE-2] = PREFIX;
-                code_buf_n[CODE_BUF_SIZE-3:0]   = {(CODE_BUF_SIZE-2){1'b0}};
                 blk_size_n                      = 'd2;
                 buf_size_n                      = 'd2;
+                cnt_n                           = 'd0;
+                // preload for the next transaction
+                code_buf_n[CODE_BUF_SIZE-1:CODE_BUF_SIZE-2] = PREFIX;
+                code_buf_n[CODE_BUF_SIZE-3:0]   = {(CODE_BUF_SIZE-2){1'b0}};
+            end
+        end
+        else begin
+            if (buf_size_n >= 'd64) begin
+                // enough data has accumulated   -> forward
+                if (cnt < 'd8) begin    // write up to 8 words
+                    valid_n                         = 1'b1;
+                    addr_n                          = cnt;
+                    cnt_n                           = cnt + 'd1;
+                    data_n                          = tmp_buf[TMP_BUF_SIZE-1:TMP_BUF_SIZE-64];
+                end
+                code_buf_n                      = tmp_buf[TMP_BUF_SIZE-65:TMP_BUF_SIZE-64-CODE_BUF_SIZE];
+                buf_size_n                      = buf_size_n - 'd64;
             end
             else begin
                 code_buf_n                      = tmp_buf[TMP_BUF_SIZE-1:TMP_BUF_SIZE-CODE_BUF_SIZE];
