@@ -71,8 +71,8 @@ class CompTransaction #(parameter int MAX=8);
     rand    int             blk_cnt;
     rand    CompData        blks[];
 
-    //constraint  comp_type_c     { comp_type inside {SR, ZRLE}; }
-    constraint  comp_type_c     { comp_type inside {ZRLE}; }
+    constraint  comp_type_c     { comp_type inside {SR, ZRLE}; }
+    //constraint  comp_type_c     { comp_type inside {ZRLE}; }
     constraint  blk_cnt_c       { blk_cnt > 0; blk_cnt < MAX; };
     constraint  blk_type_c      { foreach (blks[i]) blks[i].comp_type==comp_type; }
 
