@@ -1,7 +1,7 @@
 # This file describes a workflow that runs regression tests
 # on a pull request to the main branch
-name: Synthesis (UMC28nm)
-run-name: IP-level synthesis (UMC28nm) from ${{ github.actor }}
+name: Synthesis (TSMC65nm)
+run-name: IP-level synthesis (TSMC65nm) from ${{ github.actor }}
 on:
 #  pull_request:
 #    branches:
@@ -19,7 +19,7 @@ jobs:
       - name: Synthesis
         run: |
           source ${{github.workspace}}/env.source ${{github.workspace}}
-          action.syn_UMC28.tcl
+          action.syn_TSMC65.tcl
       - name: Report (Design)
         run: cat work.syn/*.design.rpt
       - name: Report (Timing)
