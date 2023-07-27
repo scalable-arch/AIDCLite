@@ -1,13 +1,14 @@
-puts "===================== Start to run: UMC28.tcl ========================="
+puts "===================== Start to run: TSMC65.tcl ========================="
+
 set AIDC_LITE_HOME [getenv AIDC_LITE_HOME]
 
+try {
 # ---------------------------------------
 # Step 1: Specify libraries
 # ---------------------------------------
 set link_library [list \
 		/media/2/FoundationIP/TSMC65LP_DK/STD_CELL/tcbn65lp_220a/FE/TSMCHOME/digital/Front_End/timing_power_noise/NLDM/tcbn65lp_220a/tcbn65lpwcl0d9.db \
 ]
-
 set target_library [list \
 		/media/2/FoundationIP/TSMC65LP_DK/STD_CELL/tcbn65lp_220a/FE/TSMCHOME/digital/Front_End/timing_power_noise/NLDM/tcbn65lp_220a/tcbn65lpwcl0d9.db \
 ]
@@ -27,6 +28,8 @@ set file_list {}
 foreach line $lines {
 	if {$line eq ""} {
 		continue
+	} elseif {[string match "\/\/*" $line]} {
+		continue
 	} elseif {[string match "-*" $line]} {
 		set file_format [string range $line 1 end]
 		puts "file_format: $file_format"
@@ -43,7 +46,6 @@ foreach rtl_file $file_list {
 	puts "Analyzing file: $rtl_file"
 	analyze -format $file_format $rtl_file
 }
-
 
 set design_name $env(DESIGN_TOP)
 elaborate ${design_name}
@@ -137,4 +139,5 @@ write -hierarchy -format verilog -output  $design_name.scan.netlist.v
 write_test_protocol              -output  $design_name.scan.stil
 write_sdc                                 $design_name.scan.sdc
 
-exit
+exit 0
+}
