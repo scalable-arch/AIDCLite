@@ -19,7 +19,7 @@ jobs:
       - name: Synthesis
         run: |
           source ${{github.workspace}}/env.source ${{github.workspace}}
-          action.syn_TSMC65.tcl
+          action.syn_TSMC65
       - name: Report (Design)
         run: cat work.syn/*.design.rpt
       - name: Report (Timing)
