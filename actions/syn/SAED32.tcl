@@ -1,35 +1,51 @@
+puts "===================== Start to run: UMC28.tcl ========================="
+
+set AIDC_LITE_HOME [getenv AIDC_LITE_HOME]
+
 try {
 # ---------------------------------------
 # Step 1: Specify libraries
 # ---------------------------------------
-set link_library \
-[list /home/kkh/RTL/RTL/SOC/SAED32_EDK/lib/stdcell_lvt/db_ccs/saed32lvt_ss0p75v125c.db ]
-set target_library \
-[list /home/kkh/RTL/RTL/SOC/SAED32_EDK/lib/stdcell_lvt/db_ccs/saed32lvt_ss0p75v125c.db ]
+set link_library [list \
+        /home/kkh/RTL/RTL/SOC/SAED32_EDK/lib/stdcell_lvt/db_ccs/saed32lvt_ss0p75v125c.db
+]
+set target_library [list \
+/home/kkh/RTL/RTL/SOC/SAED32_EDK/lib/stdcell_lvt/db_ccs/saed32lvt_ss0p75v125c.db
+]
 
 # ---------------------------------------
 # Step 2: Read designs
 # ---------------------------------------
 set search_path "$env(AIDC_LITE_HOME)/design/interface $search_path"
 
-analyze -format sverilog $env(AIDC_LITE_HOME)/design/interface/AHB2_INTF.sv
-analyze -format sverilog $env(AIDC_LITE_HOME)/design/interface/APB_INTF.sv
-analyze -format sverilog $env(AIDC_LITE_HOME)/design/sverilog/AIDC_LITE_BUFFER.sv
-analyze -format sverilog $env(AIDC_LITE_HOME)/design/sverilog/AIDC_LITE_CODE_CONCATENATE.sv
+set fd [open "$env(AIDC_LITE_HOME)/design/filelist.f" r]
+set lines [split [read $fd] "\n"]
+close $fd
 
-analyze -format sverilog $env(AIDC_LITE_HOME)/design/sverilog/AIDC_LITE_COMP_CFG.sv
-analyze -format sverilog $env(AIDC_LITE_HOME)/design/sverilog/AIDC_LITE_COMP_SR.sv
-analyze -format sverilog $env(AIDC_LITE_HOME)/design/sverilog/AIDC_LITE_COMP_ZRLE.sv
-analyze -format sverilog $env(AIDC_LITE_HOME)/design/sverilog/AIDC_LITE_COMP_ENGINE.sv
-analyze -format sverilog $env(AIDC_LITE_HOME)/design/sverilog/AIDC_LITE_COMP_TOP.sv
+set file_format "verilog"
+set file_list {}
 
-analyze -format sverilog $env(AIDC_LITE_HOME)/design/sverilog/AIDC_LITE_DECOMP_CFG.sv
-analyze -format sverilog $env(AIDC_LITE_HOME)/design/sverilog/AIDC_LITE_DECOMP_SR.sv
-analyze -format sverilog $env(AIDC_LITE_HOME)/design/sverilog/AIDC_LITE_DECOMP_ZRLE.sv
-analyze -format sverilog $env(AIDC_LITE_HOME)/design/sverilog/AIDC_LITE_DECOMP_ENGINE.sv
-analyze -format sverilog $env(AIDC_LITE_HOME)/design/sverilog/AIDC_LITE_DECOMP_TOP.sv
+foreach line $lines {
+	if {$line eq ""} {
+		continue
+	} elseif {[string match "\/\/*" $line]} {
+		continue
+	} elseif {[string match "-*" $line]} {
+		set file_format [string range $line 1 end]
+		puts "file_format: $file_format"
+	} elseif {[string match "+incdir+*" $line]} {
+		append search_path [subst [string map {"+incdir+" ""} $line]] " "
+		puts "search_path: $search_path"
+	} else {
+		lappend file_list [subst $line]
+		puts "file_list: $file_list"
+	}
+}
 
-analyze -format sverilog $env(AIDC_LITE_HOME)/design/sverilog/AIDC_LITE_TOP_WRAPPER.sv
+foreach rtl_file $file_list {
+	puts "Analyzing file: $rtl_file"
+	analyze -format $file_format $rtl_file
+}
 
 set design_name $env(DESIGN_TOP)
 elaborate ${design_name}

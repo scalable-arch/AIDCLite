@@ -3,23 +3,23 @@
 name: Synthesis (TSMC65nm)
 run-name: IP-level synthesis (TSMC65nm) from ${{ github.actor }}
 on:
-#  pull_request:
-#    branches:
-#      - main
-#  schedule:
-#    - cron: '30 5 * * *'    # 5:30 AM (UTC), any day of the month, any month, any day of the week
+  pull_request:
+    branches:
+      - main
+  schedule:
+    - cron: '30 5 * * *'    # 5:30 AM (UTC), any day of the month, any month, any day of the week
   workflow_dispatch:
 
 jobs:
   Design-Compiler:
     runs-on: self-hosted        # runs on a server with Synopsys Design Compiler installed
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
       - name: Synthesis
         run: |
           source ${{github.workspace}}/env.source ${{github.workspace}}
-          action.syn_TSMC65.tcl
+          action.syn_TSMC65
       - name: Report (Design)
         run: cat work.syn/*.design.rpt
       - name: Report (Timing)

@@ -1,13 +1,17 @@
 puts "===================== Start to run: UMC28.tcl ========================="
+
 set AIDC_LITE_HOME [getenv AIDC_LITE_HOME]
 
+try {
 # ---------------------------------------
 # Step 1: Specify libraries
 # ---------------------------------------
-set link_library \
-[list /media/0/LogicLibraries/UMC/28nm/35hd/hdl/lvt/2.01a/liberty/logic_synth/um28nchllogl35hdl140f_sswc0p81vn40c.db]
-set target_library \
-[list /media/0/LogicLibraries/UMC/28nm/35hd/hdl/lvt/2.01a/liberty/logic_synth/um28nchllogl35hdl140f_sswc0p81vn40c.db]
+set link_library [list \
+        /media/0/LogicLibraries/UMC/28nm/35hd/hdl/lvt/2.01a/liberty/logic_synth/um28nchllogl35hdl140f_sswc0p81vn40c.db
+]
+set target_library [list \
+/media/0/LogicLibraries/UMC/28nm/35hd/hdl/lvt/2.01a/liberty/logic_synth/um28nchllogl35hdl140f_sswc0p81vn40c.db
+]
 
 # ---------------------------------------
 # Step 2: Read designs
@@ -23,6 +27,8 @@ set file_list {}
 
 foreach line $lines {
 	if {$line eq ""} {
+		continue
+	} elseif {[string match "\/\/*" $line]} {
 		continue
 	} elseif {[string match "-*" $line]} {
 		set file_format [string range $line 1 end]
@@ -40,7 +46,6 @@ foreach rtl_file $file_list {
 	puts "Analyzing file: $rtl_file"
 	analyze -format $file_format $rtl_file
 }
-
 
 set design_name $env(DESIGN_TOP)
 elaborate ${design_name}
@@ -134,4 +139,5 @@ write -hierarchy -format verilog -output  $design_name.scan.netlist.v
 write_test_protocol              -output  $design_name.scan.stil
 write_sdc                                 $design_name.scan.sdc
 
-exit
+exit 0
+}
