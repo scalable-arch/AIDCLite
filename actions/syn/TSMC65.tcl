@@ -22,7 +22,7 @@ set fd [open "$env(AIDC_LITE_HOME)/design/filelist.f" r]
 set lines [split [read $fd] "\n"]
 close $fd
 
-set file_format "verilog"
+set file_format "sverilog"
 set file_list {}
 
 foreach line $lines {
