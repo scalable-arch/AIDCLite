@@ -32,6 +32,7 @@ interface APB_INTF
         output      pready, prdata, pslverr
     );
 
+`ifdef UNIT_SIM
     // synopsys translate_off
     // - for verification only
     task reset_master();
@@ -83,5 +84,6 @@ interface APB_INTF
         reset_master();
     endtask;
     // synopsys translate_on
+`endif /* UNIT_SIM */
 
 endinterface
