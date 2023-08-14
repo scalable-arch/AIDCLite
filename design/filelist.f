@@ -5,6 +5,7 @@ ${AIDC_LITE_HOME}/design/interface/APB_INTF.sv
 +incdir+${AIDC_LITE_HOME}/design/sverilog
 ${AIDC_LITE_HOME}/design/sverilog/AIDC_LITE_BUFFER.sv
 
+${AIDC_LITE_HOME}/design/sverilog/AIDC_LITE_COMP_CFG_pkg.sv
 ${AIDC_LITE_HOME}/design/sverilog/AIDC_LITE_COMP_CFG.sv
 ${AIDC_LITE_HOME}/design/sverilog/AIDC_LITE_CODE_CONCATENATE.sv
 ${AIDC_LITE_HOME}/design/sverilog/AIDC_LITE_COMP_ZRLE.sv
@@ -13,6 +14,7 @@ ${AIDC_LITE_HOME}/design/sverilog/AIDC_LITE_COMP_SR.sv
 ${AIDC_LITE_HOME}/design/sverilog/AIDC_LITE_COMP_ENGINE.sv
 ${AIDC_LITE_HOME}/design/sverilog/AIDC_LITE_COMP_TOP.sv
 
+${AIDC_LITE_HOME}/design/sverilog/AIDC_LITE_DECOMP_CFG_pkg.sv
 ${AIDC_LITE_HOME}/design/sverilog/AIDC_LITE_DECOMP_CFG.sv
 ${AIDC_LITE_HOME}/design/sverilog/AIDC_LITE_DECOMP_ZRLE.sv
 ${AIDC_LITE_HOME}/design/sverilog/AIDC_LITE_DECOMP_SR.sv

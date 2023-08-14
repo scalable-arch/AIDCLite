@@ -1,3 +1,5 @@
+import  AIDC_LITE_DECOMP_CFG_pkg::*;
+
 module AIDC_LITE_DECOMP_TOP
 (
     input   wire                        clk,
@@ -8,24 +10,25 @@ module AIDC_LITE_DECOMP_TOP
     APB_INTF.slave                      apb_if
 );
 
-    wire    [31:0]                      cfg_src_addr;
-    wire    [31:0]                      cfg_dst_addr;
-    wire    [31:6]                      cfg_len;
-    wire                                cfg_start;
-    wire                                cfg_done;
+    wire    AIDC_LITE_DECOMP_CFG__in_t  cfg_hwif_in;
+    wire    AIDC_LITE_DECOMP_CFG__out_t cfg_hwif_out;
 
     AIDC_LITE_DECOMP_CFG                u_cfg
     (
         .clk                            (clk),
         .rst_n                          (rst_n),
 
-        .apb_if                         (apb_if),
+        .s_apb_psel                     (apb_if.psel),
+        .s_apb_penable                  (apb_if.penable),
+        .s_apb_pwrite                   (apb_if.pwrite),
+        .s_apb_paddr                    (apb_if.paddr[4:0]),
+        .s_apb_pwdata                   (apb_if.pwdata),
+        .s_apb_pready                   (apb_if.pready),
+        .s_apb_prdata                   (apb_if.prdata),
+        .s_apb_pslverr                  (apb_if.pslverr),
 
-        .src_addr_o                     (cfg_src_addr),
-        .dst_addr_o                     (cfg_dst_addr),
-        .len_o                          (cfg_len),
-        .start_o                        (cfg_start),
-        .done_i                         (cfg_done)
+        .hwif_in                        (cfg_hwif_in),
+        .hwif_out                       (cfg_hwif_out)
     );
 
     wire                                decomp0_wren,
@@ -52,11 +55,11 @@ module AIDC_LITE_DECOMP_TOP
         .clk                            (clk),
         .rst_n                          (rst_n),
 
-        .src_addr_i                     (cfg_src_addr),
-        .dst_addr_i                     (cfg_dst_addr),
-        .len_i                          (cfg_len),
-        .start_i                        (cfg_start),
-        .done_o                         (cfg_done),
+        .src_addr_i                     (cfg_hwif_out.SRC_ADDR.START_ADDR.value),
+        .dst_addr_i                     (cfg_hwif_out.DST_ADDR.START_ADDR.value),
+        .len_i                          (cfg_hwif_out.LEN.BYTE_SIZE.value),
+        .start_i                        (cfg_hwif_out.CMD.START.value),
+        .done_o                         (cfg_hwif_in.STATUS.DONE.next),
 
         .ahb_if                         (ahb_if),
 
