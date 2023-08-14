@@ -1,0 +1,2 @@
+[regblock]
+default_reset = "rst_n"

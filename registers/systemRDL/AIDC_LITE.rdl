@@ -1,6 +1,6 @@
-addrmap atxmega_spi {
+addrmap AIDC_LITE_COMP_CFG {
     name = "AI Data Compressor";
-    desc = "Register description of Sungkyunkwan University Scalable Architecture Lab's AIDC";
+    desc = "Register description of Sungkyunkwan University Scalable Architecture Lab's AIDCLite Compressor";
 
     default regwidth = 32;
     default sw = rw;
@@ -11,6 +11,7 @@ addrmap atxmega_spi {
 
         field {
             desc = "Specifies the source address (of uncompressed data)";
+            sw=rw; hw=r;
         } START_ADDR[31:0] = 0;
     } SRC_ADDR @0x0;
 
@@ -19,6 +20,7 @@ addrmap atxmega_spi {
 
         field {
             desc = "Specifies the destination address (of compressed data)";
+            sw=rw; hw=r;
         } START_ADDR[31:0] = 0;
     } DST_ADDR @0x4;
 
@@ -27,14 +29,15 @@ addrmap atxmega_spi {
 
         field {
             desc = "Specifies the size of the data to be compressed";
-        } BYTE_SIZE[31:0] = 0;
+            sw=rw; hw=r;
+        } BYTE_SIZE[31:7] = 0;
     } LEN @0x8;
 
     reg {
         field {
-            sw=r; hw=w;
+            singlepulse=1; hw=r;
+            reset=0;
         } START[0:0];
-
     } CMD @ 0xC;
 
     reg {
@@ -43,52 +46,54 @@ addrmap atxmega_spi {
         } START[0:0];
 
     } STATUS @ 0x10;
-/*
-    reg {
-        name = "Control Register";
+};
 
-        field {
-            desc = "Selects master mode when written to one, and slave mode when
-            written to zero. If SS is configured as an input and driven low while
-            master mode is set, master mode will be cleared";
+addrmap AIDC_LITE_DECOMP_CFG {
+    name = "AI Data Decompressor";
+    desc = "Register description of Sungkyunkwan University Scalable Architecture Lab's AIDCLite Decompressor";
 
-            hw=rw; we;
-        } MASTER[4:4] = 0;
-    } SRC_ADDR @ 0x0;
+    default regwidth = 32;
+    default sw = rw;
+    default hw = r;
 
     reg {
-        name = "Interrupt Control";
+        name = "Source Register";
 
         field {
-            desc = "These bits enable the SPI interrupt and select the interrupt level";
-        } INTLVL[1:0] = 0;
-    } INTCTRL @ 0x1;
+            desc = "Specifies the source address (of compressed data)";
+            sw=rw; hw=r;
+        } START_ADDR[31:0] = 0;
+    } SRC_ADDR @0x0;
+
+    reg {
+        name = "Destination Register";
+
+        field {
+            desc = "Specifies the destination address (of decompressed data)";
+            sw=rw; hw=r;
+        } START_ADDR[31:0] = 0;
+    } DST_ADDR @0x4;
+
+    reg {
+        name = "Length Register";
+
+        field {
+            desc = "Specifies the size of the data to be decompressed";
+            sw=rw; hw=r;
+        } BYTE_SIZE[31:6] = 0;
+    } LEN @0x8;
 
     reg {
         field {
-            sw=r; hw=rw; we;
-        } WRCOL[6:6] = 0;
-
-        field {
-            sw=r; hw=rw; we;
-        } IF[7:7] = 0;
-    } STATUS @ 0x2;
+            singlepulse=1; hw=r;
+            reset=0;
+        } START[0:0];
+    } CMD @ 0xC;
 
     reg {
-        desc = "The DATA register is used for sending and receiving data.
-        Writing to the register initiates the data transmission, and the byte
-        written to the register will be shifted out on the SPI output line.
-        Reading the register causes the shift register receive buffer to be read,
-        returning the last byte successfully received";
-
-        field {
-            sw=w; hw=r;
-        } WDATA[7:0];
-
         field {
             sw=r; hw=w;
-        } RDATA[7:0];
+        } START[0:0];
 
-    } DATA @ 0x3;
-    */
+    } STATUS @ 0x10;
 };

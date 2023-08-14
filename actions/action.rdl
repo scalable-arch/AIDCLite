@@ -1,4 +1,5 @@
 #!/bin/bash
 
 # $@: forward all input arguments to VCS
-peakrdl regblock registers/systemRDL/AIDC_LITE.rdl -o regblock/ --cpuif apb3-flat
+peakrdl regblock ${WORKING_DIR}/registers/systemRDL/AIDC_LITE.rdl -o ${WORKING_DIR}/registers/regblock/ --cpuif apb3-flat --peakrdl-cfg ${WORKING_DIR}/registers/systemRDL/peakrdl.toml
+peakrdl html ${WORKING_DIR}/registers/systemRDL/AIDC_LITE.rdl -o ${WORKING_DIR}/registers/reghtml/
