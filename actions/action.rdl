@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # $@: forward all input arguments to VCS
-peakrdl regblock ${WORKING_DIR}/registers/systemRDL/AIDC_LITE_COMP.rdl   -o ${WORKING_DIR}/design/sverilog/ --cpuif apb3-flat --peakrdl-cfg ${WORKING_DIR}/registers/systemRDL/peakrdl.toml
-peakrdl regblock ${WORKING_DIR}/registers/systemRDL/AIDC_LITE_DECOMP.rdl -o ${WORKING_DIR}/design/sverilog/ --cpuif apb3-flat --peakrdl-cfg ${WORKING_DIR}/registers/systemRDL/peakrdl.toml
+peakrdl regblock ${WORKING_DIR}/registers/systemRDL/AIDC_LITE.rdl --top AIDC_LITE_COMP_CFG   -o ${WORKING_DIR}/design/sverilog/ --cpuif apb3-flat --peakrdl-cfg ${WORKING_DIR}/registers/systemRDL/peakrdl.toml
+peakrdl regblock ${WORKING_DIR}/registers/systemRDL/AIDC_LITE.rdl --top AIDC_LITE_DECOMP_CFG -o ${WORKING_DIR}/design/sverilog/ --cpuif apb3-flat --peakrdl-cfg ${WORKING_DIR}/registers/systemRDL/peakrdl.toml
 
-peakrdl html ${WORKING_DIR}/registers/systemRDL/AIDC_LITE_COMP.rdl   -o ${WORKING_DIR}/doc/regMap/AIDCLite_COMP/
-peakrdl html ${WORKING_DIR}/registers/systemRDL/AIDC_LITE_DECOMP.rdl -o ${WORKING_DIR}/doc/regMap/AIDCLite_DECOMP/
+peakrdl html ${WORKING_DIR}/registers/systemRDL/AIDC_LITE.rdl   -o ${WORKING_DIR}/doc/regMap/
+# peakrdl html ${WORKING_DIR}/registers/systemRDL/AIDC_LITE_DECOMP.rdl -o ${WORKING_DIR}/doc/regMap/AIDCLite_DECOMP/
