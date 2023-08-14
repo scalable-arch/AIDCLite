@@ -1,0 +1,49 @@
+addrmap AIDC_LITE_DECOMP_CFG {
+    name = "AI Data Decompressor";
+    desc = "Register description of Sungkyunkwan University Scalable Architecture Lab's AIDCLite Decompressor";
+
+    default regwidth = 32;
+    default sw = rw;
+    default hw = r;
+
+    reg {
+        name = "Source Register";
+
+        field {
+            desc = "Specifies the source address (of compressed data)";
+            sw=rw; hw=r;
+        } START_ADDR[31:0] = 0;
+    } SRC_ADDR @0x0;
+
+    reg {
+        name = "Destination Register";
+
+        field {
+            desc = "Specifies the destination address (of decompressed data)";
+            sw=rw; hw=r;
+        } START_ADDR[31:0] = 0;
+    } DST_ADDR @0x4;
+
+    reg {
+        name = "Length Register";
+
+        field {
+            desc = "Specifies the size of the data to be decompressed";
+            sw=rw; hw=r;
+        } BYTE_SIZE[31:6] = 0;
+    } LEN @0x8;
+
+    reg {
+        field {
+            singlepulse=1; hw=r;
+            reset=0;
+        } START[0:0];
+    } CMD @ 0xC;
+
+    reg {
+        field {
+            sw=r; hw=w;
+        } DONE[0:0];
+
+    } STATUS @ 0x10;
+};
