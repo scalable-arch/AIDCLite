@@ -6,3 +6,5 @@ peakrdl regblock ${WORKING_DIR}/registers/systemRDL/AIDC_LITE.rdl --top AIDC_LIT
 
 peakrdl html ${WORKING_DIR}/registers/systemRDL/AIDC_LITE.rdl --top AIDC_LITE_COMP_CFG   -o ${WORKING_DIR}/docs/regMapComp/
 peakrdl html ${WORKING_DIR}/registers/systemRDL/AIDC_LITE.rdl --top AIDC_LITE_DECOMP_CFG -o ${WORKING_DIR}/docs/regMapDecomp/
+
+#peakrdl markdown ${WORKING_DIR}/registers/systemRDL/AIDC_LITE.rdl --top AIDC_LITE_DECOMP_CFG -o regmap.md

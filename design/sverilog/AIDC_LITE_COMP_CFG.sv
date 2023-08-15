@@ -227,7 +227,7 @@ module AIDC_LITE_COMP_CFG (
         if(decoded_reg_strb.CMD && decoded_req_is_wr) begin // SW write
             next_c = (field_storage.CMD.START.value & ~decoded_wr_biten[0:0]) | (decoded_wr_data[0:0] & decoded_wr_biten[0:0]);
             load_next_c = '1;
-        end else if(1) begin // singlepulse clears back to 0
+        end else begin // singlepulse clears back to 0
             next_c = '0;
             load_next_c = '1;
         end
