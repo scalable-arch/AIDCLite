@@ -52,3 +52,8 @@
 |           | decomp_prdata_o   | Output    | 32        | (Decompressor) APB read data               |
 |           | decomp_pslverr_o  | Output    | 1         | (Decompressor) APB slave error             |
 
+# Internal SRAM List
+
+None
+
+# Integration Test Plan
