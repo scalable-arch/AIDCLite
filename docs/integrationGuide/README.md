@@ -2,6 +2,8 @@
 
 # Integration Example
 
+<img src="images/integration_example.png" title="An example of AIDC integration"/>
+
 
 # Port List
 
