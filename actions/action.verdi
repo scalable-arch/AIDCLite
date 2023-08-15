@@ -1,4 +1,4 @@
 #!/bin/bash
 
 # $@: forward all input arguments to VCS
-Verdi-Ultra -f $DESIGN_FILELIST -f $TB_FILELIST $@
+Verdi-Ultra -sv -f $DESIGN_FILELIST -f $TB_FILELIST $@
