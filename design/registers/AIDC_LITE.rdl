@@ -7,6 +7,9 @@ addrmap AIDC_LITE_COMP_CFG {
     default hw = r;
 
     reg {
+        name = "Version Register";
+        desc = "The version information of this IP";
+
         field {
             sw = r; hw = w;
             desc = "The major version of this IP. A change in major version indicates that the software needs changes. This document describes the behaviours of MAJOR version 1.";
@@ -22,6 +25,9 @@ addrmap AIDC_LITE_COMP_CFG {
     } VERSION @0x0;
 
     reg {
+        name = "Git Hash Register";
+        desc = "The Git version hash of this IP";
+
         field {
             sw = r; hw = w;
             desc = "The short Git version hash (upper 32-bit) of this IP";
@@ -30,6 +36,7 @@ addrmap AIDC_LITE_COMP_CFG {
 
     reg {
         name = "Source Register";
+        desc = "The starting address of the to-be-compressed region";
 
         field {
             desc = "Specifies the source address (of uncompressed data)";
@@ -40,6 +47,7 @@ addrmap AIDC_LITE_COMP_CFG {
 
     reg {
         name = "Destination Register";
+        desc = "The starting address of the compressed region";
 
         field {
             desc = "Specifies the destination address (of compressed data)";
@@ -59,6 +67,8 @@ addrmap AIDC_LITE_COMP_CFG {
     } LEN @0x18;
 
     reg {
+        name = "Command Register";
+
         field {
             singlepulse = 1; hw = r;
             reset = 0;
@@ -66,6 +76,7 @@ addrmap AIDC_LITE_COMP_CFG {
     } CMD @0x1C;
 
     reg {
+        name = "Status Register";
         field {
             sw = r; hw = w;
         } DONE[0:0];
@@ -94,6 +105,7 @@ addrmap AIDC_LITE_DECOMP_CFG {
             sw = r; hw = w;
             desc = "The micro version of this IP. Every commit increases this version.";
         } MICRO[15:0];
+        desc = "The version information of this IP";
     } VERSION @0x0;
 
     reg {
@@ -101,6 +113,7 @@ addrmap AIDC_LITE_DECOMP_CFG {
             sw = r; hw = w;
             desc = "The short Git version hash (upper 32-bit) of this IP";
         } HASH[31:0];
+        desc = "The Git version hash of this IP";
     } GIT @0x4;
 
     reg {
