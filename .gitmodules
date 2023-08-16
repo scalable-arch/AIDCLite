@@ -1,3 +1,6 @@
 [submodule "sim/gen_amba"]
 	path = sim/gen_amba
 	url = https://github.com/adki/gen_amba.git
+[submodule "rtl-actions"]
+	path = rtl-actions
+	url = https://github.com/scalable-arch/rtl-actions
