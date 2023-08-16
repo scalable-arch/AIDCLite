@@ -1,5 +1,7 @@
 import  AIDC_LITE_COMP_CFG_pkg::*;
 
+`include "AIDC_LITE_VERSION.svh"
+
 module AIDC_LITE_COMP_TOP
 (
     input   wire                        clk,
@@ -21,7 +23,7 @@ module AIDC_LITE_COMP_TOP
         .s_apb_psel                     (apb_if.psel),
         .s_apb_penable                  (apb_if.penable),
         .s_apb_pwrite                   (apb_if.pwrite),
-        .s_apb_paddr                    (apb_if.paddr[4:0]),
+        .s_apb_paddr                    (apb_if.paddr[5:0]),
         .s_apb_pwdata                   (apb_if.pwdata),
         .s_apb_pready                   (apb_if.pready),
         .s_apb_prdata                   (apb_if.prdata),
@@ -30,6 +32,11 @@ module AIDC_LITE_COMP_TOP
         .hwif_in                        (cfg_hwif_in),
         .hwif_out                       (cfg_hwif_out)
     );
+
+    assign  cfg_hwif_in.VERSION.MAJOR.next  = `AIDC_LITE_VERSION_MAJOR;
+    assign  cfg_hwif_in.VERSION.MINOR.next  = `AIDC_LITE_VERSION_MINOR;
+    assign  cfg_hwif_in.VERSION.MICRO.next  = `AIDC_LITE_VERSION_MICRO;
+    assign  cfg_hwif_in.GIT.HASH.next       = `AIDC_LITE_GIT_HASH;
 
     wire                                comp_wren;
     wire                                comp_sop;

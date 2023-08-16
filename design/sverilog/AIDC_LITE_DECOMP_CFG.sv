@@ -8,7 +8,7 @@ module AIDC_LITE_DECOMP_CFG (
         input wire s_apb_psel,
         input wire s_apb_penable,
         input wire s_apb_pwrite,
-        input wire [4:0] s_apb_paddr,
+        input wire [5:0] s_apb_paddr,
         input wire [31:0] s_apb_pwdata,
         output logic s_apb_pready,
         output logic [31:0] s_apb_prdata,
@@ -23,7 +23,7 @@ module AIDC_LITE_DECOMP_CFG (
     //--------------------------------------------------------------------------
     logic cpuif_req;
     logic cpuif_req_is_wr;
-    logic [4:0] cpuif_addr;
+    logic [5:0] cpuif_addr;
     logic [31:0] cpuif_wr_data;
     logic [31:0] cpuif_wr_biten;
     logic cpuif_req_stall_wr;
@@ -51,7 +51,7 @@ module AIDC_LITE_DECOMP_CFG (
                     is_active <= '1;
                     cpuif_req <= '1;
                     cpuif_req_is_wr <= s_apb_pwrite;
-                    cpuif_addr <= {s_apb_paddr[4:2], 2'b0};
+                    cpuif_addr <= {s_apb_paddr[5:2], 2'b0};
                     cpuif_wr_data <= s_apb_pwdata;
                 end
             end else begin
@@ -82,6 +82,8 @@ module AIDC_LITE_DECOMP_CFG (
     // Address Decode
     //--------------------------------------------------------------------------
     typedef struct {
+        logic VERSION;
+        logic GIT;
         logic SRC_ADDR;
         logic DST_ADDR;
         logic LEN;
@@ -95,11 +97,13 @@ module AIDC_LITE_DECOMP_CFG (
     logic [31:0] decoded_wr_biten;
 
     always_comb begin
-        decoded_reg_strb.SRC_ADDR = cpuif_req_masked & (cpuif_addr == 5'h0);
-        decoded_reg_strb.DST_ADDR = cpuif_req_masked & (cpuif_addr == 5'h4);
-        decoded_reg_strb.LEN = cpuif_req_masked & (cpuif_addr == 5'h8);
-        decoded_reg_strb.CMD = cpuif_req_masked & (cpuif_addr == 5'hc);
-        decoded_reg_strb.STATUS = cpuif_req_masked & (cpuif_addr == 5'h10);
+        decoded_reg_strb.VERSION = cpuif_req_masked & (cpuif_addr == 6'h0);
+        decoded_reg_strb.GIT = cpuif_req_masked & (cpuif_addr == 6'h4);
+        decoded_reg_strb.SRC_ADDR = cpuif_req_masked & (cpuif_addr == 6'h10);
+        decoded_reg_strb.DST_ADDR = cpuif_req_masked & (cpuif_addr == 6'h14);
+        decoded_reg_strb.LEN = cpuif_req_masked & (cpuif_addr == 6'h18);
+        decoded_reg_strb.CMD = cpuif_req_masked & (cpuif_addr == 6'h1c);
+        decoded_reg_strb.STATUS = cpuif_req_masked & (cpuif_addr == 6'h20);
     end
 
     // Pass down signals to next stage
@@ -259,15 +263,19 @@ module AIDC_LITE_DECOMP_CFG (
     logic [31:0] readback_data;
     
     // Assign readback values to a flattened array
-    logic [31:0] readback_array[5];
-    assign readback_array[0][31:0] = (decoded_reg_strb.SRC_ADDR && !decoded_req_is_wr) ? field_storage.SRC_ADDR.START_ADDR.value : '0;
-    assign readback_array[1][31:0] = (decoded_reg_strb.DST_ADDR && !decoded_req_is_wr) ? field_storage.DST_ADDR.START_ADDR.value : '0;
-    assign readback_array[2][5:0] = '0;
-    assign readback_array[2][31:6] = (decoded_reg_strb.LEN && !decoded_req_is_wr) ? field_storage.LEN.BYTE_SIZE.value : '0;
-    assign readback_array[3][0:0] = (decoded_reg_strb.CMD && !decoded_req_is_wr) ? field_storage.CMD.START.value : '0;
-    assign readback_array[3][31:1] = '0;
-    assign readback_array[4][0:0] = (decoded_reg_strb.STATUS && !decoded_req_is_wr) ? hwif_in.STATUS.DONE.next : '0;
-    assign readback_array[4][31:1] = '0;
+    logic [31:0] readback_array[7];
+    assign readback_array[0][15:0] = (decoded_reg_strb.VERSION && !decoded_req_is_wr) ? hwif_in.VERSION.MICRO.next : '0;
+    assign readback_array[0][23:16] = (decoded_reg_strb.VERSION && !decoded_req_is_wr) ? hwif_in.VERSION.MINOR.next : '0;
+    assign readback_array[0][31:24] = (decoded_reg_strb.VERSION && !decoded_req_is_wr) ? hwif_in.VERSION.MAJOR.next : '0;
+    assign readback_array[1][31:0] = (decoded_reg_strb.GIT && !decoded_req_is_wr) ? hwif_in.GIT.HASH.next : '0;
+    assign readback_array[2][31:0] = (decoded_reg_strb.SRC_ADDR && !decoded_req_is_wr) ? field_storage.SRC_ADDR.START_ADDR.value : '0;
+    assign readback_array[3][31:0] = (decoded_reg_strb.DST_ADDR && !decoded_req_is_wr) ? field_storage.DST_ADDR.START_ADDR.value : '0;
+    assign readback_array[4][5:0] = '0;
+    assign readback_array[4][31:6] = (decoded_reg_strb.LEN && !decoded_req_is_wr) ? field_storage.LEN.BYTE_SIZE.value : '0;
+    assign readback_array[5][0:0] = (decoded_reg_strb.CMD && !decoded_req_is_wr) ? field_storage.CMD.START.value : '0;
+    assign readback_array[5][31:1] = '0;
+    assign readback_array[6][0:0] = (decoded_reg_strb.STATUS && !decoded_req_is_wr) ? hwif_in.STATUS.DONE.next : '0;
+    assign readback_array[6][31:1] = '0;
 
     // Reduce the array
     always_comb begin
@@ -275,7 +283,7 @@ module AIDC_LITE_DECOMP_CFG (
         readback_done = decoded_req & ~decoded_req_is_wr;
         readback_err = '0;
         readback_data_var = '0;
-        for(int i=0; i<5; i++) readback_data_var |= readback_array[i];
+        for(int i=0; i<7; i++) readback_data_var |= readback_array[i];
         readback_data = readback_data_var;
     end
 

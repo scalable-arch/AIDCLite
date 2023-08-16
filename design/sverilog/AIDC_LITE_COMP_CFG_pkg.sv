@@ -3,6 +3,32 @@
 
 package AIDC_LITE_COMP_CFG_pkg;
     typedef struct {
+        logic [15:0] next;
+    } AIDC_LITE_COMP_CFG__VERSION__MICRO__in_t;
+
+    typedef struct {
+        logic [7:0] next;
+    } AIDC_LITE_COMP_CFG__VERSION__MINOR__in_t;
+
+    typedef struct {
+        logic [7:0] next;
+    } AIDC_LITE_COMP_CFG__VERSION__MAJOR__in_t;
+
+    typedef struct {
+        AIDC_LITE_COMP_CFG__VERSION__MICRO__in_t MICRO;
+        AIDC_LITE_COMP_CFG__VERSION__MINOR__in_t MINOR;
+        AIDC_LITE_COMP_CFG__VERSION__MAJOR__in_t MAJOR;
+    } AIDC_LITE_COMP_CFG__VERSION__in_t;
+
+    typedef struct {
+        logic [31:0] next;
+    } AIDC_LITE_COMP_CFG__GIT__HASH__in_t;
+
+    typedef struct {
+        AIDC_LITE_COMP_CFG__GIT__HASH__in_t HASH;
+    } AIDC_LITE_COMP_CFG__GIT__in_t;
+
+    typedef struct {
         logic next;
     } AIDC_LITE_COMP_CFG__STATUS__DONE__in_t;
 
@@ -11,6 +37,8 @@ package AIDC_LITE_COMP_CFG_pkg;
     } AIDC_LITE_COMP_CFG__STATUS__in_t;
 
     typedef struct {
+        AIDC_LITE_COMP_CFG__VERSION__in_t VERSION;
+        AIDC_LITE_COMP_CFG__GIT__in_t GIT;
         AIDC_LITE_COMP_CFG__STATUS__in_t STATUS;
     } AIDC_LITE_COMP_CFG__in_t;
 
