@@ -8,19 +8,23 @@ addrmap AIDC_LITE_COMP_CFG {
 
     reg {
         field {
-            sw=r; hw=w;
+            sw = r; hw = w;
+            desc = "The major version of this IP. A change in major version indicates that the software needs changes. This document describes the behaviours of MAJOR version 1.";
         } MAJOR[31:24];
         field {
-            sw=r; hw=w;
+            sw = r; hw = w;
+            desc = "The minor version of this IP. A change in minor version indicates that the hardware has undergone some changes yet its software interface has not changes.";
         } MINOR[23:16];
         field {
-            sw=r; hw=w;
+            sw = r; hw = w;
+            desc = "The micro version of this IP. Every commit increases this version.";
         } MICRO[15:0];
     } VERSION @0x0;
 
     reg {
         field {
-            sw=r; hw=w;
+            sw = r; hw = w;
+            desc = "The short Git version hash (upper 32-bit) of this IP";
         } HASH[31:0];
     } GIT @0x4;
 
@@ -29,8 +33,9 @@ addrmap AIDC_LITE_COMP_CFG {
 
         field {
             desc = "Specifies the source address (of uncompressed data)";
-            sw=rw; hw=r;
-        } START_ADDR[31:0] = 0;
+            sw = rw; hw = r;
+            reset = 0;
+        } START_ADDR[31:0];
     } SRC_ADDR @0x10;
 
     reg {
@@ -38,8 +43,9 @@ addrmap AIDC_LITE_COMP_CFG {
 
         field {
             desc = "Specifies the destination address (of compressed data)";
-            sw=rw; hw=r;
-        } START_ADDR[31:0] = 0;
+            sw = rw; hw = r;
+            reset = 0;
+        } START_ADDR[31:0];
     } DST_ADDR @0x14;
 
     reg {
@@ -47,20 +53,21 @@ addrmap AIDC_LITE_COMP_CFG {
 
         field {
             desc = "Specifies the size of the data to be compressed";
-            sw=rw; hw=r;
-        } BYTE_SIZE[31:7] = 0;
+            sw = rw; hw = r;
+            reset = 0;
+        } BYTE_SIZE[31:7];
     } LEN @0x18;
 
     reg {
         field {
-            singlepulse=1; hw=r;
-            reset=0;
+            singlepulse = 1; hw = r;
+            reset = 0;
         } START[0:0];
     } CMD @0x1C;
 
     reg {
         field {
-            sw=r; hw=w;
+            sw = r; hw = w;
         } DONE[0:0];
 
     } STATUS @0x20;
@@ -76,19 +83,23 @@ addrmap AIDC_LITE_DECOMP_CFG {
 
     reg {
         field {
-            sw=r; hw=w;
+            sw = r; hw = w;
+            desc = "The major version of this IP. A change in major version indicates that the software needs changes. This document describes the behaviours of MAJOR version 1.";
         } MAJOR[31:24];
         field {
-            sw=r; hw=w;
+            sw = r; hw = w;
+            desc = "The minor version of this IP. A change in minor version indicates that the hardware has undergone some changes yet its software interface has not changes.";
         } MINOR[23:16];
         field {
-            sw=r; hw=w;
+            sw = r; hw = w;
+            desc = "The micro version of this IP. Every commit increases this version.";
         } MICRO[15:0];
     } VERSION @0x0;
 
     reg {
         field {
-            sw=r; hw=w;
+            sw = r; hw = w;
+            desc = "The short Git version hash (upper 32-bit) of this IP";
         } HASH[31:0];
     } GIT @0x4;
 
@@ -97,8 +108,9 @@ addrmap AIDC_LITE_DECOMP_CFG {
 
         field {
             desc = "Specifies the source address (of compressed data)";
-            sw=rw; hw=r;
-        } START_ADDR[31:0] = 0;
+            sw = rw; hw = r;
+            reset = 0;
+        } START_ADDR[31:0];
     } SRC_ADDR @0x10;
 
     reg {
@@ -106,8 +118,9 @@ addrmap AIDC_LITE_DECOMP_CFG {
 
         field {
             desc = "Specifies the destination address (of decompressed data)";
-            sw=rw; hw=r;
-        } START_ADDR[31:0] = 0;
+            sw = rw; hw = r;
+            reset = 0;
+        } START_ADDR[31:0];
     } DST_ADDR @0x14;
 
     reg {
@@ -115,20 +128,21 @@ addrmap AIDC_LITE_DECOMP_CFG {
 
         field {
             desc = "Specifies the size of the data to be decompressed";
-            sw=rw; hw=r;
-        } BYTE_SIZE[31:6] = 0;
+            sw = rw; hw = r;
+            reset = 0;
+        } BYTE_SIZE[31:6];
     } LEN @0x18;
 
     reg {
         field {
-            singlepulse=1; hw=r;
-            reset=0;
+            singlepulse = 1; hw = r;
+            reset = 0;
         } START[0:0];
     } CMD @0x1C;
 
     reg {
         field {
-            sw=r; hw=w;
+            sw = r; hw = w;
         } DONE[0:0];
 
     } STATUS @0x20;
