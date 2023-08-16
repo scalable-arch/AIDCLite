@@ -236,13 +236,13 @@ module TB_TOP;
         $display(" Compression test starts");
         $display("---------------------------------------------------");
 
-        apb0_if.write(32'h0, src_addr);
-        apb0_if.write(32'h4, dst_addr);
-        apb0_if.write(32'h8, len);
-        apb0_if.write(32'hC, 32'd1);
+        apb0_if.write(32'h10, src_addr);
+        apb0_if.write(32'h14, dst_addr);
+        apb0_if.write(32'h18, len);
+        apb0_if.write(32'h1C, 32'd1);
 
         for (int i=0; i<10000; i++) begin
-            apb0_if.read(32'h10, rdata);
+            apb0_if.read(32'h20, rdata);
             if (rdata==32'h1) begin
                 break;
             end
@@ -271,13 +271,13 @@ module TB_TOP;
         $display(" Decompression test starts");
         $display("---------------------------------------------------");
 
-        apb1_if.write(32'h0, src_addr);
-        apb1_if.write(32'h4, dst_addr);
-        apb1_if.write(32'h8, len);
-        apb1_if.write(32'hC, 32'd1);
+        apb1_if.write(32'h10, src_addr);
+        apb1_if.write(32'h14, dst_addr);
+        apb1_if.write(32'h18, len);
+        apb1_if.write(32'h1C, 32'd1);
 
         for (int i=0; i<10000; i++) begin
-            apb1_if.read(32'h10, rdata);
+            apb1_if.read(32'h20, rdata);
             if (rdata==32'h1) begin
                 break;
             end

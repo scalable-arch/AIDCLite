@@ -7,13 +7,31 @@ addrmap AIDC_LITE_COMP_CFG {
     default hw = r;
 
     reg {
+        field {
+            sw=r; hw=w;
+        } MAJOR[31:24];
+        field {
+            sw=r; hw=w;
+        } MINOR[23:16];
+        field {
+            sw=r; hw=w;
+        } MICRO[15:0];
+    } VERSION @0x0;
+
+    reg {
+        field {
+            sw=r; hw=w;
+        } HASH[31:0];
+    } GIT @0x4;
+
+    reg {
         name = "Source Register";
 
         field {
             desc = "Specifies the source address (of uncompressed data)";
             sw=rw; hw=r;
         } START_ADDR[31:0] = 0;
-    } SRC_ADDR @0x0;
+    } SRC_ADDR @0x10;
 
     reg {
         name = "Destination Register";
@@ -22,7 +40,7 @@ addrmap AIDC_LITE_COMP_CFG {
             desc = "Specifies the destination address (of compressed data)";
             sw=rw; hw=r;
         } START_ADDR[31:0] = 0;
-    } DST_ADDR @0x4;
+    } DST_ADDR @0x14;
 
     reg {
         name = "Length Register";
@@ -31,22 +49,21 @@ addrmap AIDC_LITE_COMP_CFG {
             desc = "Specifies the size of the data to be compressed";
             sw=rw; hw=r;
         } BYTE_SIZE[31:7] = 0;
-    } LEN @0x8;
+    } LEN @0x18;
 
     reg {
         field {
             singlepulse=1; hw=r;
             reset=0;
         } START[0:0];
-    } CMD @ 0xC;
+    } CMD @0x1C;
 
     reg {
         field {
             sw=r; hw=w;
-            reset=1;
         } DONE[0:0];
 
-    } STATUS @ 0x10;
+    } STATUS @0x20;
 };
 
 addrmap AIDC_LITE_DECOMP_CFG {
@@ -58,13 +75,31 @@ addrmap AIDC_LITE_DECOMP_CFG {
     default hw = r;
 
     reg {
+        field {
+            sw=r; hw=w;
+        } MAJOR[31:24];
+        field {
+            sw=r; hw=w;
+        } MINOR[23:16];
+        field {
+            sw=r; hw=w;
+        } MICRO[15:0];
+    } VERSION @0x0;
+
+    reg {
+        field {
+            sw=r; hw=w;
+        } HASH[31:0];
+    } GIT @0x4;
+
+    reg {
         name = "Source Register";
 
         field {
             desc = "Specifies the source address (of compressed data)";
             sw=rw; hw=r;
         } START_ADDR[31:0] = 0;
-    } SRC_ADDR @0x0;
+    } SRC_ADDR @0x10;
 
     reg {
         name = "Destination Register";
@@ -73,7 +108,7 @@ addrmap AIDC_LITE_DECOMP_CFG {
             desc = "Specifies the destination address (of decompressed data)";
             sw=rw; hw=r;
         } START_ADDR[31:0] = 0;
-    } DST_ADDR @0x4;
+    } DST_ADDR @0x14;
 
     reg {
         name = "Length Register";
@@ -82,19 +117,19 @@ addrmap AIDC_LITE_DECOMP_CFG {
             desc = "Specifies the size of the data to be decompressed";
             sw=rw; hw=r;
         } BYTE_SIZE[31:6] = 0;
-    } LEN @0x8;
+    } LEN @0x18;
 
     reg {
         field {
             singlepulse=1; hw=r;
             reset=0;
         } START[0:0];
-    } CMD @ 0xC;
+    } CMD @0x1C;
 
     reg {
         field {
             sw=r; hw=w;
         } DONE[0:0];
 
-    } STATUS @ 0x10;
+    } STATUS @0x20;
 };
