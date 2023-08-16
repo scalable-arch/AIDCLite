@@ -25,7 +25,7 @@
     </tr>
     <tr id="MAJOR">
         <td>[31:24]</td>
-        <td>MAJOR</td>
+        <td><a href="#MAJOR.desc">MAJOR</a></td>
         <td>
             <span title='Read-only'>r</span></td>
         <td>-
@@ -45,7 +45,7 @@
     </tr>
     <tr id="MINOR">
         <td>[23:16]</td>
-        <td>MINOR</td>
+        <td><a href="#MINOR.desc">MINOR</a></td>
         <td>
             <span title='Read-only'>r</span></td>
         <td>-
@@ -65,7 +65,7 @@
     </tr>
     <tr id="MICRO">
         <td>[15:0]</td>
-        <td>MICRO</td>
+        <td><a href="#MICRO.desc">MICRO</a></td>
         <td>
             <span title='Read-only'>r</span></td>
         <td>-
@@ -91,4 +91,26 @@
         <button type="button" class="reset-button" title="Reset register values" aria-label="Reset register values" onclick="onResetRegValue(this)"></button>
     </label>
 </p>
+<hr/><h2>Field Descriptions</h2>
+
+<h3 id="MAJOR.desc">MAJOR
+    <a class="headerlink" href="#MAJOR.desc" title="Permalink to this headline"></a>
+</h3>
+<div id="_Content.MAJOR.desc">
+<p>The major version of this IP. A change in major version indicates that the software needs changes. This document describes the behaviours of MAJOR version 1.</p>
+</div>
+
+<h3 id="MINOR.desc">MINOR
+    <a class="headerlink" href="#MINOR.desc" title="Permalink to this headline"></a>
+</h3>
+<div id="_Content.MINOR.desc">
+<p>The minor version of this IP. A change in minor version indicates that the hardware has undergone some changes yet its software interface has not changes.</p>
+</div>
+
+<h3 id="MICRO.desc">MICRO
+    <a class="headerlink" href="#MICRO.desc" title="Permalink to this headline"></a>
+</h3>
+<div id="_Content.MICRO.desc">
+<p>The micro version of this IP. Every commit increases this version.</p>
+</div>
 </div>
