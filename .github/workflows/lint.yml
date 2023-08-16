@@ -17,7 +17,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
       - name: Spyglass-Lint
-        uses: scalable-arch/rtl-actions/lint
+        uses: scalable-arch/rtl-actions/lint@head
       - name: Report (moresimple)
         run: cat work.lint/reports/moresimple.rpt
 #      - name: Upload Lint report
