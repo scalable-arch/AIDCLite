@@ -32,7 +32,7 @@ jobs:
         uses: scalable-arch/rtl-actions/rdl-regblock@main
         with:
           rdl: design/registers/AIDC_LITE.rdl
-          peakrdl-cfg: design/registers/peakrdl.toml
+          cfg: design/registers/peakrdl.toml
           cpuif: apb3-flat
           top: AIDC_LITE_COMP_CFG
       - name: RTL generation (decompressor)
