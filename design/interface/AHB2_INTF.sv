@@ -5,8 +5,6 @@
 // Follows AMBA2 AHB v1.0 specification, 1999
 // (ARM IHI 0011A)
 
-`include "AHB2_PKG.svh"
-
 interface AHB2_MST_INTF
 (
     input   wire                        hclk,

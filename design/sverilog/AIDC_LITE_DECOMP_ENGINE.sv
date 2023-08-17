@@ -1,7 +1,3 @@
-`include "AHB2_PKG.svh"
-
-import AHB2_PKG::*;
-
 module AIDC_LITE_DECOMP_ENGINE
 (
     input   wire                        clk,
@@ -124,7 +120,7 @@ module AIDC_LITE_DECOMP_ENGINE
                     // address phase part (prepation)
                     // set the address and SRC_ADDR + BLK_CNT*128
                     haddr_n                         = src_addr_i + {blk_cnt, 6'd0};
-                    htrans_n                        = HTRANS_NONSEQ;
+                    htrans_n                        = AHB2_PKG::HTRANS_NONSEQ;
                     hwrite_n                        = 1'b0;
 
                     state_n                         = S_RD_1ST_ADDR;
@@ -135,7 +131,7 @@ module AIDC_LITE_DECOMP_ENGINE
                 if (ahb_if.hready) begin
                     // address phase part
                     haddr_n                         = haddr + 'd4;
-                    htrans_n                        = HTRANS_SEQ;
+                    htrans_n                        = AHB2_PKG::HTRANS_SEQ;
 
                     // data phase part
                     // during a RD, beat_cnt counts data phases
@@ -161,7 +157,7 @@ module AIDC_LITE_DECOMP_ENGINE
 
                     if (beat_cnt=='d14) begin
                         // last address (=last data - 1) of the access
-                        htrans_n                        = HTRANS_IDLE;
+                        htrans_n                        = AHB2_PKG::HTRANS_IDLE;
                         state_n                         = S_RD_LAST_DATA;
                     end
                 end
@@ -190,7 +186,7 @@ module AIDC_LITE_DECOMP_ENGINE
                     //  x2 for block_cnt than source as destination contains
                     // expanded data
                     haddr_n                         = dst_addr_i + {blk_cnt[30:6], 7'd0};
-                    htrans_n                        = HTRANS_NONSEQ;
+                    htrans_n                        = AHB2_PKG::HTRANS_NONSEQ;
                     hwrite_n                        = 1'b1;
                     // during a WR, beat_cnt counts for address phases
                     beat_cnt_n                      = 'd0;
@@ -203,7 +199,7 @@ module AIDC_LITE_DECOMP_ENGINE
                 if (ahb_if.hready) begin
                     // address phase part
                     haddr_n                         = haddr + 'd4;
-                    htrans_n                        = HTRANS_SEQ;
+                    htrans_n                        = AHB2_PKG::HTRANS_SEQ;
                     beat_cnt_n                      = beat_cnt + 'd1;
 
                     // data phase part
@@ -238,7 +234,7 @@ module AIDC_LITE_DECOMP_ENGINE
 
                     if (beat_cnt=='d15) begin
                         // last address (=last data - 1) of the access
-                        htrans_n                        = HTRANS_IDLE;
+                        htrans_n                        = AHB2_PKG::HTRANS_IDLE;
                         state_n                         = S_WR1_LAST_DATA;
                     end
                 end
@@ -254,7 +250,7 @@ module AIDC_LITE_DECOMP_ENGINE
                 if (ahb_if.hgrant) begin
                     // address phase part
                     // set the address and SRC_ADDR + BLK_CNT*64
-                    htrans_n                        = HTRANS_NONSEQ;
+                    htrans_n                        = AHB2_PKG::HTRANS_NONSEQ;
 
                     state_n                         = S_WR2_1ST_ADDR;
                 end
@@ -264,7 +260,7 @@ module AIDC_LITE_DECOMP_ENGINE
                 if (ahb_if.hready) begin
                     // address phase part
                     haddr_n                         = haddr + 'd4;
-                    htrans_n                        = HTRANS_SEQ;
+                    htrans_n                        = AHB2_PKG::HTRANS_SEQ;
 
                     beat_cnt_n                      = beat_cnt + 'd1;
 
@@ -301,7 +297,7 @@ module AIDC_LITE_DECOMP_ENGINE
 
                     if (beat_cnt=='d31) begin
                         // last address (=last data - 1) of the access
-                        htrans_n                        = HTRANS_IDLE;
+                        htrans_n                        = AHB2_PKG::HTRANS_IDLE;
                         state_n                         = S_WR2_LAST_DATA;
                     end
                 end
@@ -333,7 +329,7 @@ module AIDC_LITE_DECOMP_ENGINE
 
             hbusreq                         <= 1'b0;
             haddr                           <= 32'd0;
-            htrans                          <= HTRANS_IDLE;
+            htrans                          <= AHB2_PKG::HTRANS_IDLE;
             hwrite                          <= 1'b0;
             hwdata                          <= 32'd0;
         end
@@ -424,8 +420,8 @@ module AIDC_LITE_DECOMP_ENGINE
     assign  ahb_if.haddr                    = haddr;
     assign  ahb_if.htrans                   = htrans;
     assign  ahb_if.hwrite                   = hwrite;
-    assign  ahb_if.hsize                    = HSIZE_32BITS;
-    assign  ahb_if.hburst                   = HBURST_INCR16;
+    assign  ahb_if.hsize                    = AHB2_PKG::HSIZE_32BITS;
+    assign  ahb_if.hburst                   = AHB2_PKG::HBURST_INCR16;
     assign  ahb_if.hprot                    = 4'b0001;  // data access
     assign  ahb_if.hwdata                   = hwdata;
 
