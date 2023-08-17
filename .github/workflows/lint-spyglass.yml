@@ -1,25 +1,28 @@
 # This file describes a workflow that runs regression tests
 # on a pull request to the main branch
-name: Lint-RTL-Handoff2
-run-name: Spyglass Lint for a IP-level RTL handoff from ${{ github.actor }}
+name: Lint-Spyglass-RTL-Handoff
+run-name: Spyglass Lint for an IP-level RTL handoff from ${{ github.actor }}
 on:
-#pull_request:
-#    branches:
-#      - main
-#  schedule:
-#    - cron: '30 5 * * *'    # 5:30 AM (UTC), any day of the month, any month, any day of the week
+  pull_request:
+    branches:
+      - main
+  schedule:
+    - cron: '30 5 * * *'    # 5:30 AM (UTC), any day of the month, any month, any day of the week
   workflow_dispatch:
 
 jobs:
   Spyglass:
     runs-on: self-hosted        # runs on a server with Synopsys Spyglass installed
     steps:
+      # checkout the repository (with its submodules) to the runner
       - name: Checkout code
         uses: actions/checkout@v3
         with:
           submodules: recursive
+      # run lint
       - name: Spyglass-Lint
         uses: scalable-arch/rtl-actions/lint@main
+      # output report
       - name: Report (moresimple)
         run: cat work.lint/reports/moresimple.rpt
 #      - name: Upload Lint report
