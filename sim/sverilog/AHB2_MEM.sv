@@ -63,7 +63,7 @@ module AHB2_MEM
     // Output assignments
     //----------------------------------------------------------
     assign  ahb_if.hrdata               = hrdata;
-    assign  ahb_if.hresp                = HRESP_OKAY;
+    assign  ahb_if.hresp                = AHB2_PKG::HRESP_OKAY;
     assign  ahb_if.hreadyo              = 1'b1;
 
     // synopsys translate_off

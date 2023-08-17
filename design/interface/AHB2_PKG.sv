@@ -5,9 +5,6 @@
 // Follows AMBA2 AHB v1.0 specification, 1999
 // (ARM IHI 0011A)
 
-`ifndef __AHB2_PKG_SVH__
-`define __AHB2_PKG_SVH__
-
 package AHB2_PKG;
     localparam  logic   [1:0]           HTRANS_IDLE     = 2'b00;
     localparam  logic   [1:0]           HTRANS_BUSY     = 2'b01;
@@ -38,5 +35,3 @@ package AHB2_PKG;
     localparam  logic   [2:0]           HSIZE_1024BITS  = 3'b111;
 
 endpackage
-
-`endif /* __AHB2_PKG_SVH__ */
