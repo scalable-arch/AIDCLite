@@ -1,0 +1,50 @@
+# This file describes a workflow that runs regression tests
+# on a pull request to the main branch
+name: RDL-PeakRDL
+run-name: Generate HDL and html from Register Description Language inputs from ${{ github.actor }}
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - design/registers/*
+  workflow_dispatch:
+
+jobs:
+  RDL-PeakRDL:
+    runs-on: ubuntu-latest    # GitHub runner
+    steps:
+      # checkout the repository (with its submodules) to the runner
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+      # peakRDL requires Python, so install it
+      - name: Set up Python environment
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+      # install peakRDL
+      - name: Install peakRDL
+        run: python3 -m pip install peakrdl
+      # Generate RTL
+      - name: RTL generation
+        uses: scalable-arch/rtl-actions/rdl-regblock@main
+        with:
+          rdl: design/registers/AIDC_LITE.rdl
+          peakrdl-cfg: design/registers/peakrdl.toml
+          cpuif: apb3-flat
+          top:
+            - AIDC_LITE_COMP_CFG
+            - AIDC_LITE_DECOMP_CFG
+#      - name: Commit changes
+#        run: |
+#          git config --global user.email "no-reply@github.com"
+#          git config --global user.name "GitHub Actions"
+#          git add regblock/
+#          git commit -m "Update RDL-generated files"
+#      - name: Push changes
+#        uses: ad-m/github-push-action@master
+#          with:
+#            github_token: ${{ secrets.GITHUB_TOKEN }}
+#            force: true
