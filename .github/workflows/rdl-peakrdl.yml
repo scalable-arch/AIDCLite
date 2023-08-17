@@ -34,9 +34,7 @@ jobs:
           rdl: design/registers/AIDC_LITE.rdl
           peakrdl-cfg: design/registers/peakrdl.toml
           cpuif: apb3-flat
-          top:
-            - AIDC_LITE_COMP_CFG
-            - AIDC_LITE_DECOMP_CFG
+          top: [AIDC_LITE_COMP_CFG, AIDC_LITE_DECOMP_CFG]
 #      - name: Commit changes
 #        run: |
 #          git config --global user.email "no-reply@github.com"
