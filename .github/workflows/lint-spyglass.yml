@@ -12,7 +12,8 @@ on:
 
 jobs:
   Spyglass:
-    runs-on: self-hosted        # runs on a server with Synopsys Spyglass installed
+    # runs on a server with Synopsys Spyglass installed
+    runs-on: self-hosted        
     steps:
       # checkout the repository (with its submodules) to the runner
       - name: Checkout code

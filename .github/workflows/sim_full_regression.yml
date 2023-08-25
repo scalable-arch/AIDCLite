@@ -12,7 +12,8 @@ on:
 
 jobs:
   VCS:
-    runs-on: self-hosted        # runs on a server with Synopsys VCS installed
+    # runs on a server with Synopsys VCS installed
+    runs-on: self-hosted        
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
