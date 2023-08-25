@@ -12,21 +12,17 @@ on:
 
 jobs:
   Design-Compiler:
-    runs-on: self-hosted        # runs on a server with Synopsys Design Compiler installed
+    # runs on a server with Synopsys Design Compiler installed
+    runs-on: self-hosted        
     steps:
+      # checkout the repository (with its submodules) to the runner
       - name: Checkout code
         uses: actions/checkout@v3
         with:
           submodules: recursive
+      # run synthesis and generate report in ${SYN_OUT}
       - name: Synthesis
-        run: |
-          source ${{github.workspace}}/env.source ${{github.workspace}}
-          action.syn_TSMC65
-      - name: Report (Design)
-        run: cat work.syn/*.design.rpt
-      - name: Report (Timing)
-        run: cat work.syn/*.timing.rpt
-      - name: Report (Area)
-        run: cat work.syn/*.area.rpt
-      - name: Report (Power)
-        run: cat work.syn/*.power.rpt
+        uses: scalable-arch/rtl-actions/syn_TSMC65@4e23dc8 
+      # output report on github action consoles
+      - name: Report (Design, TIming, Area, Power)
+        uses: scalable-arch/rtl-actions/syn_report@4e23dc8
