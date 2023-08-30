@@ -30,7 +30,7 @@ uint32_t read_mem(uint64_t addr)
     return *((uint32_t *)addr);
 }
 
-// APIs for memory read/write
+// API for memory compression
 int test_comp(uint32_t src_addr, uint32_t dst_addr, uint32_t len)
 {
     uint32_t status;
@@ -50,6 +50,7 @@ int test_comp(uint32_t src_addr, uint32_t dst_addr, uint32_t len)
     return 1;
 }
 
+// API for memory decompression
 int test_decomp(uint32_t src_addr, uint32_t dst_addr, uint32_t len)
 {
     uint32_t status;
@@ -85,6 +86,7 @@ uint32_t test_data[TEST_DATA_SIZE/4] = {
          0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000004, 0xffa0ffdc, 0x00000000, 0x0000ffd1,
          0x00000004, 0x00260000, 0xffa50000, 0x0000ff8f, 0x0060ffd2, 0x0000005c, 0xffe40000, 0x0000ffe3};
 
+// main test
 int main()
 {
     int result;
