@@ -257,7 +257,7 @@ module TB_TOP;
         $display(" Compression test completed");
         $display("---------------------------------------------------");
     end
-    endtask;
+    endtask
 
     task test_decomp (
         input   [31:0]      src_addr,
@@ -292,7 +292,7 @@ module TB_TOP;
         $display(" Decompression test completed");
         $display("---------------------------------------------------");
     end
-    endtask;
+    endtask
 
     task test_random_trans (
         input   [31:0]      orig_addr,
@@ -304,7 +304,7 @@ module TB_TOP;
 
         CompTransaction     trans;
         trans = new();
-        trans.randomize();
+        assert(trans.randomize());
         //trans.display();
 
         for (int blk_idx=0; blk_idx<trans.blk_cnt; blk_idx=blk_idx+1) begin

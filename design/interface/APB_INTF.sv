@@ -61,7 +61,7 @@ interface APB_INTF
             #1 ;
         end
         reset_master();
-    endtask;
+    endtask
 
     task read (input logic [31:0]       addr,
                output logic [31:0]       data);
@@ -82,7 +82,7 @@ interface APB_INTF
         end
         data                            = prdata;
         reset_master();
-    endtask;
+    endtask
     // synopsys translate_on
 `endif /* UNIT_SIM */
 

@@ -58,13 +58,13 @@ class CompData;
         end
     endfunction
 
-    function display;
+    function void display;
         for (int i=0; i<32; i=i+1) begin
             $display("%04x %04x", data[i][31:16], data[i][15:0]);
         end
     endfunction
 
-endclass;
+endclass
 
 class CompTransaction #(parameter int MAX=8);
     rand    CompType        comp_type;
@@ -73,7 +73,7 @@ class CompTransaction #(parameter int MAX=8);
 
     constraint  comp_type_c     { comp_type inside {SR, ZRLE}; }
     //constraint  comp_type_c     { comp_type inside {ZRLE}; }
-    constraint  blk_cnt_c       { blk_cnt > 0; blk_cnt < MAX; };
+    constraint  blk_cnt_c       { blk_cnt > 0; blk_cnt < MAX; }
     constraint  blk_type_c      { foreach (blks[i]) blks[i].comp_type==comp_type; }
 
     function void pre_randomize();
@@ -90,4 +90,4 @@ class CompTransaction #(parameter int MAX=8);
             blks[i].display();
         end
     endfunction
-endclass;
+endclass
