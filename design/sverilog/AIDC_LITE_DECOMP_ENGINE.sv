@@ -116,7 +116,7 @@ module AIDC_LITE_DECOMP_ENGINE
             end
             S_RD_BUSREQ: begin
                 // request granted
-                if (ahb_if.hgrant) begin
+                if (ahb_if.hgrant & ahb_if.hready) begin
                     // address phase part (prepation)
                     // set the address and SRC_ADDR + BLK_CNT*128
                     haddr_n                         = src_addr_i + {blk_cnt, 6'd0};
@@ -180,7 +180,7 @@ module AIDC_LITE_DECOMP_ENGINE
             end
             S_WR1_BUSREQ: begin
                 // request granted
-                if (ahb_if.hgrant) begin
+                if (ahb_if.hgrant & ahb_if.hready) begin
                     // address phase part (prepation)
                     // continue using haddr and hwrite from the 1st access
                     //  x2 for block_cnt than source as destination contains
@@ -247,7 +247,8 @@ module AIDC_LITE_DECOMP_ENGINE
                 end
             end
             S_WR2_BUSREQ: begin
-                if (ahb_if.hgrant) begin
+                // request granted
+                if (ahb_if.hgrant & ahb_if.hready) begin
                     // address phase part
                     // set the address and SRC_ADDR + BLK_CNT*64
                     htrans_n                        = AHB2_PKG::HTRANS_NONSEQ;

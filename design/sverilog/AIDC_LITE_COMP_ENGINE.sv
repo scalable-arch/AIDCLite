@@ -126,7 +126,7 @@ module AIDC_LITE_COMP_ENGINE
             end
             S_RD1_BUSREQ: begin
                 // request granted
-                if (ahb_if.hgrant) begin
+                if (ahb_if.hgrant & ahb_if.hready) begin
                     // address phase part (prepation)
                     // set the address and SRC_ADDR + BLK_CNT*128
                     haddr_n                         = src_addr_i + {blk_cnt, 7'd0};
@@ -185,7 +185,7 @@ module AIDC_LITE_COMP_ENGINE
             end
             S_RD2_BUSREQ: begin
                 // request granted
-                if (ahb_if.hgrant) begin
+                if (ahb_if.hgrant & ahb_if.hready) begin
                     // address phase part (prepation)
                     // continue using haddr and hwrite from the 1st access
                     htrans_n                        = AHB2_PKG::HTRANS_NONSEQ;
@@ -256,7 +256,8 @@ module AIDC_LITE_COMP_ENGINE
                 end
             end
             S_WR_BUSREQ: begin
-                if (ahb_if.hgrant) begin
+                // request granted
+                if (ahb_if.hgrant & ahb_if.hready) begin
                     // address phase part
                     // set the address and SRC_ADDR + BLK_CNT*64
                     haddr_n                         = dst_addr_i + {blk_cnt, 6'd0};
