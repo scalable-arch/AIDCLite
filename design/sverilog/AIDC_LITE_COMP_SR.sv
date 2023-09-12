@@ -39,6 +39,12 @@ module AIDC_LITE_COMP_SR
     logic                               done,       done_n;
     logic                               fail,       fail_n;
 
+    property sop_p;
+        @(posedge clk) (state==S_FIRST) && (valid_i) |-> sop_i;
+    endproperty
+
+    sop_chk: assert property (sop_p);
+
     always_comb begin
         state_n                         = state;
 
@@ -52,10 +58,6 @@ module AIDC_LITE_COMP_SR
             case (state)
                 S_FIRST: begin
                     // the first cycle
-                    // synopsys translate_off
-                    assert(sop_i);
-                    // synopsys translate_on
-
                     valid_n                         = 1'b0;
                     addr_n                          = 'd0;
                     done_n                          = 1'b0;
